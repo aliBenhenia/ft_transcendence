@@ -1,0 +1,209 @@
+--------------------------------------
+# WebSockets
+--------------------------------------
+
+WebSockets are a protocol for full-duplex communication channels over a single TCP connection.
+They enable real-time, two-way communication between a client and a server.
+which is particularly useful for applications like chat apps, live notifications, 
+and real-time data feeds.
+
+--------------------------------------
+# How WebSockets Work
+--------------------------------------
+
+# Handshake: 
+
+The client initiates a connection to the server using an HTTP request with an "Upgrade" header. 
+If the server supports WebSockets, it responds with an "Upgrade" response .
+and the connection is upgraded from HTTP to WebSocket.
+
+# Communication: 
+
+Once the WebSocket connection is established, data can be sent in both directions as messages 
+without the overhead of repeatedly opening and closing connections.
+
+# Closure: 
+
+Either the client or the server can close the connection at any time, and a closing handshake 
+is performed to ensure both parties are aware that the connection is closing.
+
+--------------------------------------
+# Understand WS on the network level
+--------------------------------------
+
+# HTTP :
+
+is the foundation of data communication on the web. 
+It operates over TCP , which ensures reliable, ordered, 
+and error-checked delivery of data between applications.
+
+# Statelessness (HTTP): 
+
+Each HTTP request is independent of others, meaning that the server does not keep track of 
+previous requests. This is known as the stateless nature of HTTP.
+
+# Methods: 
+
+Common HTTP methods include:
+-  GET (retrieve data).
+- POST (send data).
+- PUT (update data).
+- DELETE (remove data).
+
+# Headers: 
+
+HTTP requests and responses include headers that provide metadata about the request or response.
+(e.g., content type, content length).
+
+# Body: 
+
+The body of an HTTP request or response contains the actual data being sent (e.g., HTML content, JSON).
+
+# WebSocket Handshake
+
+WebSockets leverage HTTP for the initial handshake but provide a different communication protocol
+once the connection is established.
+
+
+# Initiating the WebSocket Connection:
+
+# Client Request: 
+
+The client sends an HTTP request with an Upgrade header to switch from HTTP to WebSocket. 
+This request uses the GET method and includes headers like : 
+Upgrade: websocket and Connection: Upgrade.
+
+# Server Response: 
+
+If the server supports WebSockets, it responds with a 101 Switching Protocols status code 
+and headers indicating that it is switching to the WebSocket protocol.
+
+# Example of a WebSocket handshake request:
+
+GET /chat HTTP/1.1
+Host: example.com
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==
+Sec-WebSocket-Version: 13
+
+# Example of a WebSocket handshake response:
+
+HTTP/1.1 101 Switching Protocols
+Upgrade: websocket
+Connection: Upgrade
+Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xYo=
+
+# WebSocket Communication:
+
+# Data Frames: 
+
+Once the handshake is complete, the connection is upgraded, and the WebSocket protocol takes over.WebSocket communication involves sending and receiving data in the form of frames. 
+Frames can be text, binary data, or control messages (e.g., ping/pong for keep-alive).
+
+# Full-Duplex Communication: 
+
+Unlike HTTP, WebSockets provide a full-duplex communication channel.
+allowing data to flow in both directions simultaneously.
+
+# Closing the Connection:
+
+# Client or Server Initiated: 
+
+Either the client or server can initiate the closing handshake to terminate the 
+WebSocket connection. This involves sending a close frame
+which the other party acknowledges with its own close frame.
+
+# Example of a WebSocket closing frame:
+
+Frame Type: Close
+Close Code: 1000 (Normal Closure)
+
+# Network Level Breakdown
+
+# TCP Connection: 
+
+Both HTTP and WebSocket protocols operate over TCP. This ensures reliable 
+data transmission between the client and server.
+
+# Port: 
+
+By default, HTTP operates over port 80, and HTTPS operates over port 443. 
+WebSockets typically use the same ports but specify the :
+ws (for non-secure) or wss (for secure) scheme in the URL.
+
+# Protocol Switch: 
+
+During the WebSocket handshake, the HTTP connection is upgraded to a WebSocket connection, 
+changing how data is framed and communicated.
+
+# Data Frames: 
+
+WebSocket frames are transmitted directly over the established TCP connection. 
+Each frame includes a header and a payload. The WebSocket protocol is designed for :
+low-latency communication, making it suitable for real-time applications.
+
+--------------------------------------
+# Sec-WebSocket-Key
+--------------------------------------
+
+# Purpose:
+
+This header is used by the client to initiate the WebSocket handshake. 
+It contains a base64-encoded value that is used to ensure the server is 
+capable of handling WebSocket connections.
+
+# Format: 
+
+The value is a randomly generated 16-byte value that is base64-encoded.
+
+# How It Works: 
+
+The client generates this key and sends it to the server. 
+This key is used as part of the handshake process to create a unique response 
+that proves the server is WebSocket-compliant.
+
+--------------------------------------
+# Sec-WebSocket-Version
+--------------------------------------
+
+# Purpose: 
+
+This header specifies the version of the WebSocket protocol that the client is using. 
+It ensures that both the client and server understand the same version of the protocol.
+
+# Format: 
+
+The value is a number indicating the WebSocket protocol version.
+
+# How It Works: 
+
+The value 13 is the current version of the WebSocket protocol as specified in RFC 6455. 
+Both the client and server must agree on this version to successfully establish a connection.
+
+--------------------------------------
+# Sec-WebSocket-Accept
+--------------------------------------
+
+# Purpose: 
+
+This header is used by the server to respond to the client's Sec-WebSocket-Key. 
+It contains a base64-encoded value that is derived from the client's key.
+proving that the server is capable of handling WebSocket connections.
+
+# Format: 
+
+The server generates this value by concatenating the client's Sec-WebSocket-Key with : 
+a specific GUID (Globally Unique Identifier) and then hashing the result using:
+the SHA-1 algorithm. The result is base64-encoded.
+
+# How It Works: 
+
+When the client receives this header, it verifies that the value matches what it expects.
+This verification process confirms that the server has correctly processed the
+handshake request and that it is a valid WebSocket server.
+
+This involves calculating the expected value based on the Sec-WebSocket-Key it sent 
+and the GUID specified in the WebSocket protocol.
+
+

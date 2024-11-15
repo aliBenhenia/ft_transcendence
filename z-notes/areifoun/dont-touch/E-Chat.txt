@@ -1,0 +1,94 @@
+# Introduction to Django Channels
+
+Django Channels is a project that extends Django’s capabilities to handle :  
+asynchronous communication, including WebSockets, HTTP2 push, and background tasks. 
+It allows you to build real-time web applications by enabling bidirectional communication between the client and the server.
+
+
+--------------------------------------
+# Chat Implementation in Django
+--------------------------------------
+
+
+# from channels.generic.websocket import AsyncWebsocketConsumer:
+
+Imports the AsyncWebsocketConsumer class from Django Channels.
+This class is used to handle WebSocket connections asynchronously. 
+It provides methods for managing WebSocket events like : 
+connecting, receiving messages, and disconnecting.
+
+# async def connect(self)::
+
+Defines an asynchronous method connect that is called when a WebSocket connection is made. 
+The async keyword allows the method to run asynchronously, meaning it won't block 
+the execution of other code while waiting for long-running operations.
+
+# self.username = self.scope['url_route']['kwargs']['username']:
+
+Retrieves the username from the WebSocket connection's scope. 
+The scope is a dictionary containing metadata about the connection. 
+The username is extracted from the URL route parameters.
+
+# self.user = self.scope['user']:
+
+Retrieves the current authenticated user from the WebSocket connection's scope. 
+This is the user who is making the connection.
+
+# self.room_group_name = f'chat_{self.user.username}_{self.username}':
+
+Constructs a room group name using the usernames of the two users involved in the chat.
+The room group name is a string formatted as chat_<current_user_username>_<other_user_username>.
+
+
+
+AsyncWebsocketConsumer 
+_____________________
+
+is a class that provides asynchronous WebSocket support.
+Its a consumer that handles WebSocket connections in Django.
+
+
+async def connect(self):
+_____________________
+
+This is an asynchronous method that gets called when a WebSocket connection is established. 
+It must be defined as async because it uses asynchronous I/O.
+
+
+await self.accept(): 
+_____________________
+
+This method is used to accept the WebSocket connection. 
+It signals that the server agrees to establish the connection. 
+This is required for the connection to be fully established and for
+the client to be able to send and receive data.
+
+
+async def disconnect(self, closeID):
+____________________________________
+
+This asynchronous method is called when the WebSocket connection is closed.
+The closeID parameter provides an identifier for the closure reason.
+
+
+async def receive(self, text_data):
+____________________________________
+
+This asynchronous method is called when the server receives a message from the WebSocket connection.
+The text_data parameter contains the message as a JSON-encoded string.
+
+
+json.loads(text_data): 
+______________________
+
+This line parses the JSON-encoded string into a Python dictionary using json.loads()
+
+
+await self.send(text_data=json.dumps({'message': message})): 
+____________________________________________________________
+
+This sends a message back to the WebSocket client. 
+The text_data parameter must be a JSON-encoded string so json.dumps()
+is used to encode the message as a JSON string before sending it.
+
+

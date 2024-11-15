@@ -1,0 +1,22 @@
+  radis:
+     build:
+      context: ./tools/Redis
+      dockerfile: Dockerfile
+    
+    container_name: redis
+    
+    networks:
+      - mynetwork
+  
+  celery:
+    
+    build:
+      context: ./tools/Celery
+      dockerfile: Dockerfile
+    
+    container_name: celery
+    
+    command: celery -A framework worker -l INFO
+    
+    networks:
+      - mynetwork

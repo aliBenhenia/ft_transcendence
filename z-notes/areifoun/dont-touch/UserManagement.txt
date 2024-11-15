@@ -1,0 +1,92 @@
+
+# What is OAuth2?
+
+OAuth2 is a way for users to give a third-party application access to their data without sharing their passwords.
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+[*] The Flow Step by Step:
+
+    User Redirected to Authorization Server:
+        
+        The user wants to log into a third-party app using their 42 (a platform) account.
+        The app redirects the user to the 42 platform’s authorization page.
+        The 42 platform checks if the user is logged in. If they are, it asks if they want to allow the app to access their data.
+
+[*] User Grants Access:
+
+    The user agrees to give the app access.
+    The 42 platform sends the user back to the app with a temporary code in the URL.
+
+[*] App Exchanges Code for Access Token:
+
+    The app takes the code and sends it back to the 42 platform to exchange it for an access token.
+    The access token is a special key that allows the app to make requests to the 42 API on behalf of the user.
+
+[*] App Makes API Requests:
+
+    The app can now use the access token to request data from the 42 API.
+    For example, the app might ask for the user's profile information, and the 42 API will respond with the data.
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+[*] Implementation:
+
+    - Redirect Users to 42 Authorization:
+        The app sends users to the 42 authorization URL, where they log in and grant access.
+    
+    - Authorization URL:
+
+        https://api.intra.42.fr/oauth/authorize?client_id=your_client_id&redirect_uri=http://yourapp.com/callback&response_type=code&scope=public&state=random_string
+
+    client_id: The app's ID.
+    
+    redirect_uri: Where the user goes after granting access.
+    
+    response_type: "code" indicates the app is asking for an authorization code.
+    
+    scope: What data the app wants to access.
+    
+    state: A random string to protect against attacks.
+
+    - Exchange Code for Access Token:
+
+        - The app sends a POST request to get the access token:
+
+        - POST https://api.intra.42.fr/oauth/token
+
+    - Using the Access Token:
+
+        The app includes the token in the header of API requests:
+
+The OAuth2 flow allows a user to give an app permission to access their data without sharing their login details. 
+The app first gets a code, exchanges it for an access token, and then uses that token to access the user’s data from the API.
+
+- Web Application flow (also known as the Authorization Code flow)
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+1 - Install Required Libraries :
+
+pip install requests django-allauth
+
+2 - Add django-allauth to your Django project:
+
+INSTALLED_APPS += 'allauth'
+
+3 - Set up the SITE_ID in settings.py:
+
+SITE_ID = 1
+
+4 - Include django-allauth URLs in your urls.py:
+
+path('accounts/', include('allauth.urls')),
+
+5 - Create OAuth2 Configuration in Settings
+
+
+
+
+
+
+

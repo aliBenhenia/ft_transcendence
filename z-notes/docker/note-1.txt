@@ -1,0 +1,8 @@
+docker build -t server .
+
+docker run -t server
+
+docker run -v "$(pwd)/framework:/server-api" -p "9000:8000" -t server
+
+docker build -t ui .
+docker run -v "$(pwd):/usr/share/nginx/html" -p "9001:80" -t ui
