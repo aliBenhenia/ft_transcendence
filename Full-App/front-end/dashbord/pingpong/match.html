@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Match API - PingPong</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <style>
+        .spinner {
+            border-top-color: transparent;
+            border-right-color: transparent;
+            border-bottom-color: transparent;
+            border-left-color: #3490dc;
+            border-width: 4px;
+            border-style: solid;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        .popup.active {
+            display: block;
+        }
+        .box {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 16px;
+            margin: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    
+    <div class="flex items-center justify-center h-screen">
+        <div class="text-center">
+            <h1 class="text-4xl font-bold text-blue-600 mb-8">API - PINGPONG</h1>
+            <div class="flex items-center justify-center space-x-8">
+                <div class="flex items-center">
+                    <div>
+                        
+                        <h2 class="text-xl font-semibold" style="margin-bottom: 10px;">Me :</h2>
+                        <div class="flex items-center p-4 bg-white rounded-lg shadow-md">
+                            <div class="ml-4 text-center">
+                                <img src="user-image-url" alt="User Image" id="user-image" class="w-12 h-12 rounded-full mx-auto">
+                                <a href="#" id="auth-user" class="text-lg font-semibold text-blue-600 hover:underline"></a>
+
+                                <p class="text-sm text-gray-600" >Rank: <span id="rank" class="font-medium"></span></p>
+                                <p class="text-sm text-gray-600" >Matches: <span id="matches" class="font-medium"></span></p>
+                                <p class="text-sm text-gray-600" >Win: <span class="font-medium" id="win"></span></p>
+                                <p class="text-sm text-gray-600" >Loss: <span class="font-medium" id="loss"></span></p>
+                        
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                <p class="text-2xl text-gray-500">VS</p>
+                <div class="flex items-center" id="card-id">
+                    <h2 class="text-xl font-semibold" id="afterhide">Player:</h2>
+  
+                        <div class="ml-2" id="change-mood">
+                            <p id="player-user" class="ml-2 text-lg text-gray-700"></p>
+                                <input id="player" type="text" required class="mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <button id="find-button" type="button" class="ml-4 px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition">Find</button>
+                </div>
+                <button id="cancel" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Cancel</button>
+                
+            </div>
+            
+            <h1 class="text-4xl font-bold text-black-600 mb-8" style="margin-top: 40px;">GAME IS : <span id="which-mood" class="text-4xl font-bold mb-8"><span></h1>
+            <button id="end-button" type="button" class="hidden ml-4 px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition" style="width: 150px;">END GAME</button>
+            
+            
+
+             <!-- Sender Box -->
+            <div id="sender-box" class="box bg-white">
+                <h2 class="text-xl font-bold mb-4">Sender</h2>
+                <textarea id="sender-message" class="w-full h-32 p-2 border border-gray-300 rounded" placeholder="Type your message here..."></textarea>
+            </div>
+    
+            <button id="quite" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Quite</button>
+
+            <div id="loading-spinner" class="hidden mt-4" >
+                <div class="spinner" style="margin-top: 1.5%; "></div>
+                <p class="text-gray-600 mt-2" id="x-player" style="padding-left: 10px;">Processing invitation...</p>
+            </div>
+        </div>
+
+        <!-- DATA FLOWS -->
+    
+    
+        
+    </div>
+   
+    <!-- INVITATION POPUP-->
+    <div class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+        <!-- Popup -->
+        <div id="popup" class="popup p-6">
+            <div class="flex items-center">
+                
+                <!-- Picture -->
+                <img src="https://via.placeholder.com/50" id="sender-picture" alt="User Picture" class="w-12 h-12 rounded-full mr-4">
+                
+                <!-- Message -->
+                <div class="flex-1">
+                    <p class="text-lg font-semibold" id="sender-username"></p>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-end space-x-4">
+                <!-- Accept Button -->
+                <button id="accept" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Accept</button>
+                <!-- Cancel Button -->
+                <button id="cancel" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Cancel</button>
+            </div>
+        </div>
+    
+        <!-- Overlay -->
+        <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-500 hidden"></div>
+    
+    </div>
+
+
+    
+    <!-- Player Quited !-->
+    <div class="bg-gray-100 flex items-center justify-center min-h-screen">
+    
+        <!-- Popup -->
+        <div id="popup-quited" class="popup p-6">
+            <div class="flex items-center">
+                
+                <!-- Picture -->
+                <img src="https://via.placeholder.com/50" id="senderpicture" alt="User Picture" class="w-12 h-12 rounded-full mr-4">
+                
+                <!-- Message -->
+                <div class="flex-1">
+                    <p class="text-lg font-semibold" id="senderusername"></p>
+                </div>
+            </div>
+    
+            <div class="mt-4 flex justify-end space-x-4">
+                <!-- Accept Button -->
+                <button id="accept1" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600">Find Other Player ?</button>
+                <button id="stay" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600">Stay On page</button>
+            </div>
+    
+        </div>
+        <div id="overlay1" class="fixed inset-0 bg-black bg-opacity-50 z-500 hidden"></div>
+    </div>
+
+    <!--
+        <script src="logic.js"></script>
+    -->
+    <script src="live.js"></script>
+    <script src="dom.js"></script>
+</body>
+</html>

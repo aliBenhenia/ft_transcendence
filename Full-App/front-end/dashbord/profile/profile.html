@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <!-- Include Tailwind CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.16/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body class="bg-gray-100">
+    
+    
+    <div class="max-w-4xl mx-auto px-4 py-8">
+        <!-- Profile Card -->
+        <div >
+            <br>
+            <div class="max-w-xl mx-auto">
+                <div class="relative">
+                    <input id="search-input" type="text" class="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" placeholder="Search for a friend">
+                    <div id="suggestions" class="absolute w-full bg-white shadow-lg mt-1 rounded-md hidden">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        
+        
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            
+            <div class="relative">
+                <div id="notificationIcon" class="absolute top-5 right-5 bg-blue-500 text-white w-10 h-10 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-600" style="border: 1px solid rgb(32, 125, 232)">
+                    <!-- Icon or notification count can be added here -->
+                    <span id="counter-request" class="text-sm">0</span>
+                </div>
+                <div id="notificationContainer" class="absolute top-5 right-5 bg-white shadow-lg rounded-md p-2 mt-2 hidden" style="border: 1px solid rgb(32, 125, 232); background-color:rgb(32, 125, 232)" >
+                    <!-- Notifications will be appended here -->
+                </div>
+            </div>
+            
+        
+            <div class="px-6 py-4">
+                <button onclick="logout()" class="mt-1 px-3 py-1 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500">
+                    Logout
+                </button>
+            <div>
+            </div>
+            <hr style="margin-top: 4%; margin-bottom: 4%;">                
+                <!-- Profile Picture -->
+                <div class="flex justify-center">
+                    <img id="profilePicture" src="" alt="Profile Picture" class="h-24 w-24 rounded-full object-cover">
+                </div>
+                
+                
+                <div class="bflex justify-center">
+                    
+                    
+                </div>
+                  
+                <!-- User Info -->
+                <div class="mt-4">
+                    <h2 class="text-xl font-bold text-gray-800" style="margin-bottom: 1%; margin-top: 2%;"><span id="client-fname"></span></h2>
+                    <p id="client-lname" style="margin-bottom: 1%;"></p>
+                    <p>ONLINE : <span id="client-online"></span></p>
+                    <p class="text-sm text-gray-600">Level <span id="client-level"></span> | Achievements: <span id="client-achev"></span>
+                    | Total Matches: <span id="client-match"></span> | Wins: <span id="client-win"></span> | Losses: <span id="client-loss"></span></p>
+                    
+                    <!--
+                        <div style="margin-top: 1%;">
+                            <button onclick="window.location.href='../chat/chat.html'" class="mt-1 px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500">CHAT ROOM</button>
+                        </div>
+                    -->
+                
+                </div>
+                
+                
+                <!-- Options -->
+                <div class="mt-4 flex justify-between items-center border-t pt-4">
+                    
+                    <div>
+                        <p class="text-sm text-gray-600">UPDATE PROFILE</p>
+                        <button id="update-profile" class="mt-1 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            Click Here
+                        </button>
+                    </div>
+                    
+                    <div>
+                        <p class="text-sm text-gray-600">SEND A MESSAGE</p>
+                        <button onclick="window.location.href='../chat/chat.html'" class="mt-1 px-3 py-1 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500">CHAT ROOM</button>
+                    </div>
+                    <!-- Enable 2FA -->
+                    <div>
+                        <p class="text-sm text-gray-600"> SETUP 2FA</p>
+                        <button id="toggleButton" class="mt-1 px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            Enable
+                        </button>
+                    </div>
+
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div id="popup" class="fixed top-0 left-0 right-0 bottom-0 flex items-center justify-center hidden bg-gray-800 bg-opacity-50">
+        <div class="bg-white p-8 rounded shadow-md max-w-sm w-full text-center">
+            <h2 class="text-xl font-bold mb-4">Logout Successful!</h2>
+            <p class="text-gray-700">Good Bye !</p>
+            <button id="closePopup" class="mt-4 bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">Close</button>
+        </div>
+    </div>
+
+
+    <!--
+        NOTIFICATION :
+    -->
+
+    <div id="notification" class="hidden">
+        <div class="bg-gray-100 h-screen flex justify-end items-center">
+            <!-- Notification Pop-up -->
+            <div class="fixed top-4 right-4 bg-white shadow-lg rounded-lg w-96 p-3 space-y-4">
+              <div class="flex items-start justify-between">
+                <div class="flex-shrink-0">
+                    <!--
+                        <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m0-4h.01M12 8v.01M19 8v6a2 2 0 01-2 2H7a2 2 0 01-2-2V8M5 8V6a2 2 0 012-2h10a2 2 0 012 2v2"></path>
+                        </svg>
+                    -->
+                    <img id="notify-image" class="w-12 h-12 rounded-full object-cover" src="" alt="">
+                </div>
+                <div class="ml-3 w-0 flex-1">
+                  <p  id="notify-title" class="text-xs font-medium text-gray-900">
+                  </p>
+                  <p  id="notify-description" class="mt-1 text-xs text-gray-500">
+                   
+                </p>
+                </div>
+                <div class="ml-4 flex-shrink-0 flex" style="flex-direction: column; align-items: flex-end;">
+                    <div style="display: flex; gap: 10px;">
+                        <button id="notify-close" class="bg-blue-500 text-white ml-2 px-2 py-1 text-xs rounded-lg hover:bg-blue-600">
+                            Close
+                        </button>
+                        
+                    </div>
+                    <div>
+                        <p id="notify-date" style="font-size: 8px; margin-top: 10px;"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+    </div>
+
+
+
+
+    <!-- 
+        <script src="notify.js"></script>
+    
+        <script src="js/img.js"></script>
+        <script src="js/search.js"></script>
+        <script src="js/notify.js"></script>
+        
+    -->
+    <script src="js/profile.js"></script>
+</body>
+</html>

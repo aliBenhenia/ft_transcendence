@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+</head>
+<body class="bg-gray-100" style="margin-top: 20%;">
+
+    <!-- Main Profile Card -->
+    <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl mt-10">
+        <div class="md:flex">
+            <div class="md:shrink-0">
+                <img id="image" class="h-48 w-full object-cover md:h-full md:w-48" src="" alt="User profile picture">
+            </div>
+            <div class="p-8">
+                <div id="rank" class="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Rank: Gold</div>
+                <h1 id="fullname" class="block mt-1 text-lg leading-tight font-medium text-black"> <span id="username" class="text-gray-500"></span></h1>
+                <p class="mt-2 text-gray-500">Total Matches: <span id="match"></span></p>
+                <p class="mt-2 text-green-500">Wins: <span id="wins"></span></p>
+                <p class="mt-2 text-red-500">Losses: <span id="loss"></span></p>
+
+                <!-- Friend Status and Actions -->
+                <div class="mt-4">
+                    <div id="friend-status">
+                        
+                        <!-- If user is a friend, display chat icon, otherwise show invite button
+                        <button id="send-invite" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700">Send Friend Request</button>
+                         -->
+                        <!-- Chat Icon -->
+                        <!-- Uncomment this line if user is already a friend -->
+                        <!-- 
+                        -->
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/user.js"></script>
+</body>
+</html>

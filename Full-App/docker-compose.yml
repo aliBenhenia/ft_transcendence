@@ -1,0 +1,82 @@
+version: '2.27.0'
+
+services:
+
+  server:
+    
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+  
+    container_name: django
+
+    # depends_on:
+    #   - database
+    
+    # env_file:
+    #   - example.env
+    
+    # environment:
+    #   - DB_NAME=${DB_NAME}
+    #   - DB_USER=${DB_USER}
+    #   - DB_PASSWORD=${DB_PASSWORD}
+    #   - DB_HOST=database
+    #   - DB_PORT=${DB_PORT}
+    
+    depends_on:
+      - redis
+    ports:
+      - 9003:8001
+    volumes:
+      - ./backend/source:/server
+    networks:
+      - mynetwork
+  
+  frontend:
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    image: ui
+    container_name: ui
+    ports:
+      - 9001:80
+    volumes:
+      - ./front-end:/usr/share/nginx/html
+    networks:
+      - mynetwork
+  
+  database:
+    image: postgres:latest
+    container_name: db
+    
+    environment:
+      - POSTGRES_USER=student
+      - POSTGRES_PASSWORD=1337
+      - POSTGRES_DB=information
+
+    ports:
+      - 5435:5432
+    
+    volumes:
+      - ./database:/var/lib/postgres/data
+
+    networks:
+      - mynetwork
+  
+  redis:
+    build:
+      context: ./tools/Redis
+      dockerfile: Dockerfile
+    
+    container_name: redis
+    
+    networks:
+      - mynetwork
+    
+    networks:
+      - mynetwork
+    
+
+networks:
+  mynetwork:
+    driver: bridge

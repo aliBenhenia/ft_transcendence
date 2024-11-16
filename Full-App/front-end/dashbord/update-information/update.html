@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update User Info</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-6 text-center">Update User Info</h1>
+        <form id="profileForm" class="space-y-4">
+            <div class="flex items-center justify-between">
+                <label for="pic" class="font-semibold">Profile Picture:</label>
+                <input type="file" name="avatar" id="pic" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+            </div>
+            
+            <div class="flex items-center justify-between">
+                <label for="f_name" class="font-semibold">First Name:</label>
+                <input type="text" name="first_name" id="f_name" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+            </div>
+            
+            <div class="flex items-center justify-between">
+                <label for="l_name" class="font-semibold">Last Name:</label>
+                <input type="text" name="last_name" id="l_name" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+            </div>
+        
+            <div class="flex items-center justify-between">
+                <label for="old" class="font-semibold">Old Password:</label>
+                <input type="password" name="old_pass" id="old" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+            </div>
+        
+            <div class="flex items-center justify-between">
+                <label for="pass" class="font-semibold">New Password:</label>
+                <input type="password" name="password" id="pass" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+            </div>
+        
+            <div class="flex items-center justify-between">
+                <label for="repass" class="font-semibold">Re Password:</label>
+                <input type="password" name="re_password" id="repass" class="w-full px-3 py-2 border border-gray-300 rounded-lg">
+            </div>
+            <div style="margin-left:20%; margin-top: 10%;">
+                <button type="submit" style="width: 200px;" class="ml-2 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg">Update</button>
+            </div>
+        </form>   
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="js/update.js"></script>
+</body>
+</html>
