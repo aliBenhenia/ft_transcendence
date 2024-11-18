@@ -83,7 +83,7 @@ const ProfileCard = () => {
         </motion.div>
         <div className="text-white text-center sm:text-left mt-6 sm:mt-0 sm:ml-8 flex-1">
           <h2 className="text-2xl sm:text-3xl font-bold">{profileState.full_name }</h2>
-          <p className="text-gray-400 text-lg">@{profileState.username || "Doe"}</p>
+          <p className="text-gray-400 text-lg">@{profileState.username}</p>
         </div>
         <div className="w-full mt-6 sm:mt-0 sm:max-w-xs">
           <h3 className="text-white text-sm font-semibold text-center sm:text-left">Level Progress</h3>
@@ -116,29 +116,30 @@ const ProfileCard = () => {
           </motion.p>
         </div>
       </div>
-      <div className="flex justify-center sm:justify-start space-x-4 sm:space-x-8 mt-10">
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          onClick={() => router.push("/chat")}
-          className="bg-[#07325F] text-white font-semibold py-2 px-6 rounded-2xl shadow hover:bg-[#0d0e0f] transition ease-in-out duration-300"
-        >
-          Chat now
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          className="bg-[#07325F] text-white font-semibold py-2 px-6 rounded-2xl shadow hover:bg-[#0d0e0f] transition ease-in-out duration-300"
-          onClick={() => router.push("/setting")}
-        >
-          Settings
-        </motion.button>
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          onClick={toggleTwoFactor}
-          className={`bg-[#07325F] text-white font-semibold py-2 px-6 rounded-2xl shadow hover:bg-[#0d0e0f] transition ease-in-out duration-300`}
-        >
-          {twoFactorEnabled === null ? "Loading..." : twoFactorEnabled ? "Deactivate 2FA" : "Activate 2FA"}
-        </motion.button>
-      </div>
+      <div className="flex flex-col sm:flex-row justify-center sm:justify-start space-y-4 sm:space-y-0 sm:space-x-8 mt-10">
+  <motion.button
+    whileHover={{ scale: 1.1 }}
+    onClick={() => router.push("/chat")}
+    className="bg-[#07325F] text-white font-semibold py-2 px-6 rounded-2xl shadow hover:bg-[#0d0e0f] transition ease-in-out duration-300"
+  >
+    Chat now
+  </motion.button>
+  <motion.button
+    whileHover={{ scale: 1.1 }}
+    className="bg-[#07325F] text-white font-semibold py-2 px-6 rounded-2xl shadow hover:bg-[#0d0e0f] transition ease-in-out duration-300"
+    onClick={() => router.push("/setting")}
+  >
+    Settings
+  </motion.button>
+  <motion.button
+    whileHover={{ scale: 1.1 }}
+    onClick={toggleTwoFactor}
+    className="bg-[#07325F] text-white font-semibold py-2 px-6 rounded-2xl shadow hover:bg-[#0d0e0f] transition ease-in-out duration-300"
+  >
+    {twoFactorEnabled === null ? "Loading..." : twoFactorEnabled ? "Deactivate 2FA" : "Activate 2FA"}
+  </motion.button>
+</div>
+
     </div>
   );
 };
