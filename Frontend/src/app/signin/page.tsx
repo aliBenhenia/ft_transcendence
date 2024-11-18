@@ -118,9 +118,9 @@ export default function SignIn() {
           message.error("error to login");  
           setError((prev) => ({ ...prev, general: 'Login failed' }));
         }
-      } catch (error) {
-        message.error('Error:', error);
-        setError((prev) => ({ ...prev, general: 'An error occurred. Please try again.' }));
+      } catch (error:any) {
+        console.log(error.response.data.error);
+        message.error(error.response.data.error);
       } 
    
   };
