@@ -5,7 +5,7 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Link from "next/link";
 import styles from "./signin.module.css";
 import { useRouter } from "next/navigation";
-import {message} from "antd";
+import { message } from "antd";
 import axios from "axios";
 
 export default function SignIn() {
@@ -18,14 +18,11 @@ export default function SignIn() {
   const [passErr, setPassErr] = useState(false);
   const router = useRouter();
 
-
-
   const isAllSpaces = (str: string): boolean => {
     return str.trim().length === 0;
   };
 
   const validatePassword = (password: string) => {
-    // Validate password length
     if (password.length < 8) {
       setPassErr(true);
       return false;
@@ -61,8 +58,7 @@ export default function SignIn() {
     const { name, value } = e.target;
     setData((prev) => ({ ...prev, [name]: value }));
     setError((prev) => ({ ...prev, [name]: "" }));
-    
-    // Validate password on change
+
     if (name === "password") {
       validatePassword(value);
     }
@@ -70,7 +66,7 @@ export default function SignIn() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
+    setLoading(true);  // Start loading state
 
     const emailValidation = isValidInput(inputEmail);
     const passwordValidation = isValidInput(inputPassword);
@@ -84,50 +80,50 @@ export default function SignIn() {
     }
     setError(newError);
     if (!emailValidation.valid || !passwordValidation.valid) {
+      setLoading(false);  // Stop loading if there's an invalid field
       return;
     }
+
     if (data.password.length < 8) {
       setPassErr(true);
+      setLoading(false);
       return;
     }
 
-      try {
-        const response = await axios.post('http://127.0.0.1:9003/login/api/token/', {
-          email: data.email,
-          password: data.password,
-        });
+    try {
+      const response = await axios.post("http://127.0.0.1:9003/login/api/token/", {
+        email: data.email,
+        password: data.password,
+      });
+      setLoading(true);
 
-        const result = response.data;
-        console.log(result);
-        if (response.status == 200)
-        {
-          console.log(result.access);
-          localStorage.setItem('accessToken', result.access);
-          if (result['2FA'] == true)
-          {
-            message.success("you need to verify 2fa authentication");
-            router.push('/2fa');
-            return;
-          }
-          message.success("login success");
-          router.push('/dashboard');
-        } 
-        else
-        {
-          console.log(response.status)
-          message.error("error to login");  
-          setError((prev) => ({ ...prev, general: 'Login failed' }));
+      const result = response.data;
+      if (response.status == 200) {
+        localStorage.setItem("accessToken", result.access);
+        if (result["2FA"] === true) {
+          message.success("You need to verify 2FA authentication");
+          router.push("/2fa");
+          setLoading(false);
+          return;
         }
-      } catch (error:any) {
-        console.log(error.response.data.error);
-        message.error(error.response.data.error);
-      } 
-   
+        setLoading(true);
+        message.success("Login success");
+        router.push("/dashboard");
+      } else {
+        message.error("Error during login");
+        setError((prev) => ({ ...prev, general: "Login failed" }));
+      }
+    } catch (error: any) {
+      message.error(error.response.data.error || "Login failed");
+    } finally {
+      
+      setLoading(false);  // Always stop loading when the request completes
+    }
   };
 
   return (
     <div className="flex flex-col">
-      <div className={`${styles.singin} min-h-screen flex items-center justify-center w-full `}>
+      <div className={`${styles.singin} min-h-screen flex items-center justify-center w-full`}>
         <div className="bg-cover bg-center absolute top-0 left-0 w-full h-full opacity-50"></div>
         <div className={`${styles.box} relative p-8 rounded-lg shadow-lg`}>
           <h2 className="text-2xl font-semibold text-white text-center mb-6">Sign In</h2>
@@ -167,25 +163,25 @@ export default function SignIn() {
               />
               {error.email && <p className="text-red-500">{error.email}</p>}
             </div>
-            <div className="relative">
-              <div className="relative">
-                <input
-                  ref={inputPassword}
-                  type={hidePass ? "password" : "text"}
-                  name="password"
-                  placeholder="Password"
-                  className={`w-full bg-[#D9D9D9] p-2 rounded text-black ${passErr ? 'border-red-500' : 'border-gray-300'}`}
-                  value={data.password}
-                  onChange={handleInputChange}
-                  onFocus={() => validatePassword(data.password)}
-                />
-                <span className="absolute top-1/2 right-2 transform -translate-y-1/2 cursor-pointer" onClick={() => setHidePass(!hidePass)}>
-                  {!hidePass ? <FaEye /> : <FaEyeSlash />}
-                </span>
-              </div>
-              {passErr && <p className="text-red-500">Password must be at least 6 characters long.</p>}
-              {error.password && !passErr && <p className="text-red-500">{error.password}</p>}
+            <div className="relative ">
+              <input
+                ref={inputPassword}
+                type={hidePass ? "password" : "text"}
+                name="password"
+                placeholder="Password"
+                className={`w-full bg-[#D9D9D9] p-2 rounded text-black ${passErr ? "border-red-500" : "border-gray-300"}`}
+                value={data.password}
+                onChange={handleInputChange}
+              />
+              <span
+                className="absolute top-1/2 right-2 transform -translate-y-1/2 cursor-pointer"
+                onClick={() => setHidePass(!hidePass)}
+              >
+                {!hidePass ? <FaEye /> : <FaEyeSlash />}
+              </span>
             </div>
+              {passErr && <p className="text-red-500">Password must be at least 8 characters long.</p>}
+              {error.password && !passErr && <p className="text-red-500">{error.password}</p>}
             <div className="flex justify-between items-center">
               <Link className="text-gray-400 hover:underline" href="/reset-password">
                 Forgot password?
@@ -193,9 +189,10 @@ export default function SignIn() {
             </div>
             <button
               type="submit"
-              className={`w-full bg-[#3E3C49] text-white p-2 rounded mt-4 `}
+              className={`w-full bg-[#3E3C49] text-white p-2 rounded mt-4 ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+              disabled={loading} // Disable button while loading
             >
-             Sign In
+              {loading ? "Signing In..." : "Sign In"} {/* Show loading state text */}
             </button>
           </form>
           {error.general && <p className="text-red-500 text-center mt-4">{error.general}</p>}
@@ -207,4 +204,3 @@ export default function SignIn() {
     </div>
   );
 }
-
