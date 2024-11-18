@@ -79,7 +79,7 @@ const ResetPassword = () => {
       setStep(5);
       message.success(response.data.success);
     } catch (err:any) {
-
+      
       message.error(err.response.data.error);
     } finally {
       setLoading(false);

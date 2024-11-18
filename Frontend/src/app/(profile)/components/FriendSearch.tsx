@@ -56,7 +56,8 @@ const FriendSearch = () => {
                 <motion.input
                     type="text"
                     placeholder="Search"
-                    className="w-full pl-10 pr-4 bg-[#031B3A] py-2 rounded-2xl focus:outline-none shadow-lg border border-transparent focus:border-blue-500 transition-all duration-300 ease-in-out"
+                    className="w-full sm:w-3/4 md:w-1/2 pl-10 pr-4 bg-[#031B3A] py-2 rounded-2xl focus:outline-none shadow-lg border border-transparent focus:border-blue-500 transition-all duration-300 ease-in-out"
+
                     value={username}
                     onChange={handleSearch}
                     initial={{ scale: 0.95 }}

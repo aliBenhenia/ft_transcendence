@@ -33,14 +33,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const dispatch = useDispatch();
   const router = useRouter();
 
-  // useEffect(() => {
-  //   // const newToken = localStorage.getItem('accessToken');
-  //   // if (newToken !== null) {
-  //     // setToken(newToken);
-  //   }
-  // }, []);
-
-  // WebSocket setup
   useWebSocket(`ws://127.0.0.1:9003/ws/connection/?token=${token}`);
 
   const handleUpdateProfile = (data: Partial<RootState['profile']>) => {

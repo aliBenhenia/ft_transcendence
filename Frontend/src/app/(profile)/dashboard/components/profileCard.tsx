@@ -12,7 +12,7 @@ const ProfileCard = () => {
   const profileState = useSelector((state: RootState) => state.profile);
   
   const [twoFactorEnabled, setTwoFactorEnabled] = useState<boolean | null>(null);
-  const progressPercentage = profileState.level; 
+  const progressPercentage = profileState.level;  
   
 
   const checkTwoFactorStatus = async () => {
@@ -75,43 +75,44 @@ const ProfileCard = () => {
           className="mx-auto sm:mx-0"
         >
           <img
-            src={profileState.picture || "https://assets-global.website-files.com/61554cf069663530fc823d21/6369fecfaa89f609ff356f26_download-14-min-p-500.png"}
+            src={profileState.picture}
             alt="Avatar"
             className="rounded-full border-4 border-white hover:border-blue-500 transition duration-500 ease-in-out"
             style={{ width: '100px', height: '100px' }}
           />
         </motion.div>
         <div className="text-white text-center sm:text-left mt-6 sm:mt-0 sm:ml-8 flex-1">
-          <h2 className="text-2xl sm:text-3xl font-bold">{profileState.full_name || "John"}</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold">{profileState.full_name }</h2>
           <p className="text-gray-400 text-lg">@{profileState.username || "Doe"}</p>
         </div>
         <div className="w-full mt-6 sm:mt-0 sm:max-w-xs">
           <h3 className="text-white text-sm font-semibold text-center sm:text-left">Level Progress</h3>
           <div className="relative bg-[#0d0e0f] rounded-full h-6 w-full overflow-hidden mt-2">
-            <motion.div
-              className="h-full bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 rounded-full shadow-md"
-              style={{ width: `${progressPercentage}%` }}
-              initial={{ width: '0%' }}
-              animate={{ width: `${progressPercentage}%` }}
-              transition={{ duration: 1.5, ease: 'easeInOut' }}
-            />
-            <motion.div
-              className="absolute top-0 left-0 text-sm font-bold text-white"
-              style={{ transform: `translateX(${progressPercentage - 5}%)` }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 1.5, ease: 'easeInOut' }}
-            >
-              {progressPercentage}%
-            </motion.div>
-          </div>
+  <motion.div
+    className="h-full bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 rounded-full shadow-md"
+    style={{ width: `${progressPercentage}%` }}
+    initial={{ width: '0%' }}
+    animate={{ width: `${progressPercentage}%` }}
+    transition={{ duration: 1.5, ease: 'easeInOut' }}
+  />
+  <motion.div
+    className="absolute top-1/2 left-1/2 text-sm font-bold text-white transform -translate-x-1/2 -translate-y-1/2 z-[55]"
+    style={{ opacity: progressPercentage > 0 ? 1 : 0 }} // Hide the number until the progress starts
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    transition={{ duration: 1.5, ease: 'easeInOut' }}
+  >
+    {progressPercentage}xp
+  </motion.div>
+</div>
+
           <motion.p
             className="text-gray-400 text-sm mt-2 text-center sm:text-left"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5, duration: 0.5 }}
           >
-            {progressPercentage}% Completed
+            {progressPercentage} XP
           </motion.p>
         </div>
       </div>

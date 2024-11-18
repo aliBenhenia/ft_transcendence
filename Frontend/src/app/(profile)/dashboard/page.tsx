@@ -43,7 +43,7 @@ const Dashboard = () => {
             textAlign: 'center',
         }}
         >
-               <div className='w-full'>
+               <div className='w-full '>
                 <ProfileCard />
                 <GameStats
                 level={profileState.level}
