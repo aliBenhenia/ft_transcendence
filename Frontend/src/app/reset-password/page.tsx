@@ -78,15 +78,16 @@ const ResetPassword = () => {
       );
       setStep(5);
       message.success(response.data.success);
-    } catch (err) {
-      handleError(err);
+    } catch (err:any) {
+
+      message.error(err.response.data.error);
     } finally {
       setLoading(false);
     }
   };
 
   // Handle API errors
-  const handleError = (err) => {
+  const handleError = (err:any) => {
     if (err.response) {
       const { data } = err.response;
       if (data.error) message.error(data.error);
