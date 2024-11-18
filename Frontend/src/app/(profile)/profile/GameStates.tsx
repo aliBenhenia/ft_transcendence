@@ -101,64 +101,67 @@ const GameStats = ({ level, loss, matches, win,isUser }:GameStatsProps) => {
 }, [notifications]); // Run effect when accessToken changes
 
   return (
-    <div className=" bg-[#00152993] rounded-2xl shadow-lg overflow-hidden mt-5 w-[100%] overflow-y-scroll" 
-    style={{ height: "413px" }}>
-      <div className="m-5 flex items-center justify-around rounded-2xl shadow-md p-2">
-        <button
-          className={`flex flex-col items-center w-1/3 py-2 text-lg font-semibold rounded-2xl ${activeTab === 'stats' ? 'bg-blue-600 text-white shadow-lg' : 'bg-transparent text-gray-600 hover:blur hover:text-blue-600'} transition-all duration-300 ease-in-out`}
-          onClick={() => setActiveTab('stats')}
-        >
-          <FaStar className="text-2xl" />
-          <span className="text-xs">Stats</span>
-        </button>
-        <button
-          className={`flex flex-col items-center w-1/3 py-2 text-lg font-semibold rounded-2xl ${activeTab === 'achievements' ? 'bg-blue-600 text-white shadow-lg' : 'bg-transparent text-gray-600 hover:blur hover:text-blue-600'} transition-all duration-300 ease-in-out`}
-          onClick={() => setActiveTab('achievements')}
-        >
-          <FaTrophy className="text-2xl" />
-          <span className="text-xs">Achievements</span>
-        </button>
-        <button
-          className={`flex flex-col items-center w-1/3 py-2 text-lg font-semibold rounded-2xl ${activeTab === 'friends' ? 'bg-blue-600 text-white shadow-lg' : 'bg-transparent text-gray-600 hover:blur hover:text-blue-600'} transition-all duration-300 ease-in-out`}
-          onClick={() => setActiveTab('friends')}
-        >
-          <FaRegCircle className="text-2xl" />
-          <span className="text-xs">Friends</span>
-        </button>
-      </div>
-
-
-      <div className="p-4">
-        {activeTab === 'stats' && (
-          <div className="space-y-4">
-            <div className="p-4 rounded-2xl shadow-md mt-5">
-              <div className="rounded-2xl p-4 shadow-lg md:mt-5">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
-                  <div className="text-white bg-[#07325F] rounded-2xl p-3 transition-all shadow-2xl">
-                    <p className="text-sm uppercase tracking-wide text-gray-400">Losses</p>
-                    <p className="text-2xl font-bold text-red-500">{loss}</p>
-                  </div>
-                  <div className="text-white bg-[#07325F] rounded-2xl p-3 transition-all shadow-2xl">
-                    <p className="text-sm uppercase tracking-wide text-gray-400">Matches</p>
-                    <p className="text-2xl font-bold text-yellow-500">{matches}</p>
-                  </div>
-                  <div className="text-white bg-[#07325F] rounded-2xl p-3 transition-all shadow-2xl">
-                    <p className="text-sm uppercase tracking-wide text-gray-400">Wins</p>
-                    <p className="text-2xl font-bold text-green-500">{win}</p>
-                  </div>
-                  <div className="text-white bg-[#07325F] rounded-2xl p-3 transition-all shadow-2xl">
-                    <p className="text-sm uppercase tracking-wide text-gray-400">Last Match</p>
-                    <p className={`text-2xl font-bold  ${win > loss ? 'text-green-500' : 'text-red-500'}`}>{win > loss ? 'Win' : 'Loss'}</p>
-                  </div>
-                </div>
+    <div className="bg-[#00152993] rounded-2xl shadow-lg overflow-hidden mt-5 w-full h-[413px] overflow-y-scroll relative">
+    {/* Sticky Tab Navigation */}
+    <div className="sticky top-0 z-10 flex items-center justify-around w-full p-2 bg-[#00152993] backdrop-blur-md left-0">
+      <button
+        className={`flex flex-col items-center w-1/3 py-2 text-lg font-semibold rounded-2xl ${activeTab === 'stats' ? 'bg-blue-600 text-white shadow-lg' : 'bg-transparent text-gray-600  hover:text-blue-600'} transition-all duration-300 ease-in-out`}
+        onClick={() => setActiveTab('stats')}
+      >
+        <FaStar className="text-2xl" />
+        <span className="text-xs">Stats</span>
+      </button>
+      <button
+        className={`flex flex-col items-center w-1/3 py-2 text-lg font-semibold rounded-2xl ${activeTab === 'achievements' ? 'bg-blue-600 text-white shadow-lg' : 'bg-transparent text-gray-600  hover:text-blue-600'} transition-all duration-300 ease-in-out`}
+        onClick={() => setActiveTab('achievements')}
+      >
+        <FaTrophy className="text-2xl" />
+        <span className="text-xs">Achievements</span>
+      </button>
+      <button
+        className={`flex flex-col items-center w-1/3 py-2 text-lg font-semibold rounded-2xl ${activeTab === 'friends' ? 'bg-blue-600 text-white shadow-lg' : 'bg-transparent text-gray-600  hover:text-blue-600'} transition-all duration-300 ease-in-out`}
+        onClick={() => setActiveTab('friends')}
+      >
+        <FaRegCircle className="text-2xl" />
+        <span className="text-xs">Friends</span>
+      </button>
+    </div>
+  
+    {/* Content Section */}
+    <div className="p-4 space-y-4">
+      {/* Stats Tab */}
+      {activeTab === 'stats' && (
+        <div className="p-4 rounded-2xl shadow-md mt-5">
+          <div className="rounded-2xl p-4 shadow-lg md:mt-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center">
+              <div className="text-white bg-[#07325F] rounded-2xl p-3 transition-all shadow-2xl">
+                <p className="text-sm uppercase tracking-wide text-gray-400">Losses</p>
+                <p className="text-2xl font-bold text-red-500">{loss}</p>
+              </div>
+              <div className="text-white bg-[#07325F] rounded-2xl p-3 transition-all shadow-2xl">
+                <p className="text-sm uppercase tracking-wide text-gray-400">Matches</p>
+                <p className="text-2xl font-bold text-yellow-500">{matches}</p>
+              </div>
+              <div className="text-white bg-[#07325F] rounded-2xl p-3 transition-all shadow-2xl">
+                <p className="text-sm uppercase tracking-wide text-gray-400">Wins</p>
+                <p className="text-2xl font-bold text-green-500">{win}</p>
+              </div>
+              <div className="text-white bg-[#07325F] rounded-2xl p-3 transition-all shadow-2xl">
+                <p className="text-sm uppercase tracking-wide text-gray-400">Last Match</p>
+                <p className={`text-2xl font-bold ${win > loss ? 'text-green-500' : 'text-red-500'}`}>
+                  {win > loss ? 'Win' : 'Loss'}
+                </p>
               </div>
             </div>
           </div>
-        )}
-        {activeTab === 'achievements' && (
-          <div className="p-6 ">
+        </div>
+      )}
+  
+      {/* Achievements Tab */}
+      {activeTab === 'achievements' && (
+        <div className="p-6">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {achievements.map((achievement,idx) => (
+            {achievements.map((achievement, idx) => (
               <div
                 key={idx}
                 className={`cursor-pointer relative flex items-center justify-center p-4 rounded-2xl shadow-lg transition-transform duration-300 transform cursor-pointer hover:scale-105 ${
@@ -182,29 +185,28 @@ const GameStats = ({ level, loss, matches, win,isUser }:GameStatsProps) => {
             ))}
           </div>
         </div>
-         
-        )}
-        {activeTab === 'friends' && (
-      <div className="p-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {Array.isArray(friends) && friends.map((friend,idx) => (
-          <FriendCard friend={friend} key={idx}/>
-        ))}
-        {
-        Array.isArray(friends) ? friends.length == 0 && (
-            <h2 className="text-xl font-semibold text-gray-300 text-center mt-20 hover:text-gray-100 transition duration-300 w-full">
-            No friends to display
-          </h2>
-          ):
-          (<h2 className="text-xl font-semibold text-gray-300 text-center mt-20 hover:text-gray-100 transition duration-300 w-full">
-            No friends to display
-          </h2>)
-        }
-      </div>
+      )}
+  
+      {/* Friends Tab */}
+      {activeTab === 'friends' && (
+        <div className="p-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {Array.isArray(friends) && friends.map((friend, idx) => (
+              <FriendCard friend={friend} key={idx} />
+            ))}
+            {
+              Array.isArray(friends) && friends.length === 0 && (
+                <h2 className="text-xl font-semibold text-gray-300 text-center mt-20 hover:text-gray-100 transition duration-300 w-full">
+                  No friends to display
+                </h2>
+              )
+            }
+          </div>
+        </div>
+      )}
     </div>
-        )}
-      </div>
-    </div>
+  </div>
+  
   );
 };
 
