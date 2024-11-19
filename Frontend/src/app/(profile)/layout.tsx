@@ -112,29 +112,29 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           <div className="flex items-center space-x-4">
             <Notification />
             <Dropdown
-              menu={{
-                items: menuItems.map(item => ({
-                  key: item.key,
-                  label: (
-                    <div
-                      onClick={item.key === '3' ? handleLogout : () => navigate(item.route)} 
-                      className="flex items-center cursor-pointer"
-                    >
-                      {item.icon}
-                      {item.label}
-                    </div>
-                  ),
-                })),
-              }}
-              placement="bottomLeft"
-              overlayStyle={{ backgroundColor: '#444', borderColor: '#07325F' }}
-            >
-              <img
-                src={profileState.picture}
-                alt="Avatar"
-                className="w-8 h-8 rounded-full cursor-pointer"
-              />
-            </Dropdown>
+  menu={{
+    items: menuItems.map(item => ({
+      key: item.key,
+      label: (
+        <div
+          onClick={item.key === '3' ? handleLogout : () => navigate(item.route)}
+          className="flex items-center cursor-pointer"
+        >
+          {item.icon}
+          {item.label}
+        </div>
+      ),
+    })),
+  }}
+  placement="bottomLeft"
+  overlayStyle={{ backgroundColor: '#444', borderColor: '#07325F' }}
+>
+  <img
+    src={profileState.picture}
+    alt="Avatar"
+    className="w-8 h-8 rounded-full cursor-pointer hidden sm:block" // Hide on small screens
+  />
+</Dropdown>
           </div>
         </header>
         <main className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
