@@ -50,13 +50,13 @@ const FriendSearch = () => {
     };
 
     return (
-        <div className="relative w-full">
-            <div className="flex items-center">
+        <div className="relative w-full ml-4 flex justify-center">
+            <div className=" flex items-center">
                 <FaSearch className="absolute left-3 text-gray-400 transition-colors duration-300 hover:text-blue-400" />
                 <motion.input
                     type="text"
                     placeholder="Search"
-                    className="w-full sm:w-3/4 md:w-1/2 pl-10 pr-4 bg-[#031B3A] py-2 rounded-2xl focus:outline-none shadow-lg border border-transparent focus:border-blue-500 transition-all duration-300 ease-in-out"
+                    className=" w-full sm:w-full md:w-full lg:w-full pl-10 pr-4 bg-[#031B3A] py-2 rounded-2xl focus:outline-none shadow-lg border border-transparent focus:border-blue-500 transition-all duration-300 ease-in-out"
 
                     value={username}
                     onChange={handleSearch}

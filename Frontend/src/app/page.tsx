@@ -9,7 +9,6 @@ import { FaGamepad, FaComments, FaTrophy, FaUserFriends } from "react-icons/fa";
 import Link from "next/link";
 import { Montserrat } from 'next/font/google';
 
-
 const montserrat = Montserrat({
   subsets: ['latin'],
   weight: ['400', '500', '700'],
@@ -34,11 +33,11 @@ export default function Home() {
 
   return (
     <div>
-      <div className={`pt-5 sm:h-full p-5 overflow-auto pb-5 ${montserrat.className}`} id="home">
+      <div className={`pt-5 sm:h-full  p-5 overflow-auto pb-5 ${montserrat.className}`} id="home">
         <div className="container mx-auto ">
-          <div className="flex justify-between items-center">
-            <p className="mr-auto">Created By</p>
-            <h2 className="mr-auto font-extrabold text-5xl text-[#04578B] hover:text-white mt-5">
+          <div className="flex justify-between items-center flex-wrap">
+            <p className="mr-auto text-sm sm:text-base">Created By</p>
+            <h2 className="mr-auto font-extrabold text-3xl sm:text-5xl text-[#04578B] hover:text-white mt-5">
               {header}
             </h2>
             <Link href="/signin">
@@ -51,10 +50,10 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="flex flex-col flex-col-reverse md:flex-row mt-5 text-center justify-center items-center h-screen">
+          <div className="flex flex-col md:flex-row mt-5 text-center justify-center items-center h-full">
             <div className="w-full md:w-1/2 text-center flex flex-col justify-center items-center">
               <motion.h1
-                className="text-2xl sm:mt-4 sm:mb-4 font-semibold"
+                className="text-xl sm:text-2xl font-semibold"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1 }}
@@ -83,16 +82,15 @@ export default function Home() {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ delay: i * 0.2, duration: 0.6 }}
                   >
-                    <div className="icon-container text-4xl mb-2">{item.icon}</div>
-                    <span className="text-lg">{item.label}</span>
+                    <div className="icon-container text-3xl sm:text-4xl mb-2">{item.icon}</div>
+                    <span className="text-sm sm:text-lg">{item.label}</span>
                   </motion.div>
                 ))}
               </div>
 
-              {/* </PinContainer> */}
               <Link href="/signup">
                 <motion.button
-                  className="rounded-2xl text-center mt-10 hover:opacity-90 text-[22px] w-[20px] h-[20px] bg-"
+                  className="rounded-2xl text-center mt-10 hover:opacity-90 text-lg w-full sm:w-auto bg-blue-500 text-white py-3"
                   id="signup"
                   whileHover={{ scale: 1.05 }}
                   transition={{ duration: 0.3 }}
@@ -108,8 +106,12 @@ export default function Home() {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 1 }}
             >
-              <Image className="mx-auto" src={hero} alt="Ping Pong Hero" id="hero" />
-    
+              <Image 
+                className="mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl h-auto" 
+                src={hero} 
+                alt="Ping Pong Hero" 
+                id="hero" 
+              />
             </motion.div>
           </div>
         </div>

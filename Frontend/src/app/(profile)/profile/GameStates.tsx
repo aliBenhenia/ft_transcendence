@@ -41,8 +41,8 @@ function FriendCard({ friend }: { friend: Friend }) {
         <h2 className="font-bold text-sm text-white">{friend.full_name}</h2>
         <p className="text-sm text-gray-400">@{friend.username}</p>
       </div>
-      <Link href={`/profile/${friend.username}`}>
-          <button className="bg-slate-800 text-white py-2 px-4 w-full rounded-bl-2xl rounded-br-2xl hover:opacity-90 hover:blur transition-colors duration-300">
+      <Link href={`/profile/${friend.username}`} className='w-full'>
+          <button className=" bg-slate-800 text-white py-2 px-4 w-full rounded-bl-2xl rounded-br-2xl hover:opacity-90 hover:blur transition-colors duration-300">
             View Profile
           </button>
       </Link>

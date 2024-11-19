@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { FaTrophy, FaMedal, FaStar, FaAward } from "react-icons/fa"; // Import icons
 import { motion } from "framer-motion";
 
+
+
 const Achievements: React.FC = () => {
   const [achievements] = useState([
     { id: 1, title: "Tournament Champion", icon: <FaTrophy className="text-yellow-400" /> },
@@ -20,6 +22,7 @@ const Achievements: React.FC = () => {
     <div
       style={{
         width: "555px",
+        height: "100vh",
       }}
       className="inset-0 bg-[#00152993] p-4 hidden xl:flex flex-col h-full w-1/4 rounded-2xl shadow-lg ml-5"
     >
