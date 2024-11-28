@@ -52,7 +52,7 @@ const FriendSearch = () => {
     return (
         <div className="relative w-full ml-4 flex justify-center">
             <div className=" flex items-center">
-                <FaSearch className="absolute left-3 text-gray-400 transition-colors duration-300 hover:text-blue-400" />
+                <FaSearch className="absolute left-3  text-gray-400 transition-colors duration-300 hover:text-blue-400" />
                 <motion.input
                     type="text"
                     placeholder="Search"
@@ -67,7 +67,7 @@ const FriendSearch = () => {
                 />
             </div>
             {results.length > 0 && (
-                <div className="absolute left-0 right-0 z-[199] mt-1 bg-[#031B3A] rounded-2xl shadow-2xl">
+                <div className="absolute left-0 right-0 z-[199] mt-10 bg-[#031B3A] rounded-2xl shadow-2xl">
                     {results.map((user:any) => (
                         <div
                             key={user.username}

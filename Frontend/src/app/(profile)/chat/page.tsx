@@ -1,42 +1,41 @@
 'use client'
 
-import { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, use } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { BsChatSquareHeartFill } from 'react-icons/bs'
-import { FaSearch } from 'react-icons/fa'
-import { IoMdSend } from 'react-icons/io'
-import "./chat.css"
-
+import { VscSend } from "react-icons/vsc";
 
 import sortLastConversations from '@/services/sortLastConversations'
 import FetchProfile from '@/services/FetchProfile'
 
-export default function Component() {
-  const messagesEndRef = useRef<any>(null)
+export default function ChatPage() {
+  const messagesEndRef = useRef<HTMLDivElement>(null)
   const [users, setUsers] = useState<any>([])
   const [filteredUsers, setFilteredUsers] = useState<any>([])
   const [messages, setMessages] = useState<any>([])
   const [selectedUser, setSelectedUser] = useState<any>(null)
   const [newMessage, setNewMessage] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<any>(null)
+  const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
   const [status, setStatus] = useState(false)
   const [isSending, setIsSending] = useState(false)
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null
   const online = useSelector((state: any) => state.notifications.online)
 
   useEffect(() => {
     if (messagesEndRef.current) {
-      (messagesEndRef.current as HTMLElement).scrollIntoView({ behavior: 'smooth' })
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
     }
   }, [messages])
 
   useEffect(() => {
     fetchFriends()
+
     const socket = openSocket()
+    console.log('Socket:', socket)
     return () => {
+      console.log('closed socket:', socket)
       socket.close()
     }
   }, [selectedUser])
@@ -60,6 +59,7 @@ export default function Component() {
     if (!token) return
     await FetchProfile(token)
     setError(null)
+    setLoading(true)
     try {
       const response = await fetch('http://127.0.0.1:9003/friends/list/', {
         headers: {
@@ -76,12 +76,15 @@ export default function Component() {
       }
     } catch (err) {
       setError('Failed to load friends list. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
   
   const fetchMessages = async (username:any, is_blocked:any, user:any) => {
     if (!token) return
     setError(null)
+    setLoading(true)
     try {
       const response = await fetch(`http://127.0.0.1:9003/chat/conversation/?account=${username}`, {
         headers: {
@@ -109,6 +112,9 @@ export default function Component() {
       }
     } catch (err) {
       setError('Failed to load messages. Please try again.')
+    } finally {
+      setLoading(false)
+      setIsMenuOpen(false)
     }
   }
 
@@ -126,7 +132,7 @@ export default function Component() {
       time: new Date().toISOString(),
     }
 
-    setMessages((prevMessages:any) => [...prevMessages, newMessageEntry]) // ma3loma n9der nsiti or nfetchi l messages fi kol send
+    setMessages((prevMessages:any) => [...prevMessages, newMessageEntry])
     setNewMessage('')
     setError(null)
     setIsSending(true)
@@ -141,7 +147,6 @@ export default function Component() {
         body: JSON.stringify(messagePayload),
       })
       const result = await response.json()
-      // fetchMessages(selectedUser.on_talk, selectedUser.is_blocked, selectedUser);
       if (!result.success) {
         throw new Error(result.message || 'Error sending message.')
       }
@@ -165,7 +170,7 @@ export default function Component() {
         if (selectedUser && data.sender === selectedUser.on_talk) {
           addMessage(data.sender)
           if (messagesEndRef.current) {
-            messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
           }
         }
       }
@@ -191,152 +196,166 @@ export default function Component() {
     }
   }
 
-  const handleKeyPress = (event:any) => {
+  const handleKeyPress = (event:React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       sendMessage()
     }
   }
 
   return (
-    <div className="flex h-screen  text-white chatContainer"
-    >
-      {/* Sidebar */}
-      <div className="w-full md:w-1/4 border-r border-gray-700 overflow-y-auto flex flex-col bg-gray-900">
-        <h2 className="p-4 text-lg font-semibold flex items-center justify-center gap-3">
-          <span className="hidden md:block">Messenger</span>
-          <BsChatSquareHeartFill className="text-blue-500" />
-        </h2>
-        <div className="px-4 mb-4">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full py-2 pl-10 pr-4 border border-gray-700 bg-gray-800 text-white rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-300 ease-in-out"
-            />
-            <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+    <div className="flex flex-col h-screen bg-gray-900 text-white">
+      {/* Header */}
+      <header className="bg-gray-800 p-4 flex justify-between items-center">
+        <h1 className="text-2xl font-bold">Ping pong Chat</h1>
+        <button
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          className="md:hidden bg-gray-700 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
+          </svg>
+        </button>
+      </header>
+
+      <div className="flex-1 flex overflow-hidden">
+        {/* Sidebar */}
+        <aside className={`w-full md:w-80 bg-gray-800 overflow-y-auto transition-all duration-300 ease-in-out ${isMenuOpen ? 'block' : 'hidden'} md:block`}>
+          <div className="p-4">
+            <div className="relative">
+              <input
+                type="text"
+                placeholder="Search friends..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full px-4 py-2 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+            </div>
           </div>
-        </div>
-        {error && <div className="p-4 text-red-500">{error}</div>}
-        <ul className="overflow-y-auto flex-grow">
-          {filteredUsers && filteredUsers.length > 0 ? (
-            filteredUsers.map((user:any) => (
-              <li
-                key={user.username}
-                className={`p-4 cursor-pointer hover:bg-gray-800 transition-colors ${
-                  selectedUser?.on_talk === user.username ? 'bg-gray-700' : ''
-                }`}
-                onClick={() => fetchMessages(user.username, user.is_blocked, user)}
-              >
-                <div className="flex items-center space-x-3">
+          {/* {loading && (
+            <div className="flex justify-center items-center h-20">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+          )} */}
+          {error && <div className="p-4 text-red-500">{error}</div>}
+          <ul className="space-y-2 p-4">
+            {filteredUsers.map((user:any) => (
+              <li key={user.username}>
+                <button
+                  onClick={() => fetchMessages(user.username, user.is_blocked, user)}
+                  className={`w-full flex items-center space-x-3 p-3 rounded-lg transition-colors ${
+                    selectedUser?.on_talk === user.username ? 'bg-blue-600' : 'hover:bg-gray-700'
+                  }`}
+                >
                   <div className="relative">
-                    <img
-                      src={user.picture}
-                      alt={user.full_name}
-                      className="w-10 h-10 rounded-full"
-                    />
+                    <img src={user.picture} alt={user.full_name} className="w-10 h-10 rounded-full" />
                     <span
-                      className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ${
+                      className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-gray-800 ${
                         user.online ? 'bg-green-500' : 'bg-gray-500'
                       }`}
                     ></span>
                   </div>
-                  <span className="font-medium text-gray-300">{user.full_name}</span>
-                </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{user.full_name}</p>
+                    <p className="text-xs text-gray-400 truncate">{status? 'Online' : 'Offline'}</p>
+                  </div>
+                </button>
               </li>
-            ))
-          ) : (
-            <div className="p-4 text-center text-gray-500">No friends available.</div>
-          )}
-        </ul>
-      </div>
+            ))}
+          </ul>
+        </aside>
 
-      {/* Chat Area */}
-      <div className="flex-1 flex flex-col">
-        {/* Chat Header */}
-        <div className="bg-gray-800 p-4 flex items-center space-x-3">
-          {selectedUser && (
+        {/* Chat Area */}
+        <main className="flex-1 flex flex-col bg-gray-900 overflow-hidden">
+          {selectedUser ? (
             <>
-              <div className="relative">
-                <img
-                  src={selectedUser.picture}
-                  alt={selectedUser.full_name}
-                  className="h-10 w-10 rounded-full"
-                />
-                <span
-                  className={`absolute bottom-0 right-0 w-3 h-3 rounded-full ${
-                    status ? 'bg-green-500' : 'bg-gray-500'
-                  }`}
-                ></span>
+              {/* Chat Header */}
+              <div className="bg-gray-800 p-4 flex items-center space-x-3 border-b border-gray-700">
+                <div className="relative">
+                  <img src={selectedUser.picture} alt={selectedUser.full_name} className="w-10 h-10 rounded-full" />
+                  <span
+                    className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-gray-800 ${
+                      status ? 'bg-green-500' : 'bg-gray-500'
+                    }`}
+                  ></span>
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold">{selectedUser.full_name}</h2>
+                  <p className="text-sm text-gray-400">{status ? 'Online' : 'Offline'}</p>
+                </div>
               </div>
-              <h2 className="text-lg font-semibold">{selectedUser.full_name}</h2>
+
+              {/* Messages */}
+              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+                {loading ? (
+                  <div className="flex justify-center items-center h-full">
+                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                  </div>
+                ) : messages.length === 0 ? (
+                  <div className="text-center text-gray-500">No messages yet. Start a conversation!</div>
+                ) : (
+                  messages.map((msg:any, index:number) => (
+                    <div
+                      key={index}
+                      className={`flex ${msg.sender !== selectedUser.on_talk ? 'justify-end' : 'justify-start'}`}
+                    >
+                      <div
+                        className={`max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl px-4 py-2 rounded-lg ${
+                          msg.sender !== selectedUser.on_talk
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-gray-700 text-gray-200'
+                        }`}
+                      >
+                        <p className="break-words">{msg.message}</p>
+                        <p className="text-xs mt-1 opacity-70">
+                          {new Date(msg.time).toLocaleString()}
+                        </p>
+                      </div>
+                    </div>
+                  ))
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+
+              {/* Message Input */}
+              <div className="bg-gray-800 p-4 border-t border-gray-700">
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="text"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
+                    onKeyDown={handleKeyPress}
+                    placeholder="Type your message..."
+                    className="flex-1 px-4 py-2 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                  <button 
+                    onClick={sendMessage}
+                    disabled={loading || !newMessage.trim() || isSending}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 transition-colors duration-200"
+                  >
+                    {isSending ? (
+                      <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                    ) : (
+                      // <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      //   <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                      // </svg>
+                      <VscSend />
+                    )}
+                  </button>
+                </div>
+                {error && <div className="text-red-500 mt-2">{error}</div>}
+              </div>
             </>
-          )}
-          {!selectedUser && <h2 className="text-lg font-semibold">Select a friend to chat</h2>}
-        </div>
-
-        {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {loading && <div className="text-center">Loading messages...</div>}
-          {messages.length === 0 && !loading && (
-            <div className="text-center text-gray-500">No messages yet.</div>
-          )}
-          {messages.map((msg:any, index:any) => (
-            <div
-              key={index}
-              className={`flex ${msg.sender !== selectedUser?.on_talk ? 'justify-end' : 'justify-start'}`}
-            >
-                    <div className={`"relative max-w-xs lg:max-w-md xl:max-w-lg px-4 py-2 rounded-lg shadow-lg transition-transform transform  duration-200 ease-in-out ${
-    msg.sender !== selectedUser?.on_talk 
-      ? 'bg-blue-600 text-white' 
-      : 'bg-gray-700 text-white'
-  }"`}>
-    <div className="">
-      {msg.sender === selectedUser?.on_talk && (
-        <img 
-          src={selectedUser.picture} 
-          alt={`${msg.sender}'s avatar`} 
-          className=" w-8 h-8 rounded-full border-2 border-white shadow-lg"
-        />
-      )}
-      
-      <p className={`break-words ${msg.sender === selectedUser?.on_talk ? 'pl-3' : ''}`}>
-        {msg.message}
-      </p>
-  </div>
-  
-  <div className="text-xs text-gray-400 mt-1">
-    {new Date(msg.time).toLocaleString()}
-  </div>
-</div>
+          ) : (
+            <div className="flex-1 flex items-center justify-center">
+              <p className="text-gray-500 text-lg">Select a friend to start chatting</p>
             </div>
-          ))}
-          <div ref={messagesEndRef} />
-        </div>
-
-        {/* Message Input */}
-        <div className="bg-gray-800 p-4">
-          <div className="flex items-center space-x-2">
-            <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyDown={handleKeyPress}
-              className="flex-1 bg-gray-700 text-white p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Type your message..."
-            />
-            <button
-              onClick={sendMessage}
-              className="bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50"
-              disabled={loading || !newMessage.trim()}
-            >
-              <IoMdSend />
-            </button>
-          </div>
-          {error && <div className="text-red-500 mt-2">{error}</div>}
-        </div>
+          )}
+        </main>
       </div>
     </div>
   )
 }
+

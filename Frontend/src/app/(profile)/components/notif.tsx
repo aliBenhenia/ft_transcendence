@@ -79,7 +79,7 @@ const Notification:React.FC  = () => {
             </button>
 
             {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-64 bg-[#001529] shadow-lg rounded-md overflow-hidden z-10">
+                <div className="absolute right-0  w-64 bg-[#001529] shadow-lg rounded-md overflow-hidden z-10">
                     <div className="p-2 border-b">
                         <h4 className="font-bold">Notifications</h4>
                         <button onClick={markAllAsRead} className="text-xs text-blue-400 hover:underline">
