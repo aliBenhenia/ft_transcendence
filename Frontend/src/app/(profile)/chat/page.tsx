@@ -260,7 +260,7 @@ export default function ChatPage() {
                       >
                       </span>
                       <span
-                        className={`animate-ping absolute bottom-0 right-0 w-3 h-3 rounded-full border-2  ${
+                        className={`animate-ping opacity-75 absolute bottom-0 right-0 w-3 h-3 rounded-full border-2  ${
                           (user.username === selectedUser?.on_talk && status )? 'bg-green-500' : 'bg-gray-500'
                         }`}
                       >
@@ -293,7 +293,7 @@ export default function ChatPage() {
                     }`}
                   ></span>
                   <span
-                    className={`animate-ping absolute bottom-0 right-0 w-3 h-3 rounded-full border-2  ${
+                    className={`animate-ping opacity-75 absolute bottom-0 right-0 w-3 h-3 rounded-full border-2  ${
                       status ? 'bg-green-500' : 'bg-gray-500'
                     }`}
                   ></span>

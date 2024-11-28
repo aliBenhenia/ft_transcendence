@@ -12,6 +12,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store/store'; 
 import { PinContainer } from "@/components/3d-pin";
 import Achievements from "../../components/ach"
+import { MdBlockFlipped } from "react-icons/md";
+import { TbLockOpen2 } from "react-icons/tb";
+import { FaUserPlus } from 'react-icons/fa'
+import { FaTimes } from 'react-icons/fa';
+import { FaComment } from 'react-icons/fa';
+
+
 interface profileData {
   username: string;
   full_name: string;
@@ -236,47 +243,54 @@ const ProfilePage = (props: any) => {
                   </motion.p>
                 </header>
               </div>
-              <div className="mt-4 flex justify-around">
+              <div className="mt-4 flex flex-col sm:flex-row justify-around gap-4">
                 <button
-                onClick={() => router.push(`/chat`)}
-                className="py-2 px-4 bg-green-600 text-white rounded-xl hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500">
+                  onClick={() => router.push(`/chat`)}
+                  className="flex items-center justify-center py-3 px-5 bg-green-600 text-white text-lg font-semibold rounded-xl hover:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-300 ease-in-out"
+                >
+                  <FaComment className="mr-2 text-xl" />  {/* Add chat icon with margin */}
                   Chat Now
                 </button>
                 {friendStatus === "not_friends" && (
                   <button
-                    className="py-2 px-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    onClick={handleSendFriendRequest}
-                  >
-                    Send Request
-                  </button>
+                  className="flex items-center justify-center py-3 px-5 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 ease-in-out"
+                  onClick={handleSendFriendRequest}
+                >
+                  <FaUserPlus className="mr-2 text-xl" /> {/* Icon with margin */}
+                  Send Request
+                </button>
                 )}
                 {friendStatus === "pending" && (
                   <>
-                    <button className="py-2 px-4 bg-gray-600 text-white rounded-xl">Request Sent</button>
-                    <button
-                      className="py-2 px-4 bg-red-600 text-white rounded-xl hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-                      onClick={handleCancelFriendRequest}
-                    >
-                      Cancel Request
-                    </button>
+                  <button
+            className="flex items-center justify-center py-3 px-5 bg-red-600 text-white text-lg font-semibold rounded-xl hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 ease-in-out"
+            onClick={handleCancelFriendRequest}
+          >
+            <FaTimes className="mr-2 text-xl" />
+            Cancel Request
+          </button>
+
                   </>
                 )}
                 {friendStatus === "friends" && (
                   <>
                     {blockStatus ? (
                       <button
-                        onClick={handleUnblockUser}
-                        className="py-2 px-4 bg-yellow-600 text-white rounded-xl hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-yellow-500"
-                      >
-                        Unblock
-                      </button>
+                      onClick={handleUnblockUser}
+                      className="flex items-center justify-center py-3 px-5 bg-yellow-600 text-white text-lg font-semibold rounded-xl hover:bg-yellow-700 active:bg-yellow-800 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform hover:scale-105"
+                    >
+                      <TbLockOpen2 className="mr-2 text-xl" />
+                      Unblock
+                    </button>
+                    
                     ) : (
-                      <button
-                        onClick={handleBlockUser}
-                        className="py-2 px-4 bg-red-600 text-white rounded-xl hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-                      >
-                        Block
-                      </button>
+                          <button
+      onClick={handleBlockUser}
+      className="flex items-center justify-center py-3 px-5 bg-red-600 text-white text-lg font-semibold rounded-xl hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform hover:scale-105"
+    >
+      <MdBlockFlipped className="mr-2 text-xl" />
+      Block
+    </button>
                     )}
                   </>
                 )}

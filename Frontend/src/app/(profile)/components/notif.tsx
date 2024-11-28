@@ -73,13 +73,13 @@ const Notification:React.FC  = () => {
                 <FaBell className="text-2xl" />
                 {unreadCount > 0 && (
                     <span className="absolute top-0 right-0 bg-red-600 text-white rounded-full px-1 text-xs">
-                        {unreadCount}
+                        {unreadCount <= 99 ? unreadCount : '99+'}
                     </span>
                 )}
             </button>
 
             {dropdownOpen && (
-                <div className="absolute right-0  w-64 bg-[#001529] shadow-lg rounded-md overflow-hidden z-10">
+                <div className="absolute right-0  w-64 bg-[#001529] shadow-lg rounded-md overflow-hidden z-[90]">
                     <div className="p-2 border-b">
                         <h4 className="font-bold">Notifications</h4>
                         <button onClick={markAllAsRead} className="text-xs text-blue-400 hover:underline">
