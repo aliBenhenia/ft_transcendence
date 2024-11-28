@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef, use } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { VscSend } from "react-icons/vsc";
+import { FaGamepad } from "react-icons/fa";
 import Link from 'next/link'
 
 import sortLastConversations from '@/services/sortLastConversations'
@@ -260,9 +261,8 @@ export default function ChatPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{user.full_name}</p>
-                    <Link href={`/profile/${user.username}`}>
+                    
                       <p  className="text-xs text-gray-400 font-bold hover:text-slate-200">@{user.username}</p>
-                    </Link>
                   </div>
                 </button>
               </li>
@@ -277,7 +277,9 @@ export default function ChatPage() {
               {/* Chat Header */}
               <div className="bg-gray-800 p-4 flex items-center space-x-3 border-b border-gray-700">
                 <div className="relative">
+                <Link href={`/profile/${selectedUser.on_talk}`}>
                   <img src={selectedUser.picture} alt={selectedUser.full_name} className="w-10 h-10 rounded-full" />
+                </Link>
                   <span
                     className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-gray-800 ${
                       status ? 'bg-green-500' : 'bg-gray-500'
@@ -346,6 +348,9 @@ export default function ChatPage() {
                       // </svg>
                       <VscSend />
                     )}
+                  </button>
+                  <button className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    <FaGamepad />
                   </button>
                 </div>
                 {error && <div className="text-red-500 mt-2">{error}</div>}
