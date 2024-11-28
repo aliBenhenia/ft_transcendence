@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useRef, use } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { VscSend } from "react-icons/vsc";
+import Link from 'next/link'
 
 import sortLastConversations from '@/services/sortLastConversations'
 import FetchProfile from '@/services/FetchProfile'
@@ -259,7 +260,9 @@ export default function ChatPage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium truncate">{user.full_name}</p>
-                    <p className="text-xs text-gray-400 truncate">{status? 'Online' : 'Offline'}</p>
+                    <Link href={`/profile/${user.username}`}>
+                      <p  className="text-xs text-gray-400 font-bold hover:text-slate-200">@{user.username}</p>
+                    </Link>
                   </div>
                 </button>
               </li>
