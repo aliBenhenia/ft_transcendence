@@ -137,7 +137,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 </Dropdown>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <main className="flex-1 " style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           <div className={styles.home} style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {children}
           </div>
