@@ -1,10 +1,7 @@
 "use client";
 
-import React, { useEffect, useState, ReactNode } from 'react';
-import { Dropdown } from 'antd';
+import React, { useEffect, ReactNode } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { motion, AnimatePresence } from 'framer-motion';
-import { FaUser, FaCog, FaSignOutAlt } from 'react-icons/fa';
 import Nav from './components/bar';
 import FriendSearch from './components/FriendSearch';
 import Notification from './components/notif';
@@ -20,21 +17,12 @@ interface LayoutProps {
   children: ReactNode;
 }
 
-interface MenuItem {
-  key: string;
-  label: string;
-  icon: JSX.Element;
-  route: string | (() => void);
-}
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null
-  const profileState = useSelector((state: RootState) => state.profile);
   const dispatch = useDispatch();
-  const router = useRouter();
 
   useWebSocket(`ws://127.0.0.1:9003/ws/connection/?token=${token}`);
-
   const handleUpdateProfile = (data: Partial<RootState['profile']>) => {
     dispatch(updateProfile(data));
   };
@@ -50,37 +38,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       }
     };
     getProfileData();
-  }, [dispatch]);
-
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    router.push('/');
-  };
-
-  const navigate = (route: any) => {
-    router.push(route);
-  };
-
-  const menuItems: MenuItem[] = [
-    {
-      key: '1',
-      label: 'Profile',
-      icon: <FaUser className="text-gray-400 mr-2" />,
-      route: "/profile"
-    },
-    {
-      key: '2',
-      label: 'Settings',
-      icon: <FaCog className="text-gray-400 mr-2" />,
-      route: "/setting"
-    },
-    {
-      key: '3',
-      label: 'Logout',
-      icon: <FaSignOutAlt className="text-red-400 mr-2" />,
-      route: handleLogout
-    },
-  ];
+  }, []);
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#001529]">
@@ -92,34 +50,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
           <div className="flex items-center space-x-4">
             <Notification />
-              {/* <Dropdown
-    menu={{
-      items: menuItems.map(item => ({
-        key: item.key,
-        label: (
-          <div
-            onClick={item.key === '3' ? handleLogout : () => navigate(item.route)}
-            className="flex items-center cursor-pointer "
-          >
-            {item.icon}
-            {item.label}
-          </div>
-        ),
-      })),
-    }}
-    placement="bottomLeft"
-    overlayStyle={{
-      backgroundColor: '#333',  // Dark background for the dropdown container
-      borderColor: '#07325F',   // Dark border
-    }}
-  >
-    <img
-      src={profileState.picture}
-      alt="Avatar"
-      className="w-8 h-8 rounded-full cursor-pointer hidden sm:block" // Hide on small screens
-    />
-  </Dropdown> */}
-    <DropdownMenu />
+            <DropdownMenu />
           </div>
         </header>
         <main className="flex-1 overflow-y-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
