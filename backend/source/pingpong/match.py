@@ -39,16 +39,16 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             player1 = LiveGameFlow.game_queue.pop(0)
             player2 = LiveGameFlow.game_queue.pop(0)
             room_name = self.generate_room_id()
-            self.games[room_name] = {'players' : [player1, player2]}
+            LiveGameFlow.games[room_name] = {'players' : [player1, player2]}
             for player in [player1, player2]:
                 player.room_name = room_name
             asyncio.create_task(self.game_task(room_name))
 
     async def game_task(self, room_name):
-        while room_name in self.games:
-            if len(self.games[room_name]['players']) < 2:
-                if len(self.games[room_name]['players']) == 1:
-                    remaining_player = self.games['players'][0]
+        while room_name in LiveGameFlow.games:
+            if len(LiveGameFlow.games[room_name]['players']) < 2:
+                if len(LiveGameFlow.games[room_name]['players']) == 1:
+                    remaining_player = LiveGameFlow.games['players'][0]
 
     async def connect(self):
         await self.accept()
