@@ -2,7 +2,6 @@ version: '2.29.2'
 
 services:
   backend:
-    
     build:
       context: ./backend
       dockerfile: Dockerfile
@@ -10,8 +9,8 @@ services:
     image: django
     container_name: django
 
-    depends_on:
-      - redis
+    # depends_on:
+    #   - redis
     ports:
       - 9003:8001
     volumes:
@@ -19,29 +18,29 @@ services:
     networks:
       - mynetwork
   
-  nextjs:
-    build:
-      context: ./Frontend
-      dockerfile: Dockerfile
-    container_name: nextjs
-    ports:
-      - 9001:3000
-    volumes:
-      - ./Frontend:/app
-      - /app/node_modules
-    command: npm run dev
+  # nextjs:
+  #   build:
+  #     context: ./Frontend
+  #     dockerfile: Dockerfile
+  #   container_name: nextjs
+  #   ports:
+  #     - 9001:3000
+  #   volumes:
+  #     - ./Frontend:/app
+  #     - /app/node_modules
+  #   command: npm run dev
 
 
   
-  redis:
-    build:
-      context: ./tools/Redis
-      dockerfile: Dockerfile
+  # redis:
+  #   build:
+  #     context: ./tools/Redis
+  #     dockerfile: Dockerfile
     
-    container_name: redis
+  #   container_name: redis
     
-    networks:
-      - mynetwork
+  #   networks:
+  #     - mynetwork
     
 
 networks:
