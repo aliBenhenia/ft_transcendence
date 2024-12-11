@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-export const fetchNotifications = createAsyncThunk(
+export const fetchNotifications = createAsyncThunk(//createAsyncThunk automatically handles pending, fulfilled, and rejected states
     'notifications/fetchNotifications',
     async (accessToken:any) => {
         const response = await axios.get('http://127.0.0.1:9003/notification/api/view/', {
@@ -39,13 +39,13 @@ const notificationsSlice = createSlice({
             state.unreadCount += 1;
         },
     },
-    extraReducers: (builder) => {// unused
+    extraReducers: (builder) => {// reducers that will be excuted depend on asyn action api call
         builder
-            .addCase(fetchNotifications.fulfilled, (state, action) => {
+            .addCase(fetchNotifications.fulfilled, (state, action) => {//Fulfilled: When the async request succeeds (resolved promise)
                 state.notifications = action.payload;
                 state.unreadCount = action.payload.filter((n:any) => !n.seen).length;
             })
-            .addCase(fetchNotifications.rejected, (state:any, action) => {
+            .addCase(fetchNotifications.rejected, (state:any, action) => {//Rejected: When the async request fails (rejected promise).
                 state.error = action.error.message;
             });
     },
