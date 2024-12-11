@@ -10,26 +10,21 @@ import FetchProfile from '@/services/FetchProfile';
 import useWebSocket from '@/services/useWebSocket';
 import { RootState } from '@/store/store';
 import styles from './layout.module.css';
-import { useRouter } from 'next/navigation';
 import DropdownMenu from './components/DropdownMenu';
 
 interface LayoutProps {
   children: ReactNode;
 }
-
-
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const dispatch = useDispatch();
+  const profileState = useSelector((state: RootState) => state.profile);
   useWebSocket(`ws://127.0.0.1:9003/ws/connection/?token=`);
-  const handleUpdateProfile = (data: Partial<RootState['profile']>) => {
-    dispatch(updateProfile(data));
-  };
   useEffect(() => {
     const token = localStorage.getItem("accessToken") || '';
     const getProfileData = async () => {
       try {
         const data = await FetchProfile(token);
-        handleUpdateProfile(data.informations);
+        dispatch(updateProfile(data.informations));
       } catch (err) { }
     };
     getProfileData();
@@ -45,6 +40,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
           <div className="flex items-center space-x-4">
             <Notification />
+            <h1>{profileState.username}</h1>
             <DropdownMenu />
           </div>
         </header>

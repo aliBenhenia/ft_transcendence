@@ -14,11 +14,6 @@ import Achievements from '../components/ach';
 const Dashboard = () => {
     const profileState = useSelector((state: RootState) => state.profile);
     const dispatch = useDispatch();
- 
-    const handleUpdateProfile = (data: Partial<RootState['profile']>) => {
-      
-      dispatch(updateProfile(data));
-    };
     useEffect(()=>{
         const token: string| null = localStorage.getItem("accessToken");  
         const getProfileData = async () => {
@@ -26,8 +21,7 @@ const Dashboard = () => {
           {
             try {
               const data = await FetchProfile(token);
-              console.log(data.data)
-              handleUpdateProfile(data.informations);
+              dispatch(updateProfile(data.informations));
             } catch (err:any) {
               }
           };
@@ -53,9 +47,7 @@ const Dashboard = () => {
               />
                   <LastMatchesCard />
                </div>
-
                 <Achievements />
-       
     </div>
     );
 };
