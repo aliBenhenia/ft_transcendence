@@ -1,6 +1,9 @@
 import json
 from notification.socket import extract_auth_user, get_recipient
 from channels.generic.websocket import AsyncWebsocketConsumer
+import random
+import string
+import asyncio
 
 green = "\033[92m"
 
@@ -10,6 +13,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
     games = {}
     game_queue = []
 
+    @staticmethod
     def generate_room_id():
         return ''.join(random.choices(string.ascii_lowercase + string.digits, k=9))
 
@@ -28,14 +32,23 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 'type': 'ready',
                 'message': 'Players Ready'
             }))
-        await self.match_players()
-    
+        # await self.match_players()
+
     async def match_players(self):
-        if len(self.game_queue):
-            player1 = game_queue.pop(0)
-            player2 = game_queue.pop(0)
-            room_name = generate_room_id()
+        if len(self.game_queue) == 2:
+            player1 = LiveGameFlow.game_queue.pop(0)
+            player2 = LiveGameFlow.game_queue.pop(0)
+            room_name = self.generate_room_id()
             self.games[room_name] = {'players' : [player1, player2]}
+            for player in [player1, player2]:
+                player.room_name = room_name
+            asyncio.create_task(self.game_task(room_name))
+
+    async def game_task(self, room_name):
+        while room_name in self.games:
+            if len(self.games[room_name]['players']) < 2:
+                if len(self.games[room_name]['players']) == 1:
+                    remaining_player = self.games['players'][0]
 
     async def connect(self):
         await self.accept()
@@ -64,8 +77,23 @@ class LiveGameFlow(AsyncWebsocketConsumer):
 
     
     async def disconnect(self, close_code):
-        await self.close()
-    
+        if self in LiveGameFlow.game_queue:
+            LiveGameFlow.game_queue.remove(self)
+        if hasattr(self, 'room_name') and room_name in LiveGameFlow.games:
+            game = LiveGameFlow.games[self.room_name]
+            game['players'].remove(self)
+            if game['players']:
+                remaining_player = game['player'][0]
+                try:
+                    await remaining_player.send(text_data=json.dumps(
+                    {
+                        'type' : 'game ends',
+                        'message' : 'You win! Opponent disconnected'
+                    }))
+                except:
+                    pass
+                del LiveGameFlow.games[self.room_name]
+
     async def receive(self, text_data):
         try:
             data = json.loads(text_data)
