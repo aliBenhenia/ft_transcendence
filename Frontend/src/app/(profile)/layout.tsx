@@ -17,7 +17,6 @@ interface LayoutProps {
 }
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const dispatch = useDispatch();
-  const profileState = useSelector((state: RootState) => state.profile);
   useWebSocket(`ws://127.0.0.1:9003/ws/connection/?token=`);
   useEffect(() => {
     const token = localStorage.getItem("accessToken") || '';
@@ -40,7 +39,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
           </div>
           <div className="flex items-center space-x-4">
             <Notification />
-            <h1>{profileState.username}</h1>
             <DropdownMenu />
           </div>
         </header>

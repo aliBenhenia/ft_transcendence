@@ -80,7 +80,7 @@ const Nav = () => {
         trigger={null}
         collapsible
         collapsed={collapsed}
-        className={`h-full bg-[#001529] text-white transition-all duration-500 ease-in-out ${collapsed ? 'w-16' : 'w-64'}`}
+        className={`h-full bg-[#001529] text-white transition-all duration-500 ease-in-out ${collapsed ? 'w-16' : 'w-64'} `}
         style={{
           position: isMobile ? "absolute" : "relative",
           zIndex: 100,
@@ -105,7 +105,6 @@ const Nav = () => {
             <FaSignOutAlt className="text-xl hover:text-blue-400 transform hover:scale-125 transition-transform duration-300 ease-in-out" />
           </button>
         </div>
-
       </Sider>
     </>
   );
