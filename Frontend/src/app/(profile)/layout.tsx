@@ -19,23 +19,18 @@ interface LayoutProps {
 
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null
   const dispatch = useDispatch();
-
-  useWebSocket(`ws://127.0.0.1:9003/ws/connection/?token=${token}`);
+  useWebSocket(`ws://127.0.0.1:9003/ws/connection/?token=`);
   const handleUpdateProfile = (data: Partial<RootState['profile']>) => {
     dispatch(updateProfile(data));
   };
-
   useEffect(() => {
     const token = localStorage.getItem("accessToken") || '';
     const getProfileData = async () => {
       try {
         const data = await FetchProfile(token);
         handleUpdateProfile(data.informations);
-      } catch (err) {
-        // Handle error appropriately
-      }
+      } catch (err) { }
     };
     getProfileData();
   }, []);

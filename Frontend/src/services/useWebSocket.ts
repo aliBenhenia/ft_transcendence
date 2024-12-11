@@ -15,8 +15,9 @@ const useWebSocket = (url: string) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!url) return;
-    const socket = new WebSocket(url);
+    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    if (!url || !token) return;
+    const socket = new WebSocket(`${url}${token}`);
 
     const handleNotification = (message: string, content: string, icon: React.ReactNode = null, duration: number = 5) => {
       notification.open({
