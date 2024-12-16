@@ -151,29 +151,15 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             await asyncio.sleep(1 / 60)
 
     async def connect(self):
-        await self.accept()
+        user = self.scope['user']
         print("New connection established")
-        await self.add_to_waiting_queue()
-
-        # try:
-        #     token = self.scope['query_string'].decode().split('=')[1]
-        #     self.user, is_authenticated = await extract_auth_user(token)
-        #     if is_authenticated:
-        #         self.target = self.scope['url_route']['kwargs'].get('username')
-        #         self.reciver, authenticated = await get_recipient(self.target)
-        #         if not authenticated:
-        #             self.close()
-        #         if self.user.token_game == None:
-        #             await self.close()
-        #         if self.reciver.token_game != self.user.token_game:
-        #             await self.close()
-        #         print(f'{green}[+] {self.user.username} vs {self.reciver.username} : {self.user.token_game}')
-        #         await self.channel_layer.group_add(self.user.token_game, self.channel_name)
-        #         await self.accept()
-        #     else:
-        #         self.close()
-        # except Exception as e:
-        #     print(f'[ERROR] Quit: {e}')
+        if user:
+            self.user = user
+            print(f"Authenticated user: {user.username}")
+            await self.accept()
+            await self.add_to_waiting_queue()
+        else:
+            self.close()
 
     async def disconnect(self, close_code):
         if self in LiveGameFlow.game_queue:
