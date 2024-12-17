@@ -4,10 +4,10 @@ import "./home.css";
 import Image from "next/image";
 import { motion, useAnimate } from "framer-motion";
 import { useEffect } from "react";
-import hero from "./assets/hero.svg";
 import { FaGamepad, FaComments, FaTrophy, FaUserFriends } from "react-icons/fa"; 
 import Link from "next/link";
 import { Montserrat } from 'next/font/google';
+import logo from "./assets/vecteezy_gamer-mascot-logo_26676769.png";
 
 const montserrat = Montserrat({
   subsets: ['latin'],
@@ -36,7 +36,9 @@ export default function Home() {
       <div className={`pt-5 sm:h-full  p-5 overflow-auto pb-5 ${montserrat.className}`} id="home">
         <div className="container mx-auto ">
           <div className="flex justify-between items-center flex-wrap">
-            <p className="mr-auto text-sm sm:text-base">Created By</p>
+            <p className="mr-auto text-sm sm:text-base">
+              <Image src={logo} alt="logo" width={50} height={50} />
+            </p>
             <h2 className="mr-auto font-extrabold text-3xl sm:text-5xl text-[#04578B] hover:text-white mt-5">
               {header}
             </h2>
@@ -50,7 +52,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <div className="flex flex-col md:flex-row mt-5 text-center justify-center items-center h-full">
+          <div className="flex flex-col md:flex-row mt-5 text-center justify-center items-center h-screen">
             <div className="w-full md:w-1/2 text-center flex flex-col justify-center items-center">
               <motion.h1
                 className="text-xl sm:text-2xl font-semibold"
@@ -68,7 +70,7 @@ export default function Home() {
                 </div>
               </motion.h1>
              
-              <div className="grid grid-cols-2 gap-4 mt-5 p-4 rounded-2xl text-left sm:bg-blue-400 font-semibold" id="feat">
+              <div className="grid grid-cols-2 gap-4 mt-5 p-4 rounded-2xl text-left sm:bg-blue-400 font-semibold w-full" id="feat">
                 {[
                   { icon: <FaGamepad />, label: "Play Games" },
                   { icon: <FaComments />, label: "Chat" },
@@ -99,20 +101,6 @@ export default function Home() {
                 </motion.button>
               </Link>
             </div>
-
-            <motion.div
-              className="w-full md:w-1/2 ml-5"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1 }}
-            >
-              <Image 
-                className="mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl 2xl:max-w-2xl h-auto" 
-                src={hero} 
-                alt="Ping Pong Hero" 
-                id="hero" 
-              />
-            </motion.div>
           </div>
         </div>
       </div>
