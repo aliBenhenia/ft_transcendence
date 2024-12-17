@@ -93,9 +93,9 @@ const useWebSocket = (url: string) => {
       }
     };
 
-    // socket.onerror = (error) => {
-    //   console.log("WebSocket error:", error);
-    // };
+    socket.onerror = (error) => {
+      console.log("WebSocket error:", error);
+    };
 
     socket.onclose = () => {
       console.log("WebSocket connection closed.");
@@ -104,7 +104,7 @@ const useWebSocket = (url: string) => {
     return () => {
         socket.close();
     };
-  }, [url, dispatch]);
+  }, []);
 };
 
 export default useWebSocket;
