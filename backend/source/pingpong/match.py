@@ -137,12 +137,14 @@ class LiveGameFlow(AsyncWebsocketConsumer):
         # Set the ball to move horizontally
         state['ballSpeedX'] = speed * random.choice([-1, 1])
         state['ballSpeedY'] = 0  # No vertical speed
-        state['particles'] = []
 
     async def game_task(self, room_name):
         while room_name in self.games:
             game = self.games[room_name]
             self.update_game_state(game['game_state'])
+            # Check for a winner
+
+            #
             for player in game['players']:
                 await player.send(text_data=json.dumps({
                         'type': 'game_state',
