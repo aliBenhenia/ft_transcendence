@@ -69,22 +69,22 @@ const useWebSocket = (url: string) => {
           break;
 
         case 'INVITATION':
-          handleNotification('New Friend Request', `Request from: ${sender}`);
+          handleNotification('New Friend Request', `Request from: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
           addNewNotification(serverMessage);
           break;
 
         case 'DECLINE':
-          handleNotification('Cancelled Friend Request', `Cancelled from: ${sender}`);
+          handleNotification('Cancelled Friend Request', `Cancelled from: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
           addNewNotification(serverMessage);
           break;
 
         case 'ACCEPT':
-          handleNotification('Friend Request Accepted', `Accepted from: ${sender}`);
+          handleNotification('Friend Request Accepted', `Accepted from: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
           addNewNotification(serverMessage);
           break;
 
         case 'UNFRIEND':
-          handleNotification('Unfriended', `Unfriended by: ${sender}`, null, 1);
+          handleNotification('Unfriended', `Unfriended by: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
           addNewNotification(serverMessage);
           break;
 
