@@ -268,7 +268,7 @@ export default function CreateAccount() {
           </form>
 
           <p className="text-white text-center mt-6">
-            Already have an account? <Link href="/signin" className="text-[#07325F] underline">Sign In</Link>
+            Already have an account? <Link href="/signin" className="text-[#07325F] ">Sign In</Link>
           </p>
         </div>
       </div>
