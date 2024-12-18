@@ -1,12 +1,16 @@
+'use client';
 import Image from "next/image";
+
 interface ScoreboardProps {
   player1Score: number;
   player2Score: number;
   player1Avator: string;
   player2Avator: string;
+  scoreToWin: number;
 }
 
-const Scoreboard: React.FC<ScoreboardProps> = ({ player1Score, player2Score, player1Avator, player2Avator }) => {
+const Scoreboard: React.FC<ScoreboardProps> = ({ player1Score, player2Score, player1Avator, player2Avator, scoreToWin }) => {
+
   return (
     <div className="flex justify-between items-center text-white mb-6">
       <div className="flex flex-col items-center">
@@ -19,7 +23,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ player1Score, player2Score, pla
                 className="w-20 h-20 rounded-full border-2 border-gray-300"
                 />
         </div>
-        <span className="text-3xl font-bold">{player1Score} /8</span>
+        <span className="text-3xl font-bold">{player1Score} /{scoreToWin}</span>
       </div>
       <div className="text-3xl font-bold">
         <h1>VS</h1>
@@ -34,7 +38,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ player1Score, player2Score, pla
                 className="rounded-full border-2 border-gray-300"
                 />
         </div>
-        <span className="text-3xl font-bold">{player2Score} /8</span>
+        <span className="text-3xl font-bold">{player2Score} /{scoreToWin}</span>
       </div>
     </div>
   );
