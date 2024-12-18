@@ -4,6 +4,9 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 import random
 import string
 import asyncio
+from .models import Game
+from datetime import datetime
+
 math = __import__('math')
 green = "\033[92m"
 CANVAS_WIDTH = 800
@@ -16,6 +19,7 @@ BALL_RADIUS = 10
 INITIAL_BALL_SPEED = 4
 BALL_SPEED_INCREMENT = 0.1
 MAX_BALL_SPEED = 13
+WINNING_SCORE = 5
 
 class LiveGameFlow(AsyncWebsocketConsumer):
     games = {}
@@ -89,7 +93,10 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             if paddle_y - BALL_RADIUS <= next_ballY <= paddle_y + PADDLE_HEIGHT + BALL_RADIUS:
                 # Collision detected
                 collision_y = next_ballY - paddle_y
-                
+                if is_left_paddle:
+                    print('hits the paddle 1')
+                else:
+                    print('hits the paddle 2')
                 # Calculate collision point
                 collide_point = (collision_y - PADDLE_HEIGHT / 2) / (PADDLE_HEIGHT / 2)
                 angle = collide_point * (math.pi / 4)  # Max angle of 45 degrees
@@ -138,12 +145,52 @@ class LiveGameFlow(AsyncWebsocketConsumer):
         state['ballSpeedX'] = speed * random.choice([-1, 1])
         state['ballSpeedY'] = 0  # No vertical speed
 
+    async def end_game(self, room_name, winner):
+        if room_name in self.games:
+            game = self.games[room_name]
+            winner_player = None
+            loser_player = None
+            winner_score = 0
+            loser_score = 0
+            for player in game['players']:
+                try:
+                    if player.player_number == winner:
+                        winner_player = player.user
+                        winner_score = game['game_state']['score'][player.player_number - 1]
+                        await player.send(text_data=json.dumps({
+                            'type': 'game_ends',
+                            'message': 'You win!',
+                            'final_score': game['game_state']['score']
+                        }))
+                    else:
+                        loser_player = player.user
+                        loser_score = game['game_state']['score'][player.player_number - 1]
+                        await player.send(text_data=json.dumps({
+                            'type': 'game_ends',
+                            'message': 'You lost!',
+                            'final_score': game['game_state']['score']
+                        }))
+                    await player.close()
+                except:
+                    pass
+            print(winner_score)
+            print(loser_score)
+            #save in database
+            # Game.objects.create(end_time=datetime.now(), winner=winner_player, loser=loser_player, winner_score=winner_score, loser_score=loser_score)
+            del self.games[room_name]
+
     async def game_task(self, room_name):
         while room_name in self.games:
             game = self.games[room_name]
             self.update_game_state(game['game_state'])
+            print(game['game_state']['score'])
             # Check for a winner
-
+            if game['game_state']['score'][0] >= WINNING_SCORE:
+                await self.end_game(room_name, winner=1)
+                break
+            elif game['game_state']['score'][1] >= WINNING_SCORE:
+                await self.end_game(room_name, winner=2)
+                break
             #
             for player in game['players']:
                 await player.send(text_data=json.dumps({
@@ -161,7 +208,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             await self.accept()
             await self.add_to_waiting_queue()
         else:
-            self.close()
+            await self.close()
 
     async def disconnect(self, close_code):
         if self in LiveGameFlow.game_queue:
@@ -180,7 +227,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                     }))
                 except:
                     pass
-                del LiveGameFlow.games[self.room_name]
+                del self.games[self.room_name]
 
     async def receive(self, text_data):
         try:
