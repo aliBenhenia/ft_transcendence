@@ -6,6 +6,8 @@ import string
 import asyncio
 from .models import Game
 from datetime import datetime
+import time
+from asgiref.sync import sync_to_async
 
 math = __import__('math')
 green = "\033[92m"
@@ -24,13 +26,14 @@ WINNING_SCORE = 5
 class LiveGameFlow(AsyncWebsocketConsumer):
     games = {}
     game_queue = []
+    joined_users = set()
 
     @staticmethod
     def generate_room_id():
         return ''.join(random.choices(string.ascii_lowercase + string.digits, k=9))
 
     async def add_to_waiting_queue(self):
-        LiveGameFlow.game_queue.append(self)
+        self.game_queue.append(self)
         print(f"Player added to waiting queue. Queue size: {len(self.game_queue)}")
         if len(self.game_queue) == 1:
             await self.send(text_data=json.dumps(
@@ -179,14 +182,19 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             print(winner_score)
             print(loser_score)
             #save in database
-            # Game.objects.create(end_time=datetime.now(), winner=winner_player, loser=loser_player, winner_score=winner_score, loser_score=loser_score)
+            await sync_to_async(Game.objects.create)(
+                end_time=datetime.now(),
+                winner=winner_player,
+                loser=loser_player,
+                winner_score=winner_score,
+                loser_score=loser_score
+            )
             del self.games[room_name]
 
     async def game_task(self, room_name):
         while room_name in self.games:
             game = self.games[room_name]
             self.update_game_state(game['game_state'])
-            print(game['game_state']['score'])
             # Check for a winner
             if game['game_state']['score'][0] >= WINNING_SCORE:
                 await self.end_game(room_name, winner=1)
@@ -203,19 +211,31 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             await asyncio.sleep(1 / 60)
 
     async def connect(self):
+        print(len(self.joined_users))
         user = self.scope['user']
-        print("New connection established")
+        print(f"New connection established {user.username}")
         if user:
             self.user = user
-            print(f"Authenticated user: {user.username}")
+            if user.id in self.joined_users:
+                self.send(text_data=json.dumps({
+                    'type' : 'Already connected'
+                }))
+                await self.close()
+                return
+            self.joined_users.add(user.id)
             await self.accept()
             await self.add_to_waiting_queue()
         else:
             await self.close()
 
     async def disconnect(self, close_code):
-        if self in LiveGameFlow.game_queue:
-            LiveGameFlow.game_queue.remove(self)
+        print('HHERE')
+        time.sleep(60)
+        if self.user.id in self.joined_users:
+            self.joined_users.remove(self.user.id)
+            return
+        if self in self.game_queue:
+            self.game_queue.remove(self)
             print(f"Player removed from waiting queue. Queue size: {len(self.game_queue)}")
         if hasattr(self, 'room_name') and self.room_name in self.games:
             game = self.games[self.room_name]
@@ -223,6 +243,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             if game['players']:
                 remaining_player = game['players'][0]
                 try:
+                    print('HERE2 !  ')
                     await remaining_player.send(text_data=json.dumps(
                     {
                         'type' : 'game ends',
@@ -230,7 +251,9 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                     }))
                 except:
                     pass
+                print(len(self.games[self.room_name]))
                 del self.games[self.room_name]
+                print(len(self.games[self.room_name]))
 
     async def receive(self, text_data):
         try:

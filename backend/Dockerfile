@@ -5,12 +5,7 @@ WORKDIR /server
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-COPY requirements.txt /server
-COPY /source /server
+COPY requirements.txt .
 RUN pip install -r requirements.txt
 
-VOLUME /server
-
-EXPOSE 8000
-
-CMD ["python", "manage.py", "runserver", "0.0.0.0:8001"]
+CMD ["sh", "script.sh"]
