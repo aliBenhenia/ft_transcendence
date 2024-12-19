@@ -15,7 +15,8 @@ const useWebSocket = (url: string) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    // const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    const token = localStorage.getItem('accessToken');
     if (!url || !token) return;
     const socket = new WebSocket(`${url}${token}`);
 
