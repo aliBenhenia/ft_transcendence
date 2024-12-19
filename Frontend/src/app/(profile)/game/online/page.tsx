@@ -1,9 +1,12 @@
-function page() {
-    return (
-        <div>
-            <h1>Hello online</h1>
-        </div>
-    );
-}
+import React from "react";
+import GameCanvas from "../../components/game/GameCanvas";
 
-export default page;
+const HomePage: React.FC = () => {
+    return (
+      <main className="h-screen flex items-center justify-center ">
+        <GameCanvas />
+      </main>
+    );
+  };
+  
+  export default HomePage;
