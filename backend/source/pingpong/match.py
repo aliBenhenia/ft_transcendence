@@ -66,7 +66,10 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 await player.send(text_data=json.dumps(
                 {
                     'type': 'game start',
-                    'message': 'Player Ready'
+                    'player_number' : player.player_number,
+                    'room_name' : room_name,
+                    'player1_avatar' : getattr(player1.scope['user'], 'picture', None).url,
+                    'player2_avatar' : getattr(player2.scope['user'], 'picture', None).url
                 }))
             asyncio.create_task(self.game_task(room_name))
 
