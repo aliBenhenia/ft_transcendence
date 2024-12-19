@@ -125,12 +125,18 @@ ASGI_APPLICATION = 'server.asgi.application'
 
 # Configure Channels Redis as the channel layer
 
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             "hosts": [('redis', 6379)], 
+#         },
+#     },
+# }
+
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('redis', 6379)], 
-        },
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',  # Using in-memory layer for dev/testing
     },
 }
 

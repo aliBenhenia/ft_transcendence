@@ -6,6 +6,7 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 COPY requirements.txt /server
+COPY /source /server
 RUN pip install -r requirements.txt
 
 VOLUME /server

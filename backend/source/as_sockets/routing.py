@@ -4,5 +4,5 @@ from notification.socket import Notifications
 
 websocket_urlpatterns = [
     path('ws/connection/', Notifications.as_asgi()),
-    path('ws/pingpong/<str:username>/', LiveGameFlow.as_asgi()),
+    path('ws/pingpong/', LiveGameFlow.as_asgi()),
 ]
