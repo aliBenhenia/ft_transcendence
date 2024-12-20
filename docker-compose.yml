@@ -23,6 +23,8 @@ services:
       context: ./Frontend
       dockerfile: Dockerfile
     container_name: nextjs
+    environment:
+      NEXT_PUBLIC_API_URL: "http://10.12.8.14:9003" 
     ports:
       - 9001:3000
     volumes:

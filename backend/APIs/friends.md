@@ -16,7 +16,7 @@ ________________________________________________________________________________
 
 # GET INFO QUERY (return up to 10 recodes):
 
-['GET'] API : http://127.0.0.1:9003/friends/search/?username=<username_start_with>
+['GET'] API : http://localhost:9003/friends/search/?username=<username_start_with>
 
 # HEADERS :
 
@@ -30,12 +30,12 @@ ________________________________________________________________________________
     "success": [
         {
             "username": "ayrei1",
-            "picture": "http://127.0.0.1:9003/register/media/avatars/unknown.jpg",
+            "picture": "http://localhost:9003/register/media/avatars/unknown.jpg",
             "full_name": "Ayman Reifoun"
         },
         {
             "username": "ayrei2",
-            "picture": "http://127.0.0.1:9003/register/media/avatars/unknown.jpg",
+            "picture": "http://localhost:9003/register/media/avatars/unknown.jpg",
             "full_name": "Ayman Reifoun"
         },
     ]
@@ -57,7 +57,7 @@ ________________________________________________________________________________
 # GET INFO QUERY (ONLY ONE RECORDE):
 # CASE : INVITATION SENT , WAITING TO ACCEPT, ARE FRIENDS
 
-['GET'] API : http://127.0.0.1:9003/friends/status/?username=<username>
+['GET'] API : http://localhost:9003/friends/status/?username=<username>
 
 # HEADERS :
 
@@ -87,7 +87,7 @@ ________________________________________________________________________________
 
 # SEND A FRIENDS REQUEST :
 
-['POST'] API : http://127.0.0.1:9003/friends/request/
+['POST'] API : http://localhost:9003/friends/request/
 
 
 # HEADERS :
@@ -122,7 +122,7 @@ ________________________________________________________________________________
 
 # CANCEL A FRIENDS REQUEST :
 
-['POST'] API : http://127.0.0.1:9003/friends/decline/
+['POST'] API : http://localhost:9003/friends/decline/
 
 # HEADERS :
 
@@ -155,7 +155,7 @@ ________________________________________________________________________________
 
 # ACCEPT A FRIENDS REQUEST :
 
-['POST'] API : http://127.0.0.1:9003/friends/accept/
+['POST'] API : http://localhost:9003/friends/accept/
 
 # HEADERS :
 
@@ -185,7 +185,7 @@ ________________________________________________________________________________
 
 # REMOVE A FRIENDS  :
 
-['POST'] API : http://127.0.0.1:9003/friends/delete/
+['POST'] API : http://localhost:9003/friends/delete/
 
 # HEADERS :
 
@@ -249,7 +249,7 @@ ________________________________________________________________________________
 
 # GET FRIENDS LIST
 
-['GET'] API : http://127.0.0.1:9003/friends/list/
+['GET'] API : http://localhost:9003/friends/list/
 
 # HEADERS :
 
@@ -265,7 +265,7 @@ ________________________________________________________________________________
         {
             "full_name": "Ayman Reifoun",
             "username": "ayrei1",
-            "picture": "http://127.0.0.1:9003/register/media/avatars/unknown.jpg",
+            "picture": "http://localhost:9003/register/media/avatars/unknown.jpg",
             "is_blocked": true,
             "blocked_by": "ayrei"
         }
@@ -280,7 +280,7 @@ ________________________________________________________________________________
         {
             "full_name": "Ayman Reifoun",
             "username": "ayrei1",
-            "picture": "http://127.0.0.1:9003/register/media/avatars/unknown.jpg",
+            "picture": "http://localhost:9003/register/media/avatars/unknown.jpg",
             "is_blocked": true,
             "blocked_by": "ayrei"
         }
@@ -299,7 +299,7 @@ ________________________________________________________________________________
 
 # GET INVITATION REQUEST LIST :
 
-['GET'] API : http://127.0.0.1:9003/friends/invitations/
+['GET'] API : http://localhost:9003/friends/invitations/
 
 # HEADERS :
 
@@ -315,7 +315,7 @@ ________________________________________________________________________________
         {
             "full_name": "Ayman Reifoun",
             "username": "ayrei1",
-            "picture": "http://127.0.0.1:9003/register/media/avatars/unknown.jpg"
+            "picture": "http://localhost:9003/register/media/avatars/unknown.jpg"
         }
     ]
 }
@@ -332,7 +332,7 @@ ________________________________________________________________________________
 
 # BLOCK A USER :
 
-['POST'] API : http://127.0.0.1:9003/friends/block/
+['POST'] API : http://localhost:9003/friends/block/
 
 # HEADERS :
 
@@ -355,7 +355,7 @@ ________________________________________________________________________________
 
 # UNBLOCK A USER :
 
-['POST'] API : http://127.0.0.1:9003/friends/unblock/
+['POST'] API : http://localhost:9003/friends/unblock/
 
 # HEADERS :
 

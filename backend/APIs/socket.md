@@ -13,7 +13,7 @@ Object {
     time: "2024-09-27 16:38:54.975535+00:00", 
     case: "DECLINE", 
     sender: "ayrei1", 
-    picture: "http://127.0.0.1:9003/register/media/avatars/unknown.jpg", 
+    picture: "http://localhost:9003/register/media/avatars/unknown.jpg", 
     "full-name": "Ayman Reifoun" 
 }
 ​

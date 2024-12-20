@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='register',
             name='photo_url',
-            field=models.URLField(default='http://127.0.0.1:9003/register/media/avatars/unknown.jpg'),
+            field=models.URLField(default='http://localhost:9003/register/media/avatars/unknown.jpg'),
         ),
     ]

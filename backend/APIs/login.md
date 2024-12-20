@@ -2,7 +2,7 @@ __________________________________________________________________
 
 # ACCESS-TOKEN
 
-['POST'] API : http://127.0.0.1:9003/login/api/token/
+['POST'] API : http://localhost:9003/login/api/token/
 
 # PAYLOAD :
 
@@ -30,7 +30,7 @@ __________________________________________________________________
 
 # REFRECH TOKEN 
 
-['POST'] API : http://127.0.0.1:9003/login/api/token/
+['POST'] API : http://localhost:9003/login/api/token/
 
 # PAYLOAD :
 

@@ -75,7 +75,7 @@ const GameStats = ({ level, loss, matches, win,isUser }:GameStatsProps) => {
       }
            
         try {
-            const response = await axios.get('http://127.0.0.1:9003/friends/list/', {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/friends/list/`, {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
                     'Content-Type': 'application/json',

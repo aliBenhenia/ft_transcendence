@@ -2,7 +2,7 @@
 
 # QUERY A CONVERSTATION :
 
-['GET'] API : http://127.0.0.1:9003/chat/conversation/?account=<email ? username>
+['GET'] API : http://localhost:9003/chat/conversation/?account=<email ? username>
 
 # HEADERS :
 
@@ -24,7 +24,7 @@
     "sender-info": {
         "on_talk": "ayrei",
         "online": true,
-        "picture": "http://127.0.0.1:9003/register/media/avatars/pexels-italo-melo-881954-2379004.jpg",
+        "picture": "http://localhost:9003/register/media/avatars/pexels-italo-melo-881954-2379004.jpg",
         "full_name": "amu ferwe"
     },
     "data": [
@@ -59,7 +59,7 @@ ________________________________________________________________________________
 
 # SEND A MESAAGE :
 
-['POST'] API : http://127.0.0.1:9003/chat/message/
+['POST'] API : http://localhost:9003/chat/message/
 
 # HEADERS :
 
@@ -89,7 +89,7 @@ ________________________________________________________________________________
 
 # GET CONVERSATION LIST :
 
-['GET'] API : http://127.0.0.1:9003/chat/list-conversation/
+['GET'] API : http://localhost:9003/chat/list-conversation/
 
 # HEADERS :
 
@@ -106,7 +106,7 @@ ________________________________________________________________________________
         {
             "on_talk": "ayrei",
             "online": true,
-            "picture": "http://127.0.0.1:9003/register/media/avatars/pexels-italo-melo-881954-2379004.jpg",
+            "picture": "http://localhost:9003/register/media/avatars/pexels-italo-melo-881954-2379004.jpg",
             "full_name": "amu ferwe",
 
             "sender": "ayrei1",
@@ -163,7 +163,7 @@ notificationSocket.onopen = function(e) {
 
 # RESPONSE
 
-Object { case: "NEW_MESSAGE", time: "2024-09-28 16:00:23", message: "hello 2", sender: "ayrei1", picture: "http://127.0.0.1:9003/register/media/avatars/unknown.jpg", "full-name": "Ayman Reifoun" }
+Object { case: "NEW_MESSAGE", time: "2024-09-28 16:00:23", message: "hello 2", sender: "ayrei1", picture: "http://localhost:9003/register/media/avatars/unknown.jpg", "full-name": "Ayman Reifoun" }
 
 _____________________________________________________________________________________________
 

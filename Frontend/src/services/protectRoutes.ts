@@ -18,7 +18,7 @@
 //       }
 
 //       try {
-//         const response = await axios.get("http://127.0.0.1:9003/account/profile/", {
+//         const response = await axios.get("http://localhost:9003/account/profile/", {
 //           headers: {
 //             'Authorization': `Bearer ${token}`,
 //             'Content-Type': 'application/json',

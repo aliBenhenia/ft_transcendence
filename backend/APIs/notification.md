@@ -1,6 +1,6 @@
 # READS NOTIFICATION :
 
-['GET'] API : http://127.0.0.1:9003/notification/api/view/
+['GET'] API : http://localhost:9003/notification/api/view/
 
 # HEADERS :
 
@@ -18,7 +18,7 @@
             "time": "2024-09-27T15:19:44.133183Z",
             "subject": "INVITATION",
             "sender": "ayrei1",
-            "picture": "http://127.0.0.1:9003/register/media/avatars/unknown.jpg",
+            "picture": "http://localhost:9003/register/media/avatars/unknown.jpg",
             "full-name": "Ayman Reifoun"
         },
     ],
@@ -41,7 +41,7 @@ ________________________________________________________________________________
 
 # MARK ALL AS READS
 
-['POST'] API : http://127.0.0.1:9003/notification/api/mark/
+['POST'] API : http://localhost:9003/notification/api/mark/
 
 
 # HEADERS :
@@ -71,7 +71,7 @@ ________________________________________________________________________________
 
 # DELETE ALL NOTIFICATIONS
 
-['POST'] API : http://127.0.0.1:9003/notification/api/delete/
+['POST'] API : http://localhost:9003/notification/api/delete/
 
 # HEADERS :
 

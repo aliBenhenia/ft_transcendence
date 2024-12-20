@@ -3,7 +3,7 @@ __________________________________________________________________
 
 # CREATE-ACCOUNT :
 
-['POST'] API : http://127.0.0.1:9003/register/create-account/
+['POST'] API : http://localhost:9003/register/create-account/
 
 # PAYLOAD :
 

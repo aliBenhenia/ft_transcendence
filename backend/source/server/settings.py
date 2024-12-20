@@ -103,8 +103,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # PICTURE FULL URL
 
-FULL_PICTURE = 'http://127.0.0.1:9003/register/media/avatars/unknown.jpg'
-PATH_PICTURE = 'http://127.0.0.1:9003/register'
+FULL_PICTURE = 'http://localhost:9003/register/media/avatars/unknown.jpg'
+PATH_PICTURE = 'http://localhost:9003/register'
 
 
 MIDDLEWARE = [
@@ -147,6 +147,6 @@ OAUTH2_CONFIG = {
     'client_secret': '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',
     'authorize_url': 'https://api.intra.42.fr/oauth/authorize',
     'token_url': 'https://api.intra.42.fr/oauth/token',
-    'redirect_uri': 'http://localhost:9001',
+    'redirect_uri': 'http://localhost:9003',
     'scope': 'public',
 }

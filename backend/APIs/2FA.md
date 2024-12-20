@@ -4,7 +4,7 @@ _______________________________________________________________________________
 
 # GET 2FA CODE
 
-['GET'] API : http://127.0.0.1:9003/secure/verification/send/
+['GET'] API : http://localhost:9003/secure/verification/send/
 
 # HEADERS :
 
@@ -36,7 +36,7 @@ _______________________________________________________________________________
 
 # Verify 2FA CODE :
 
-['POST'] API : http://127.0.0.1:9003/secure/verification/check/
+['POST'] API : http://localhost:9003/secure/verification/check/
 
 # HEADERS :
 

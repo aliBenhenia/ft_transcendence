@@ -26,7 +26,7 @@ const ProfileCard = () => {
     }
 
     try {
-      const response = await axios.get('http://127.0.0.1:9003/account/2FA/', {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/account/2FA/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -51,7 +51,7 @@ const ProfileCard = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post('http://127.0.0.1:9003/account/2FA/', payload, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/account/2FA/`, payload, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',

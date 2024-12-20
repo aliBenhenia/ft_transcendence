@@ -122,7 +122,7 @@ export default function CreateAccount() {
     }
 
     try {
-      const response = await axios.post('http://127.0.0.1:9003/register/create-account/', newData, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/register/create-account/`, newData, {
         headers: {
           'Content-Type': 'application/json',
         },

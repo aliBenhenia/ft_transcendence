@@ -2,7 +2,7 @@ _______________________________________________________________________________
 
 # FETCH PROFILE DATA
 
-['GET'] API : http://127.0.0.1:9003/account/profile/
+['GET'] API : http://localhost:9003/account/profile/
 
 # HEADERS :
 
@@ -28,7 +28,7 @@ _______________________________________________________________________________
         "email": "ayrei@gmail.com",
         "username": "ayrei",
         "online": false,
-        "picture": "http://127.0.0.1:9003/register/media/avatars/unknown.jpg",
+        "picture": "http://localhost:9003/register/media/avatars/unknown.jpg",
         "full_name": "Ayman Reifoun",
         "win": 0,
         "loss": 0,
@@ -43,7 +43,7 @@ _______________________________________________________________________________
 
 # FETCH OTHER USER PROFILE DATA
 
-['GET'] API : http://127.0.0.1:9003/account/search/?username=<username>
+['GET'] API : http://localhost:9003/account/search/?username=<username>
 
 # HEADERS :
 
@@ -67,7 +67,7 @@ _______________________________________________________________________________
     "account": {
         "username": "ayrei1",
         "online": true,
-        "picture": "http://127.0.0.1:9003/register/media/avatars/unknown.jpg",
+        "picture": "http://localhost:9003/register/media/avatars/unknown.jpg",
         "full_name": "Ayman Reifoun",
         "win": 0,
         "rank": 2,
@@ -81,7 +81,7 @@ _______________________________________________________________________________
         "friends": [
             {
                 "username": "ayrei",
-                "picture": "http://127.0.0.1:9003/register/media/avatars/pexels-italo-melo-881954-2379004.jpg",
+                "picture": "http://localhost:9003/register/media/avatars/pexels-italo-melo-881954-2379004.jpg",
                 "full_name": "amu ferwe"
             }
         ],
@@ -93,7 +93,7 @@ _______________________________________________________________________________
 
 # UPDATE PROFILE 
 
-['POST'] API : http://127.0.0.1:9003/account/update/
+['POST'] API : http://localhost:9003/account/update/
 
 # HEADERS :
 
@@ -163,7 +163,7 @@ _______________________________________________________________________________
 
 # ACTIVATE 2FA :
 
-['POST'] API : http://127.0.0.1:9003/account/2FA/
+['POST'] API : http://localhost:9003/account/2FA/
 
 # HEADERS :
 
@@ -193,7 +193,7 @@ _______________________________________________________________________________
 
 # CHECK THE STATUS OF 2FA :
 
-['GET'] API : http://127.0.0.1:9003/account/2FA/
+['GET'] API : http://localhost:9003/account/2FA/
 
 # HEADERS :
 

@@ -32,7 +32,7 @@ const FriendSearch = () => {
 
         setLoading(true);
         try {
-            const response = await axios.get(`http://127.0.0.1:9003/friends/search/?username=${value}`, {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/friends/search/?username=${value}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             setResults(response.data.success);

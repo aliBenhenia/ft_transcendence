@@ -3,7 +3,7 @@ _______________________________________________________________________________
 
 # SEND CODE :
 
-['GET'] API : http://127.0.0.1:9003/secure/reset-password/locate/?account=<username or email>
+['GET'] API : http://localhost:9003/secure/reset-password/locate/?account=<username or email>
 
 # Response (200) OK
 
@@ -11,7 +11,7 @@ _______________________________________________________________________________
     "success": {
         "email": "ayrei@gmail.com",
         "full_name": "amu ferwe",
-        "picture": "http://127.0.0.1:9003/register/media/avatars/pexels-italo-melo-881954-2379004.jpg"
+        "picture": "http://localhost:9003/register/media/avatars/pexels-italo-melo-881954-2379004.jpg"
     }
 }
 
@@ -28,7 +28,7 @@ _______________________________________________________________________________
 
 # SEND CODE :
 
-['POST'] API : http://127.0.0.1:9003/secure/reset-password/send/
+['POST'] API : http://localhost:9003/secure/reset-password/send/
 
 {
     "account" : "email or username",
@@ -57,7 +57,7 @@ _______________________________________________________________________________
 
 # CHECK CODE :
 
-['POST'] API : http://127.0.0.1:9003/secure/reset-password/verify/
+['POST'] API : http://localhost:9003/secure/reset-password/verify/
 
 
 # PAYLOAD :
@@ -94,7 +94,7 @@ _______________________________________________________________________________
 
 # CHANE PASSWORD WITH TOKEN 5 MIN 
 
-['GET'] API : http://127.0.0.1:9003/secure/reset-password/update/ElXFoc1kkOzFwtXnQ4dJ4Ds3npERKvJ7sMGxikcuGlP5kiwBsiq37e91woJL/
+['GET'] API : http://localhost:9003/secure/reset-password/update/ElXFoc1kkOzFwtXnQ4dJ4Ds3npERKvJ7sMGxikcuGlP5kiwBsiq37e91woJL/
 
 # Response (400) Bad Request
 
@@ -112,7 +112,7 @@ _______________________________________________________________________________
 
 "success": "you can now change your password"
 
-['POST'] API : http://127.0.0.1:9003/secure/reset-password/update/ElXFoc1kkOzFwtXnQ4dJ4Ds3npERKvJ7sMGxikcuGlP5kiwBsiq37e91woJL/
+['POST'] API : http://localhost:9003/secure/reset-password/update/ElXFoc1kkOzFwtXnQ4dJ4Ds3npERKvJ7sMGxikcuGlP5kiwBsiq37e91woJL/
 
 
 # PAYLOAD :

@@ -71,7 +71,7 @@ export default function Settings() {
     if (rePassword) formData.append('re_password', rePassword)
 
     try {
-      const response = await fetch('http://127.0.0.1:9003/account/update/', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/update/`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,

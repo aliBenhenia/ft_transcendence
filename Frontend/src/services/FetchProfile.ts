@@ -2,7 +2,7 @@ import axios from 'axios';
 import customAxios from './apiClient';
 const FetchProfile = async (token: string|null) => {
     try {
-        const res = await customAxios.get('http://127.0.0.1:9003/account/profile/', {
+        const res = await customAxios.get(`${process.env.NEXT_PUBLIC_API_URL}/account/profile/`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json'
