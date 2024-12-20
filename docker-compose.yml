@@ -24,7 +24,7 @@ services:
       dockerfile: Dockerfile
     container_name: nextjs
     environment:
-      NEXT_PUBLIC_API_URL: "http://10.12.8.14:9003" 
+      NEXT_PUBLIC_API_URL: "http://10.12.8.14:9003" # here you can change the IP address to your machine IP address
     ports:
       - 9001:3000
     volumes:
