@@ -71,8 +71,8 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                     'type': 'game start',
                     'player_number' : player.player_number,
                     'room_name' : room_name,
-                    'player1_avatar' : getattr(player1.scope['user'], 'picture', None).url,
-                    'player2_avatar' : getattr(player2.scope['user'], 'picture', None).url
+                    'player1_avatar' : getattr(player1.scope['user'], 'photo_url', None),
+                    'player2_avatar' : getattr(player2.scope['user'], 'photo_url', None)
                 }))
             self.in_game.append(player1.user.username)
             self.in_game.append(player2.user.username)
@@ -160,6 +160,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             loser_player = None
             winner_score = 0
             loser_score = 0
+            print (len(game['players']))
             for player in game['players']:
                 try:
                     if player.player_number == winner:
@@ -178,10 +179,9 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                             'message': 'You lost!',
                             'final_score': game['game_state']['score']
                         }))
-                    await player.close()
-                    game['players'].remove(player)
                 except:
                     pass
+            game['players'].clear()
             self.in_game.clear()
             #save in database
             await sync_to_async(Game.objects.create)(
@@ -220,10 +220,18 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             # if player is already in a queue
             for player in self.game_queue:
                 if user == player.scope['user']:
+                    await remaining_player.send(text_data=json.dumps(
+                    {
+                        'type' : 'Already in queue',
+                    }))
                     self.close()
                     return
             # if player is in game
             if user.username in self.in_game:
+                await remaining_player.send(text_data=json.dumps(
+                {
+                    'type' : 'Already in game'
+                }))
                 self.close()
                 return
             await self.accept()

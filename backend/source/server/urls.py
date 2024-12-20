@@ -9,6 +9,7 @@ urlpatterns = [
     path('register/', include('register.urls')),
     path('pingpong/', include('pingpong.urls')),
     path('notification/', include('notification.urls')),
+    
 ]
 
 

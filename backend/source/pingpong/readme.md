@@ -45,3 +45,18 @@ If a player disconnects or the game ends, the server will send a message indicat
     'type': 'game ends',
     'message': 'You win! Opponent disconnected'
 }
+OR
+{
+    'type': 'game ends',
+    'message': 'You win!',
+    'final_score: [5, 0]
+}
+
+If a player is already in a queue or in game.
+{
+    'type' : 'Already in queue'
+}
+OR
+{
+    'type' : 'Already in game'
+}

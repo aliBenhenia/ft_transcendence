@@ -19,7 +19,7 @@ def account_view(request):
     data = {
         
         # GENERAL INFO
-        
+        'id' : Account.id,
         'email' : Account.email,
         'username': Account.username,
         'online' : Account.is_online,
