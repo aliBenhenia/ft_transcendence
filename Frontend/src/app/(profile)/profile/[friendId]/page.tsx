@@ -27,6 +27,7 @@ interface profileData {
   win: number;
   loss: number;
   total_match: number;
+  last_match?: string;
 }
 const ProfilePage = (props: any) => {
   const { unreadCount } = useSelector((state: RootState) => state.notifications);
@@ -304,6 +305,7 @@ const ProfilePage = (props: any) => {
               matches={profileData.total_match}
               win={profileData.win}
               isUser={props.params.friendId}
+              last_match= {profileData.last_match}
             />
             <LastMatchesCard />
           </div>

@@ -44,6 +44,7 @@ const Dashboard = () => {
                 loss={profileState.loss}
                 matches={profileState.total_match}
                 win={profileState.win}
+                last_match={profileState.last_match}
               />
                   <LastMatchesCard />
                </div>
