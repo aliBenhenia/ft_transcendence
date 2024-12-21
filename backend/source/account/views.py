@@ -29,11 +29,13 @@ def account_view(request):
         # STATICS INFO
         
         'win' :  Account.DETAILS.win,
-        'rank' : Account.DETAILS.rank,
         'loss' :  Account.DETAILS.loss,
-        'level' : Account.DETAILS.level,
-        'xp_total' : Account.DETAILS.xp_total,
         'total_match' : Account.DETAILS.total_match,
+        'last_match' : Account.DETAILS.last_match,
+        'rank' : Account.DETAILS.rank,
+        'level' : Account.DETAILS.level,
+        'level_percentage' : Account.DETAILS.level_progress_percentage,
+        'xp_total' : Account.DETAILS.xp_total,
         'achievements' : ACHIEVEMENTS[Account.DETAILS.achievements],
 
     }

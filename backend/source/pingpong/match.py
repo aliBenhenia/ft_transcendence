@@ -172,19 +172,23 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 return 10
             if player.level > oponnent_player.level:
                 return 50
-    
+
     @database_sync_to_async
     def update_players_stats(self, winner_player, loser_player):
         player_states = winner_player.DETAILS
         player_states.win += 1
         player_states.total_match += 1
+        player_states.last_match = "win"
         player_states.xp_total += self.calculate_xp_to_add(winner_player.DETAILS, loser_player.DETAILS, "win")
+        print(player_states.xp_total)
         player_states.save()
         #
         player_states = loser_player.DETAILS
         player_states.loss += 1
         player_states.total_match += 1
-        player_states.xp_total += self.calculate_xp_to_add(winner_player.DETAILS, loser_player.DETAILS, "loss")
+        player_states.last_match = "loss"
+        player_states.xp_total -= self.calculate_xp_to_add(winner_player.DETAILS, loser_player.DETAILS, "loss")
+        print(player_states.xp_total)
         player_states.save()
 
     async def end_game(self, room_name, winner):
