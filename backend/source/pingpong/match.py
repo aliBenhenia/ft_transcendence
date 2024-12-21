@@ -55,10 +55,18 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             'score': [0, 0],
         }
 
+    def are_players_blocking_each_other(player1, player2):
+        is_player1_blocking = BLOCKER.objects.filter(blocker=player1, blocked=player2).exists()
+        is_player2_blocking = BLOCKER.objects.filter(blocker=player2, blocked=player1).exists()
+        return is_player1_blocking or is_player2_blocking
+
     async def match_players(self):
         if len(self.game_queue) == 2:
             player1 = self.game_queue.pop(0)
             player2 = self.game_queue.pop(0)
+            if self.are_players_blocking_each_other(player1.scope['user'], player2.scope['user']):
+                self.game_queue.append(player1)
+                self.game_queue.append(player2)
             room_name = self.generate_room_id()
             self.games[room_name] = {
                 'players' : [player1, player2],
