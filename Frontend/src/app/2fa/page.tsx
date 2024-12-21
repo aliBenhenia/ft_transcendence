@@ -14,7 +14,7 @@ const TwoFactorAuth = () => {
     const send2FACode = async () => {
         try {
             setLoading(true);
-            const response = await axios.get('http://127.0.0.1:9003/secure/verification/send/', {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/secure/verification/send/`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             message.success(response.data.success);
@@ -32,7 +32,7 @@ const TwoFactorAuth = () => {
     const verify2FACode = async () => {
         try {
             setLoading(true);
-            const response = await axios.post('http://127.0.0.1:9003/secure/verification/check/', 
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/secure/verification/check/`, 
                 { code }, 
                 { headers: { 'Authorization': `Bearer ${token}` } }
             );

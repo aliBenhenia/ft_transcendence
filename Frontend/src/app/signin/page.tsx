@@ -91,7 +91,7 @@ export default function SignIn() {
     }
 
     try {
-      const response = await axios.post("http://127.0.0.1:9003/login/api/token/", {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/login/api/token/`, {
         email: data.email,
         password: data.password,
       });
@@ -114,7 +114,8 @@ export default function SignIn() {
         setError((prev) => ({ ...prev, general: "Login failed" }));
       }
     } catch (error: any) {
-      message.error(error.response.data.error || "Login failed");
+      console.log(error);
+      // message.error(error.response.data.error || "Login failed");
     } finally {
       
       setLoading(false);  // Always stop loading when the request completes

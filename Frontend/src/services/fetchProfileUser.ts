@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const FetchProfileUser = async (token:any, username:any) => {
 
-    const url = `http://127.0.0.1:9003/account/search/?username=${username}`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/account/search/?username=${username}`;
     
     const headers = {
         'Authorization': `Bearer ${token}`

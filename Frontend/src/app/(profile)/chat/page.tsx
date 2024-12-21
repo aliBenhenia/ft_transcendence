@@ -10,6 +10,7 @@ import sortLastConversations from '@/services/sortLastConversations'
 import FetchProfile from '@/services/FetchProfile'
 
 export default function ChatPage() {
+  const socketUrl = process.env.NEXT_PUBLIC_API_URL;
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [users, setUsers] = useState<any>([])
   const [filteredUsers, setFilteredUsers] = useState<any>([])
@@ -63,7 +64,7 @@ export default function ChatPage() {
     setError(null)
     setLoading(true)
     try {
-      const response = await fetch('http://127.0.0.1:9003/friends/list/', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/friends/list/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -88,7 +89,7 @@ export default function ChatPage() {
     setError(null)
     setLoading(true)
     try {
-      const response = await fetch(`http://127.0.0.1:9003/chat/conversation/?account=${username}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/conversation/?account=${username}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -140,7 +141,7 @@ export default function ChatPage() {
     setIsSending(true)
 
     try {
-      const response = await fetch('http://127.0.0.1:9003/chat/message/', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/message/`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -164,7 +165,7 @@ export default function ChatPage() {
 
   const openSocket = () => {
     if (!token) return { close: () => {} }
-    const socket = new WebSocket(`ws://127.0.0.1:9003/ws/connection/?token=${token}`)
+    const socket = new WebSocket(`ws://${socketUrl.slice(7)}/ws/connection/?token=${token}`)
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data)
@@ -184,7 +185,7 @@ export default function ChatPage() {
   const addMessage = async (username:any) => {
     if (!selectedUser || selectedUser.on_talk !== username || !token) return
     try {
-      const response = await fetch(`http://127.0.0.1:9003/chat/conversation/?account=${username}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/conversation/?account=${username}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

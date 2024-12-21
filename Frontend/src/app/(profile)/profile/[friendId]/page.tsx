@@ -66,7 +66,7 @@ const ProfilePage = (props: any) => {
 
     const checkFriendAndBlockStatus = async () => {
       try {
-        const response = await axios.get(`http://127.0.0.1:9003/friends/status/?username=${props.params.friendId}`, {
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/friends/status/?username=${props.params.friendId}`, {
           headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` },
         });
 
@@ -96,7 +96,7 @@ const ProfilePage = (props: any) => {
     }
 
     try {
-      const response = await axios.post(`http://127.0.0.1:9003/friends/request/`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/friends/request/`, {
         username: profileData.username,
       }, {
         headers: { 'Authorization': `Bearer ${token}` },
@@ -121,7 +121,7 @@ const ProfilePage = (props: any) => {
     }
 
     try {
-      const response = await axios.post(`http://127.0.0.1:9003/friends/decline/`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/friends/decline/`, {
         username: profileData.username,
       }, {
         headers: { 'Authorization': `Bearer ${token}` },
@@ -146,7 +146,7 @@ const ProfilePage = (props: any) => {
     }
 
     try {
-      const response = await axios.post(`http://127.0.0.1:9003/friends/block/`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/friends/block/`, {
         username: profileData.username,
       }, {
         headers: { 'Authorization': `Bearer ${token}` },
@@ -171,7 +171,7 @@ const ProfilePage = (props: any) => {
     }
 
     try {
-      const response = await axios.post(`http://127.0.0.1:9003/friends/unblock/`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/friends/unblock/`, {
         username: profileData.username,
       }, {
         headers: { 'Authorization': `Bearer ${token}` },

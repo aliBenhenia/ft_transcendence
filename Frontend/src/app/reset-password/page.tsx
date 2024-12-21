@@ -23,7 +23,7 @@ const ResetPassword = () => {
   const locateAccount = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`http://127.0.0.1:9003/secure/reset-password/locate/?account=${account}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/secure/reset-password/locate/?account=${account}`);
       setUser(response.data.success);
       setStep(2);
       message.success('Account located successfully.');
@@ -38,7 +38,7 @@ const ResetPassword = () => {
   const sendVerificationCode = async () => {
     setLoading(true);
     try {
-      const response = await axios.post('http://127.0.0.1:9003/secure/reset-password/send/', { account });
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/secure/reset-password/send/`, { account });
       setStep(3);
       message.success(response.data.success);
     } catch (err) {
@@ -52,7 +52,7 @@ const ResetPassword = () => {
   const verifyCode = async () => {
     setLoading(true);
     try {
-      const response = await axios.post('http://127.0.0.1:9003/secure/reset-password/verify/', { account, code });
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/secure/reset-password/verify/`, { account, code });
       setToken(response.data.token);
       setStep(4);
       message.success(response.data.success);
@@ -81,7 +81,7 @@ const ResetPassword = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        `http://127.0.0.1:9003/secure/reset-password/update/${token}/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/secure/reset-password/update/${token}/`,
         { password, repassword }
       );
       setStep(5);

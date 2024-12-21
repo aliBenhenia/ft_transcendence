@@ -18,7 +18,7 @@ const sortLastConversations = async (users: User[]): Promise<User[] | undefined>
   const token = localStorage.getItem("accessToken");
 
   try {
-    const response = await fetch(`http://127.0.0.1:9003/chat/list-conversation/`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/list-conversation/`, {
       headers: {
         'Authorization': `Bearer ${token}`
       }

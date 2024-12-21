@@ -31,7 +31,7 @@ const Notification:React.FC  = () => {
 
     const markAllAsRead = async () => {
         try {
-            const response = await axios.post('http://127.0.0.1:9003/notification/api/mark/', {}, {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/notification/api/mark/`, {}, {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,
                 },
@@ -50,7 +50,7 @@ const Notification:React.FC  = () => {
 
     const deleteAllNotifications = async () => {
         try {
-            const response = await axios.post('http://127.0.0.1:9003/notification/api/delete/', {}, {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/notification/api/delete/`, {}, {
                 headers: {
                     Authorization: `Bearer ${accessToken || ''}`, 
                 },
