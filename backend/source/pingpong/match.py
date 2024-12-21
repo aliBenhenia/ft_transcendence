@@ -8,6 +8,7 @@ from .models import Game
 from datetime import datetime
 import time
 from asgiref.sync import sync_to_async
+from channels.db import database_sync_to_async
 
 math = __import__('math')
 green = "\033[92m"
@@ -71,11 +72,14 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                     'type': 'game start',
                     'player_number' : player.player_number,
                     'room_name' : room_name,
+                    'player1_username' : player1.scope['user'].username,
+                    'player2_username' : player1.scope['user'].username,
                     'player1_avatar' : getattr(player1.scope['user'], 'photo_url', None),
                     'player2_avatar' : getattr(player2.scope['user'], 'photo_url', None)
                 }))
             self.in_game.append(player1.user.username)
             self.in_game.append(player2.user.username)
+            await asyncio.sleep(5)
             asyncio.create_task(self.game_task(room_name))
 
     def update_game_state(self, state):
@@ -153,6 +157,36 @@ class LiveGameFlow(AsyncWebsocketConsumer):
         state['ballSpeedX'] = speed * random.choice([-1, 1])
         state['ballSpeedY'] = 0  # No vertical speed
 
+    def calculate_xp_to_add(self, player, oponnent_player, result):
+        if result == "win":
+            if player.level == oponnent_player.level:
+                return 25
+            if player.level < oponnent_player.level:
+                return 50
+            if player.level > oponnent_player.level:
+                return 10
+        else:
+            if player.level == oponnent_player.level:
+                return 25
+            if player.level < oponnent_player.level:
+                return 10
+            if player.level > oponnent_player.level:
+                return 50
+    
+    @database_sync_to_async
+    def update_players_stats(self, winner_player, loser_player):
+        player_states = winner_player.DETAILS
+        player_states.win += 1
+        player_states.total_match += 1
+        player_states.xp_total += self.calculate_xp_to_add(winner_player.DETAILS, loser_player.DETAILS, "win")
+        player_states.save()
+        #
+        player_states = loser_player.DETAILS
+        player_states.loss += 1
+        player_states.total_match += 1
+        player_states.xp_total += self.calculate_xp_to_add(winner_player.DETAILS, loser_player.DETAILS, "loss")
+        player_states.save()
+
     async def end_game(self, room_name, winner):
         if room_name in self.games:
             game = self.games[room_name]
@@ -160,9 +194,9 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             loser_player = None
             winner_score = 0
             loser_score = 0
-            print (len(game['players']))
             for player in game['players']:
                 try:
+                    # Winner
                     if player.player_number == winner:
                         winner_player = player.user
                         winner_score = game['game_state']['score'][player.player_number - 1]
@@ -171,6 +205,8 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                             'message': 'You win!',
                             'final_score': game['game_state']['score']
                         }))
+                        
+                    # Loser
                     else:
                         loser_player = player.user
                         loser_score = game['game_state']['score'][player.player_number - 1]
@@ -179,8 +215,10 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                             'message': 'You lost!',
                             'final_score': game['game_state']['score']
                         }))
+                        
                 except:
                     pass
+            await self.update_players_stats(winner_player, loser_player)
             game['players'].clear()
             self.in_game.clear()
             #save in database
