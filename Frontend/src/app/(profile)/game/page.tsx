@@ -22,15 +22,7 @@ function PingPongGame() {
     }
   };
   const handleStartGame = () => {
-    // Prepare settings object
-    const settings = customSettingsEnabled
-      ? { scoreToWin, botLevel, selectedMap }
-      : { scoreToWin: 3, botLevel: "easy", selectedMap: "Board 1" };
-
-    // Pass settings via query parameters
-    router.push(
-      `/game/online?scoreToWin=${settings.scoreToWin}&botLevel=${settings.botLevel}&selectedMap=${encodeURIComponent(settings.selectedMap)}`
-    );
+    router.push("/game/online");
   };
   const handlePlayWithBot = () => {
     // Prepare settings object
