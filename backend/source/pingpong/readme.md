@@ -11,10 +11,14 @@ If you're the first player to join, you'll see a message indicating that you're 
 }
 
 Game Start:
-When the second player joins then both players are ready, the server will send a message to start the game.
+When the second player joins then both players are ready, the server will send a message 'game_start', to show informations
+about the the players, when game_start is sent it waits for 5 seconds before sending the 'game_state' message.
 {
     'type': 'game start',
-    'message': 'Player Ready'
+    'player1_username' : 'some_username',
+    'player1_username' : 'some_username',
+    'player1_avatar' : 'avatar_url',
+    'player2_avatar' : 'avatar_url'
 }
 
 Game State:
