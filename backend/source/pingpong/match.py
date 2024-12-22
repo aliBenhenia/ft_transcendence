@@ -64,9 +64,9 @@ class LiveGameFlow(AsyncWebsocketConsumer):
         if len(self.game_queue) == 2:
             player1 = self.game_queue.pop(0)
             player2 = self.game_queue.pop(0)
-            if self.are_players_blocking_each_other(player1.scope['user'], player2.scope['user']):
-                self.game_queue.append(player1)
-                self.game_queue.append(player2)
+            # if self.are_players_blocking_each_other(player1.scope['user'], player2.scope['user']):
+            #     self.game_queue.append(player1)
+            #     self.game_queue.append(player2)
             room_name = self.generate_room_id()
             self.games[room_name] = {
                 'players' : [player1, player2],
@@ -81,7 +81,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                     'player_number' : player.player_number,
                     'room_name' : room_name,
                     'player1_username' : player1.scope['user'].username,
-                    'player2_username' : player1.scope['user'].username,
+                    'player2_username' : player2.scope['user'].username,
                     'player1_avatar' : getattr(player1.scope['user'], 'photo_url', None),
                     'player2_avatar' : getattr(player2.scope['user'], 'photo_url', None)
                 }))
@@ -249,17 +249,17 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             if len(game['players']) < 2:
                 self.games.pop(room_name)
             self.update_game_state(game['game_state'])
-            # Check for a winner
-            if game['game_state']['score'][0] >= WINNING_SCORE:
-                await self.end_game(room_name, winner=1)
-            elif game['game_state']['score'][1] >= WINNING_SCORE:
-                await self.end_game(room_name, winner=2)
-            #
+            # sending game states
             for player in game['players']:
                 await player.send(text_data=json.dumps({
                         'type': 'game_state',
                         'game_state': game['game_state']
                     }))
+            # Check for a winner
+            if game['game_state']['score'][0] >= WINNING_SCORE:
+                await self.end_game(room_name, winner=1)
+            elif game['game_state']['score'][1] >= WINNING_SCORE:
+                await self.end_game(room_name, winner=2)
             await asyncio.sleep(1 / 60)
 
     async def connect(self):
