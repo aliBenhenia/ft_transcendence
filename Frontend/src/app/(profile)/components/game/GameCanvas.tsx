@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { createWebSocketConnection } from "@/utils/websocket";
 import { GameState, Direction } from "@/utils/typess";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from 'next/navigation';
 
 const WINNING_SCORE = 5;
 
@@ -17,6 +18,9 @@ const WaitingIndicator: React.FC = () => (
 
 const GameCanvas: React.FC = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const selectedMap = searchParams.get('selectedMap') || 'Board 1';
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [ws, setWs] = useState<WebSocket | null>(null);
@@ -24,6 +28,14 @@ const GameCanvas: React.FC = () => {
   const [gameOver, setGameOver] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
   const [gameResult, setGameResult] = useState({ message: '', finalScore: [0, 0] });
+
+   // Map a selectedMap value to image URLS
+   const mapBackgroundImage: Record<string, string> = {
+    'Board 1': '/board 1.jpeg',
+    'Board 2': '/board 2.jpeg',
+    'Board 3': '/board 3.avif',
+  };
+  const backgroundImage = mapBackgroundImage[selectedMap] || '/board 1.jpeg';
 
   useEffect(() => {
     const accessToken = localStorage.getItem("accessToken");
@@ -148,7 +160,11 @@ const GameCanvas: React.FC = () => {
             ref={canvasRef}
             width={800}
             height={400}
-            className="w-full h-full bg-[#07325F] border-2 border-white rounded-lg"
+            className="w-full bg-cover bg-center border-2 rounded-lg"
+            style={{
+              backgroundImage: `url('${backgroundImage}')`,
+              backgroundColor: '#07325F',
+            }}
           ></canvas>
           {gameOver && gameResult.message && (
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
