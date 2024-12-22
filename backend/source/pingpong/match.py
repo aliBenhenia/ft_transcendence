@@ -64,9 +64,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
         if len(self.game_queue) == 2:
             player1 = self.game_queue.pop(0)
             player2 = self.game_queue.pop(0)
-            # if self.are_players_blocking_each_other(player1.scope['user'], player2.scope['user']):
-            #     self.game_queue.append(player1)
-            #     self.game_queue.append(player2)
+            
             room_name = self.generate_room_id()
             self.games[room_name] = {
                 'players' : [player1, player2],
