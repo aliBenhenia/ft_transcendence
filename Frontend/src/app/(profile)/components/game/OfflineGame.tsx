@@ -5,10 +5,14 @@ import Scoreboard from './Scoreboard';
 import { Ball, Paddle, checkCollisions } from '@/utils/bot';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
+import {useSelector, useDispatch} from 'react-redux';
+import { RootState } from '@/store/store';
+import { updateProfile } from '@/store/slices/profileSlice';
+import FetchProfile from '@/services/FetchProfile';
 
-const user1 = {
-  avatar: '/me.jpeg',
-};
+// const user1 = {
+//   avatar: '/me.jpeg',
+// };
 
 const user2 = {
   avatar: '/bot.jpg',
@@ -61,6 +65,32 @@ const Ai = () => {
     'Board 3': '/board 3.avif',
   };
   const backgroundImage = mapBackgroundImage[selectedMap] || '/board 1.jpeg';
+
+  // get the user1 and user2 avatars
+  const dispatch = useDispatch();
+  const profileState = useSelector((state: RootState) => state.profile);
+
+  const handleUpdateProfile = (data: Partial<RootState["profile"]>) => {
+    dispatch(updateProfile(data));
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+
+    const getProfileData = async () => {
+      if (!token) return;
+      
+      try {
+        const data = await FetchProfile(token);
+        handleUpdateProfile(data.informations);
+      } catch (err) {
+        console.log("Failed to fetch profile data:", err);
+      }
+    };
+
+    getProfileData();
+  }, [dispatch]);
+
   useEffect(() => {
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext('2d')!;
@@ -219,7 +249,7 @@ const Ai = () => {
         <Scoreboard
           player1Score={player1Score}
           player2Score={player2Score}
-          player1Avator={user1.avatar}
+          player1Avator={profileState.picture}
           player2Avator={user2.avatar}
           scoreToWin={parseInt(scoreToWin)}
         />
