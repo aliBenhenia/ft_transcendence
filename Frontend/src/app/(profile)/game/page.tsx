@@ -21,9 +21,9 @@ function PingPongGame() {
       setSelectedMap("Board 1");
     }
   };
-  const handleStartGame = () => {
-    router.push("/game/online");
-  };
+  // const handleStartGame = () => {
+  //   router.push("/game/online");
+  // };
   const handlePlayWithBot = () => {
     // Prepare settings object
     const settings = customSettingsEnabled
@@ -33,6 +33,17 @@ function PingPongGame() {
     // Pass settings via query parameters
     router.push(
       `/game/offline?scoreToWin=${settings.scoreToWin}&botLevel=${settings.botLevel}&selectedMap=${encodeURIComponent(settings.selectedMap)}`
+    );
+  };
+  const handleStartGame = () => {
+    // Prepare settings object
+    const settings = customSettingsEnabled
+      ? { selectedMap }
+      : { selectedMap: "Board 1" };
+
+    // Pass settings via query parameters
+    router.push(
+      `/game/online?selectedMap=${encodeURIComponent(settings.selectedMap)}`
     );
   };
   return (
