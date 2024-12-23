@@ -198,7 +198,7 @@ export default function SignIn() {
           </form>
           {error.general && <p className="text-red-500 text-center mt-4">{error.general}</p>}
           <p className="text-center text-gray-400 mt-4">
-            Don't have an account? <Link href="/signup">Sign up</Link>
+            Dont have an account? <Link href="/signup">Sign up</Link>
           </p>
         </div>
       </div>

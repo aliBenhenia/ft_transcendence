@@ -51,7 +51,7 @@ const useWebSocket = (url: string) => {
 
     socket.onmessage = (event: MessageEvent) => {
       console.log("WebSocket message received:", event.data);
-      const serverMessage: ServerMessage = JSON.parse(event.data);
+      const serverMessage = JSON.parse(event.data);
       const { case: messageCase, sender, picture } = serverMessage;
 
       switch (messageCase) {

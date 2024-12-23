@@ -34,7 +34,7 @@ const notificationsSlice = createSlice({
             state.notifications = [];
             state.unreadCount = 0;
         },
-        addNotification: (state:any, action:any) => {
+        addNotification: (state:any, action) => {
             state.notifications.push(action.payload);
             state.unreadCount += 1;
         },

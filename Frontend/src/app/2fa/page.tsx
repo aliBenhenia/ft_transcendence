@@ -9,7 +9,7 @@ const TwoFactorAuth = () => {
     const router = useRouter();
     const [code, setCode] = useState('');
     const [loading, setLoading] = useState(false);
-    const token = localStorage.getItem("accessToken"); // todo.... should protect it
+    const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
 
     const send2FACode = async () => {
         try {

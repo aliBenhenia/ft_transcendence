@@ -10,7 +10,7 @@ import sortLastConversations from '@/services/sortLastConversations'
 import FetchProfile from '@/services/FetchProfile'
 
 export default function ChatPage() {
-  const socketUrl = process.env.NEXT_PUBLIC_API_URL;
+  const socketUrl = process.env.NEXT_PUBLIC_API_URL || 'localhost:8000';
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [users, setUsers] = useState<any>([])
   const [filteredUsers, setFilteredUsers] = useState<any>([])

@@ -116,7 +116,7 @@ export default function Leaderboard() {
                           exit={{ opacity: 0, y: -20 }}
                           whileHover={{ scale: 1.01 }}
                           className="border-b border-gray-700/50 hover:bg-gray-700/20 transition-colors"
-                          onHoverStart={() => setHoveredUser(player.id)}
+                          // onHoverStart={() => setHoveredUser(player.id)}
                           onHoverEnd={() => setHoveredUser(null)}
                         >
                           <td className="px-2 py-4 md:px-6">

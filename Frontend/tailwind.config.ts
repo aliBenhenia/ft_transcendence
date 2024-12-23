@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss";
-import animations from '@midudev/tailwind-animations';
+// import animations from '@midudev/tailwind-animations';
 
 const config: Config = {
   content: [

@@ -15,6 +15,8 @@ const Dashboard = () => {
     const profileState = useSelector((state: RootState) => state.profile);
     const dispatch = useDispatch();
     useEffect(()=>{
+    
+      console.log("mode===============>",process.env.NODE_ENV);
         const token: string| null = localStorage.getItem("accessToken");  
         const getProfileData = async () => {
           if (token)

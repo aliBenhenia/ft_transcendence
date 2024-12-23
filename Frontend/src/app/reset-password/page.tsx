@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState ,useEffect} from 'react';
 import axios from 'axios';
 import { Button, message, notification } from 'antd';
 import { motion } from 'framer-motion';
@@ -18,7 +18,10 @@ const ResetPassword = () => {
   const [repassword, setRepassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [user, setUser] = useState({ email: '', fullName: '', picture: '' });
-
+  useEffect(() => {
+   console.log("Reset Password page loaded", process.env.NODE_ENV);
+   console.log("Reset Password page loaded===>", process.env.NEXT_PUBLIC_API_URL);
+  }, []);
   // Step 1: Locate Account
   const locateAccount = async () => {
     setLoading(true);
@@ -114,7 +117,7 @@ const ResetPassword = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="text-3xl font-semibold text-center">Reset Your Password</h2>
+        <h2 className="text-3xl font-semibold text-center">Reset Your Password .....tt</h2>
 
         {step === 1 && (
           <div className="space-y-4">

@@ -12,7 +12,8 @@ interface ProfileState {
   total_match: number;
   win: number;
   username : string,
-  full_name : string
+  full_name : string,
+  last_match : string
 }
 
 const initialState: ProfileState = {
@@ -27,6 +28,7 @@ const initialState: ProfileState = {
   win: 0,
   username: '',
   full_name: '', 
+  last_match: ''
 };
 
 const profileSlice = createSlice({
