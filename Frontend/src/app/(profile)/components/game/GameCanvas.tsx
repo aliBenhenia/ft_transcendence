@@ -64,13 +64,13 @@ const GameCanvas: React.FC = () => {
         setGameState(data.game_state);
         setIsWaiting(false);
 
-        if (data.game_state.score[0] === WINNING_SCORE) {
-          setWinner("Player 1");
-          setGameOver(true);
-        } else if (data.game_state.score[1] === WINNING_SCORE) {
-          setWinner("Player 2");
-          setGameOver(true);
-        }
+        // if (data.game_state.score[0] === WINNING_SCORE) {
+        //   setWinner("Player 1");
+        //   setGameOver(true);
+        // } else if (data.game_state.score[1] === WINNING_SCORE) {
+        //   setWinner("Player 2");
+        //   setGameOver(true);
+        // }
       } else if (data.type === "waiting") {
         setIsWaiting(true);
       }
