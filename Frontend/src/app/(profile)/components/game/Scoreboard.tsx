@@ -17,7 +17,7 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ player1Score, player2Score, pla
         <div className="mb-4">
           <Image 
                 src={player1Avator}
-                alt="fred rukundo"
+                alt="player1"
                 width={80}
                 height={80}
                 className="w-20 h-20 rounded-full border-2 border-gray-300"
@@ -32,10 +32,10 @@ const Scoreboard: React.FC<ScoreboardProps> = ({ player1Score, player2Score, pla
         <div className="mb-4">
           <Image
                 src={player2Avator}
-                alt="Robot AI"
+                alt="player2"
                 width={80}
                 height={80}
-                className="rounded-full border-2 border-gray-300"
+                className="w-20 h-20 rounded-full border-2 border-gray-300"
                 />
         </div>
         <span className="text-3xl font-bold">{player2Score} /{scoreToWin}</span>
