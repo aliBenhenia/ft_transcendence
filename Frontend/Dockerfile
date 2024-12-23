@@ -1,4 +1,3 @@
-# Use the official Node.js 18 image
 FROM node:18
 
 # Set the working directory
@@ -13,11 +12,12 @@ RUN npm install
 # Copy the rest of the application code (including .env)
 COPY . .
 
-# ENV NEXT_PUBLIC_API_URL=http://localhost:9003
-
-
 # Build the Next.js application for production
 RUN npm run build
+
+# Check if build output exists in .next directory
+RUN ls -l .next
+ENV NODE_ENV=production
 
 # Expose the port the app runs on
 EXPOSE 3000

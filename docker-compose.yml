@@ -30,7 +30,8 @@ services:
     volumes:
       - ./Frontend:/app
       - /app/node_modules
-    command: npm run start
+      - /app/.next
+    # command: npm run start
 
   # redis:
   #   build:
