@@ -54,7 +54,7 @@ services:
     volumes:
       - ./Frontend:/app
       - /app/node_modules
-    command: npm run dev
+    command: npm run start 
 
 networks:
   mynetwork:
