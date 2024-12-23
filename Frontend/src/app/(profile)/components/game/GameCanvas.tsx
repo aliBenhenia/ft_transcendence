@@ -5,6 +5,7 @@ import { createWebSocketConnection } from "@/utils/websocket";
 import { GameState, Direction } from "@/utils/typess";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from 'next/navigation';
+import Scoreboard from "./Scoreboard";
 
 const WINNING_SCORE = 5;
 
@@ -28,9 +29,11 @@ const GameCanvas: React.FC = () => {
   const [gameOver, setGameOver] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
   const [gameResult, setGameResult] = useState({ message: '', finalScore: [0, 0] });
+  const [player1, setPlayer1] = useState<{ username: string; avatar: string }>({ username: "", avatar: "" });
+  const [player2, setPlayer2] = useState({ username: "", avatar: "" });
 
-   // Map a selectedMap value to image URLS
-   const mapBackgroundImage: Record<string, string> = {
+  // Map a selectedMap value to image URLS
+  const mapBackgroundImage: Record<string, string> = {
     'Board 1': '/board 1.jpeg',
     'Board 2': '/board 2.jpeg',
     'Board 3': '/board 3.avif',
@@ -50,7 +53,13 @@ const GameCanvas: React.FC = () => {
     websocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
 
-      if (data.type === "game_state") {
+      if (data.type === "game start") {
+        console.log("Game starting: ", data);
+        setPlayer1({ username: data.player1_username, avatar: data.player1_avatar });
+        setPlayer2({ username: data.player2_username, avatar: data.player2_avatar });
+        setIsWaiting(false);
+        setGameState(data.game_state);
+      } else if (data.type === "game_state") {
         console.log("Game state: ", data.game_state);
         setGameState(data.game_state);
         setIsWaiting(false);
@@ -103,10 +112,11 @@ const GameCanvas: React.FC = () => {
       ctx.fillRect(10, gameState.player1Y, 10, 100);
       ctx.fillRect(canvasRef.current.width - 20, gameState.player2Y, 10, 100);
 
-      // Draw scores
-      ctx.font = "20px Arial";
-      ctx.fillText(gameState.score[0].toString(), canvasRef.current.width / 4, 30);
-      ctx.fillText(gameState.score[1].toString(), (canvasRef.current.width * 3) / 4, 30);
+      // // Draw scores
+      // ctx.font = "20px Arial";
+      // ctx.fillText(gameState.score[0].toString(), canvasRef.current.width / 4, 30);
+      // ctx.fillText(gameState.score[1].toString(), (canvasRef.current.width * 3) / 4, 30);
+
     }
   }, [gameState]);
 
@@ -148,7 +158,7 @@ const GameCanvas: React.FC = () => {
     setGameOver(false);
     setGameResult({ message: '', finalScore: [0, 0] });
     window.location.reload();
-};
+  };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
@@ -156,6 +166,14 @@ const GameCanvas: React.FC = () => {
         <WaitingIndicator />
       ) : (
         <div className="relative w-full max-w-4xl aspect-w-16 aspect-h-9 border-2 rounded-lg shadow-lg">
+          <div className="p-4">
+            <Scoreboard
+              player1Score={gameState?.score[0] || 0}
+              player2Score={gameState?.score[1] || 0}
+              player1Avator={player1.avatar}
+              player2Avator={player2.avatar}
+              scoreToWin={WINNING_SCORE} />
+          </div>
           <canvas
             ref={canvasRef}
             width={800}
@@ -170,19 +188,19 @@ const GameCanvas: React.FC = () => {
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
               <p className="text-4xl font-bold text-white mb-4">{gameResult.message}</p>
               <p className="text-2xl text-white">Final Score: {gameResult.finalScore[0]} : {gameResult.finalScore[1]}</p>
-                <button
-                  onClick={leaveGame}
-                  className="px-6 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 mt-4"
-                >
-                  Leave Game
-                </button>
+              <button
+                onClick={leaveGame}
+                className="px-6 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 mt-4"
+              >
+                Leave Game
+              </button>
 
-                <button
-                  onClick={handleRestart}
-                  className="px-6 py-2 bg-[#008000] text-white font-bold rounded-lg hover:bg-[#006400] ml-4"
-                >
-                  Restart Game
-                </button>
+              <button
+                onClick={handleRestart}
+                className="px-6 py-2 bg-[#008000] text-white font-bold rounded-lg hover:bg-[#006400] ml-4"
+              >
+                Restart Game
+              </button>
             </div>
           )}
         </div>
