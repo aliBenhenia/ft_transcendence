@@ -28,21 +28,86 @@ class LiveGameFlow(AsyncWebsocketConsumer):
     games = {}
     game_queue = []
     in_game = []
+    game_queues = {}
+    LEVEL_RANGE_INCREMENT = 1
+    MAX_WAIT_TIME = 30
 
     @staticmethod
     def generate_room_id():
         return ''.join(random.choices(string.ascii_lowercase + string.digits, k=9))
 
     async def add_to_waiting_queue(self):
-        self.game_queue.append(self)
-        print(f"Player {self.scope['user'].username} added to waiting queue. Queue size: {len(self.game_queue)}")
-        if len(self.game_queue) == 1:
-            await self.send(text_data=json.dumps(
-            {
-                'type': 'waiting',
-                'message': 'Waiting for another player to join...'
-            }))
-        await self.match_players()
+        player_level = await sync_to_async(lambda: self.scope['user'].DETAILS.level)()
+        timestamp = time.time()
+        player_data = {
+            'player': self,
+            'level': player_level,
+            'timestamp': timestamp
+        }
+        if player_level not in self.game_queues:
+            self.game_queues[player_level] = []
+        self.game_queues[player_level].append(player_data)
+        print(self.game_queues.keys())
+        print(f"Player {self.scope['user'].username} (Level {player_level}) added to waiting queue.")
+        await self.send(text_data=json.dumps({
+            'type': 'searching',
+            'message': 'Looking for a match...'
+        }))
+        await self.find_match()
+
+    async def find_match(self):
+        player_level = await sync_to_async(lambda: self.scope['user'].DETAILS.level)()
+        current_time = time.time()
+        level_range = 0
+        
+        while level_range <= max(player_level, len(self.game_queues)):
+            # Check levels above and below the player's level
+            if all(entry['player'] != self for queue in self.game_queues.values() for entry in queue):
+                return
+            for level_diff in range(-level_range, level_range + 1):
+                check_level = player_level + level_diff
+                if check_level in self.game_queues:
+                    # Filter out the current player and get viable opponents
+                    viable_opponents = [
+                        p for p in self.game_queues[check_level]
+                        if p['player'] != self
+                    ]
+                    # Sort opponents by wait time (longest wait first)
+                    viable_opponents.sort(
+                        key=lambda x: current_time - x['timestamp'],
+                        reverse=True
+                    )
+                    for opponent_data in viable_opponents:
+                        print("Opponent found")
+                        opponent = opponent_data['player']
+                        if any(entry['player'] == self for entry in self.game_queues.get(player_level, [])):
+                            # Remove both players from their queues
+                            self.game_queues[player_level] = [
+                                p for p in self.game_queues[player_level]
+                                if p['player'] != self
+                            ]
+                            self.game_queues[check_level] = [
+                                p for p in self.game_queues[check_level]
+                                if p['player'] != opponent
+                            ]
+                            # Clean up empty queues
+                            for level in list(self.game_queues.keys()):
+                                if not self.game_queues[level]:
+                                    del self.game_queues[level]
+                            # Start the game
+                            await self.start_game_with_opponent(opponent)
+                            return
+            wait_time = time.time() - current_time
+            if wait_time >= self.MAX_WAIT_TIME:
+                await self.send(text_data=json.dumps({
+                    'type' : 'Searching expanded'
+                }))
+                level_range += self.LEVEL_RANGE_INCREMENT
+                current_time = time.time()
+            await asyncio.sleep(1)
+        await self.send(text_data=json.dumps({
+            'type' : 'No_opponent'
+        }))
 
     def initialize_game_state(self):
         return {
@@ -55,22 +120,14 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             'score': [0, 0],
         }
 
-    def are_players_blocking_each_other(player1, player2):
-        is_player1_blocking = BLOCKER.objects.filter(blocker=player1, blocked=player2).exists()
-        is_player2_blocking = BLOCKER.objects.filter(blocker=player2, blocked=player1).exists()
-        return is_player1_blocking or is_player2_blocking
-
-    async def match_players(self):
-        if len(self.game_queue) == 2:
-            player1 = self.game_queue.pop(0)
-            player2 = self.game_queue.pop(0)
+    async def start_game_with_opponent(self, opponent):
             
             room_name = self.generate_room_id()
             self.games[room_name] = {
-                'players' : [player1, player2],
+                'players' : [self, opponent],
                 'game_state' : self.initialize_game_state()
             }
-            for number, player in enumerate([player1, player2], start=1):
+            for number, player in enumerate([self, opponent], start=1):
                 player.room_name = room_name
                 player.player_number = number
                 await player.send(text_data=json.dumps(
@@ -78,13 +135,15 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                     'type': 'game start',
                     'player_number' : player.player_number,
                     'room_name' : room_name,
-                    'player1_username' : player1.scope['user'].username,
-                    'player2_username' : player2.scope['user'].username,
-                    'player1_avatar' : getattr(player1.scope['user'], 'photo_url', None),
-                    'player2_avatar' : getattr(player2.scope['user'], 'photo_url', None)
+                    'player1_level' : await sync_to_async(lambda: self.scope['user'].DETAILS.level)(),
+                    'player2_level' : await sync_to_async(lambda: opponent.scope['user'].DETAILS.level)(),
+                    'player1_username' : self.scope['user'].username,
+                    'player2_username' : opponent.scope['user'].username,
+                    'player1_avatar' : getattr(self.scope['user'], 'photo_url', None),
+                    'player2_avatar' : getattr(opponent.scope['user'], 'photo_url', None)
                 }))
-            self.in_game.append(player1.user.username)
-            self.in_game.append(player2.user.username)
+            self.in_game.append(self.user.username)
+            self.in_game.append(opponent.user.username)
             await asyncio.sleep(5)
             asyncio.create_task(self.game_task(room_name))
 
@@ -187,6 +246,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
         player_states.last_match = "win"
         player_states.xp_total += self.calculate_xp_to_add(winner_player.DETAILS, loser_player.DETAILS, "win")
         print(player_states.xp_total)
+        print(player_states.level)
         player_states.save()
         #
         player_states = loser_player.DETAILS
@@ -195,6 +255,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
         player_states.last_match = "loss"
         player_states.xp_total -= self.calculate_xp_to_add(winner_player.DETAILS, loser_player.DETAILS, "loss")
         print(player_states.xp_total)
+        print(player_states.level)
         player_states.save()
 
     async def end_game(self, room_name, winner):
@@ -262,21 +323,24 @@ class LiveGameFlow(AsyncWebsocketConsumer):
 
     async def connect(self):
         user = self.scope['user']
-        print(f"New connection established {user.username}")
+        # print(f"New connection established {user.username} level {user.DETAILS.level}")
         if user:
             self.user = user
             # if player is already in a queue
-            for player in self.game_queue:
-                if user == player.scope['user']:
-                    await remaining_player.send(text_data=json.dumps(
-                    {
-                        'type' : 'Already in queue',
-                    }))
-                    self.close()
-                    return
+            user_level = await sync_to_async(lambda: self.user.DETAILS.level)()
+            if user_level in self.game_queues:
+                queue = self.game_queues[user_level]
+                for p in queue:
+                    if p['player'].scope['user'] == self.user:
+                        await self.send(text_data=json.dumps(
+                        {
+                            'type' : 'Already in queue'
+                        }))
+                        self.close()
+                        return
             # if player is in game
             if user.username in self.in_game:
-                await remaining_player.send(text_data=json.dumps(
+                await self.send(text_data=json.dumps(
                 {
                     'type' : 'Already in game'
                 }))
@@ -289,9 +353,15 @@ class LiveGameFlow(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         print(f"Player {self.scope['user'].username} disconnected")
-        if self in self.game_queue:
-                self.game_queue.remove(self)
-                print(f"Player {self.scope['user'].username} removed from waiting queue. Queue size: {len(self.game_queue)}")
+        # Remove player from queue if present
+        player_level = await sync_to_async(lambda: self.scope['user'].DETAILS.level)()
+        if player_level in self.game_queues:
+            self.game_queues[player_level] = [
+                p for p in self.game_queues[player_level]
+                if p['player'] != self
+            ]
+            if not self.game_queues[player_level]:
+                del self.game_queues[player_level]
         if hasattr(self, 'room_name') and self.room_name in self.games:
                 game = self.games[self.room_name]
                 game['players'].remove(self)
@@ -303,7 +373,9 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                         'message' : 'You win! Opponent disconnected'
                     }))
                     game['players'].remove(remaining_player)
+                    del self.games[self.room_name]
                     self.in_game.clear()
+                    print(f"games after : {len(self.games)}")
 
     async def receive(self, text_data):
         try:

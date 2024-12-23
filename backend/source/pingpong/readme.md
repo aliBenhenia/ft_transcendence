@@ -4,17 +4,41 @@ The WebSocket connection is made to the URL: "ws://ip:port/ws/pingpong/?token=to
 ,This is where players will connect to join the game.
 
 Waiting for Players: 
-If you're the first player to join, you'll see a message indicating that you're waiting for the second player to join.
+If you're added to queue, you'll see a message indicating that you're searching for a player that match your level or close to it
 {
-    'type': 'waiting',
-    'message': 'Waiting for another player to join...'
+    'type': 'searching',
+    'message': '
+}
+
+if 30 seconds passed without finding a player on your level, the searching range is expanded
+{
+    'type' : 'Searching expanded'
+}
+
+when no opponent it is found
+{
+    'type' : 'No_opponent'
+}
+
+when you are already in a queue
+{
+    'type' : 'Already in queue'
+}
+
+when you are already in a game
+{
+    'type' : 'Already in game'
 }
 
 Game Start:
-When the second player joins then both players are ready, the server will send a message to start the game.
+When the second player joins then both players are ready, the server will send a message 'game_start', to show informations
+about the the players, when game_start is sent it waits for 5 seconds before sending the 'game_state' message.
 {
     'type': 'game start',
-    'message': 'Player Ready'
+    'player1_username' : 'some_username',
+    'player1_username' : 'some_username',
+    'player1_avatar' : 'avatar_url',
+    'player2_avatar' : 'avatar_url'
 }
 
 Game State:
@@ -44,4 +68,19 @@ If a player disconnects or the game ends, the server will send a message indicat
 {
     'type': 'game ends',
     'message': 'You win! Opponent disconnected'
+}
+OR
+{
+    'type': 'game ends',
+    'message': 'You win!',
+    'final_score: [5, 0]
+}
+
+If a player is already in a queue or in game.
+{
+    'type' : 'Already in queue'
+}
+OR
+{
+    'type' : 'Already in game'
 }
