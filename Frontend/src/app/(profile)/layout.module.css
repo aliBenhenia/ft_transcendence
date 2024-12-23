@@ -8,3 +8,7 @@
     ms-overflow-style: none;
     overflow-style: none;
 }
+.dropDown
+{
+    background-color: #333 !important;  /* Dark background */
+}

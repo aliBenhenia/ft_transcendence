@@ -157,7 +157,7 @@ export default function SignIn() {
                 type="text"
                 name="email"
                 placeholder="Email or username"
-                className="w-full bg-[#D9D9D9] p-2 rounded text-black"
+                className="w-full bg-[#D9D9D9] p-2 rounded text-black outline-none"
                 value={data.email}
                 onChange={handleInputChange}
               />
@@ -169,7 +169,7 @@ export default function SignIn() {
                 type={hidePass ? "password" : "text"}
                 name="password"
                 placeholder="Password"
-                className={`w-full bg-[#D9D9D9] p-2 rounded text-black ${passErr ? "border-red-500" : "border-gray-300"}`}
+                className={`w-full bg-[#D9D9D9] p-2 rounded text-black ${passErr ? "border-red-500" : "border-gray-300"} outline-none`}
                 value={data.password}
                 onChange={handleInputChange}
               />

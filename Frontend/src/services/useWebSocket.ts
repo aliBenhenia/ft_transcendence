@@ -15,8 +15,10 @@ const useWebSocket = (url: string) => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!url) return;
-    const socket = new WebSocket(url);
+    // const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
+    const token = localStorage.getItem('accessToken');
+    if (!url || !token) return;
+    const socket = new WebSocket(`${url}${token}`);
 
     const handleNotification = (message: string, content: string, icon: React.ReactNode = null, duration: number = 5) => {
       notification.open({
@@ -68,22 +70,22 @@ const useWebSocket = (url: string) => {
           break;
 
         case 'INVITATION':
-          handleNotification('New Friend Request', `Request from: ${sender}`);
+          handleNotification('New Friend Request', `Request from: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
           addNewNotification(serverMessage);
           break;
 
         case 'DECLINE':
-          handleNotification('Cancelled Friend Request', `Cancelled from: ${sender}`);
+          handleNotification('Cancelled Friend Request', `Cancelled from: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
           addNewNotification(serverMessage);
           break;
 
         case 'ACCEPT':
-          handleNotification('Friend Request Accepted', `Accepted from: ${sender}`);
+          handleNotification('Friend Request Accepted', `Accepted from: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
           addNewNotification(serverMessage);
           break;
 
         case 'UNFRIEND':
-          handleNotification('Unfriended', `Unfriended by: ${sender}`, null, 1);
+          handleNotification('Unfriended', `Unfriended by: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
           addNewNotification(serverMessage);
           break;
 
@@ -92,9 +94,9 @@ const useWebSocket = (url: string) => {
       }
     };
 
-    // socket.onerror = (error) => {
-    //   console.log("WebSocket error:", error);
-    // };
+    socket.onerror = (error) => {
+      console.log("WebSocket error:", error);
+    };
 
     socket.onclose = () => {
       console.log("WebSocket connection closed.");
@@ -103,7 +105,7 @@ const useWebSocket = (url: string) => {
     return () => {
         socket.close();
     };
-  }, [url, dispatch]);
+  }, []);
 };
 
 export default useWebSocket;

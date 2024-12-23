@@ -18,20 +18,18 @@ services:
     networks:
       - mynetwork
   
-  # nextjs:
-  #   build:
-  #     context: ./Frontend
-  #     dockerfile: Dockerfile
-  #   container_name: nextjs
-  #   ports:
-  #     - 9001:3000
-  #   volumes:
-  #     - ./Frontend:/app
-  #     - /app/node_modules
-  #   command: npm run dev
+  nextjs:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: nextjs
+    ports:
+      - 9001:3000
+    volumes:
+      - ./Frontend:/app
+      - /app/node_modules
+    command: npm run dev
 
-
-  
   # redis:
   #   build:
   #     context: ./tools/Redis
@@ -39,8 +37,8 @@ services:
     
   #   container_name: redis
     
-  #   networks:
-  #     - mynetwork
+    networks:
+      - mynetwork
     
 
 networks:

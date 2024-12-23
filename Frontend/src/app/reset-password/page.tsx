@@ -69,6 +69,14 @@ const ResetPassword = () => {
       message.error("Passwords do not match.");
       return;
     }
+    if (password.length < 8) {
+      message.error("Password must be at least 6 characters long.");
+      return;
+    }
+    if (password.trim() === '') {
+      message.error("Password cannot be empty.");
+      return;
+    }
 
     setLoading(true);
     try {
