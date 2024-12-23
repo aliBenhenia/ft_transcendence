@@ -117,7 +117,7 @@ const ResetPassword = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h2 className="text-3xl font-semibold text-center">Reset Your Password .....tt</h2>
+        <h2 className="text-3xl font-semibold text-center">Reset Your Password now</h2>
 
         {step === 1 && (
           <div className="space-y-4">

@@ -10,10 +10,10 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
-# Copy the rest of the application code
+# Copy the rest of the application code (including .env)
 COPY . .
 
-ENV NEXT_PUBLIC_API_URL=http://localhost:9003
+# ENV NEXT_PUBLIC_API_URL=http://localhost:9003
 
 
 # Build the Next.js application for production

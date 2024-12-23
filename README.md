@@ -13,7 +13,8 @@ We are using Docker Compose to set up two services:
 In this setup, the base URL of the API (`NEXT_PUBLIC_API_URL`) is configurable via environment variables in the `docker-compose.yml` file. By default, it points to `localhost`, but you can update it with your local IP or external domain.
 
 ---
-
+#create .env file in Next.js(Frontend) root
+``` NEXT_PUBLIC_API_URL=http://localhost:9003  # Set your desired API URL here```
 ## 1. Docker Compose Setup
 
 Below is the `docker-compose.yml` file setup for the Next.js and Django application:
@@ -43,8 +44,6 @@ services:
       context: ./Frontend
       dockerfile: Dockerfile
     container_name: nextjs
-    environment:
-      NEXT_PUBLIC_API_URL: "http://localhost:9003"  # Change this to your local IP or keep it as localhost
     ports:
       - 9001:3000
     volumes:
