@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, ChangeEvent } from "react";
+import { useRef, useState, ChangeEvent,useEffect } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import Link from "next/link";
 import styles from "./signin.module.css";
@@ -17,7 +17,12 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
   const [passErr, setPassErr] = useState(false);
   const router = useRouter();
-
+  useEffect (() => {
+    const accessToken = localStorage.getItem("accessToken");
+    if (accessToken) {
+      router.push("/dashboard");
+    }
+  }, []);
   const isAllSpaces = (str: string): boolean => {
     return str.trim().length === 0;
   };
