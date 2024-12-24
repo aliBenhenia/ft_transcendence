@@ -13,6 +13,8 @@ We are using Docker Compose to set up two services:
 In this setup, the base URL of the API (`NEXT_PUBLIC_API_URL`) is configurable via environment variables in the `docker-compose.yml` file. By default, it points to `localhost`, but you can update it with your local IP or external domain.
 
 ---
+## you can change from dev mode to produc mode in frontend dockerfile (now prod commented in dockerfile) 
+---
 ## Create `.env` File in Next.js (Frontend) Root
 
 Create a `.env` file in the root directory of your **Next.js** project and add the following environment variable:
