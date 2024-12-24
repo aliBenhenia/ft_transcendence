@@ -120,7 +120,7 @@ export default function SignIn() {
       }
     } catch (error: any) {
       console.log(error);
-      // message.error(error.response.data.error || "Login failed");
+      message.error(error.response.data.error || "Login failed");
     } finally {
       
       setLoading(false);  // Always stop loading when the request completes
