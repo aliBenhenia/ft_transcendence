@@ -17,12 +17,6 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
   const [passErr, setPassErr] = useState(false);
   const router = useRouter();
-  useEffect (() => {
-    const accessToken = localStorage.getItem("accessToken");
-    if (accessToken) {
-      router.push("/dashboard");
-    }
-  }, []);
   const isAllSpaces = (str: string): boolean => {
     return str.trim().length === 0;
   };
