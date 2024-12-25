@@ -5,8 +5,10 @@ from friends.models import FRIENDS
 from friends.tools import is_blocked
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
+from pingpong.match import LiveGameFlow 
 
 def create_message(sender, reciver, message):
+
     obj = MESSAGES.objects.create(sender=sender, account=reciver, message=message)
     obj.save()
     return obj
@@ -49,10 +51,12 @@ def new_message(sender, reciver, data):
         'sender' : sender.username,
         'picture' : str(sender.photo_url),
         'full-name' : f"{sender.first_name} {sender.last_name}",
-
         'message' : data.message,
         'time' : data.time.strftime('%Y-%m-%d %H:%M:%S'),
-    }
-    print("111111")
+    }    
     async_to_sync(channel_layer.group_send)(reciver.token_notify,notification_data)
     return True
+
+def invite(sender, receiver):
+    get_channel_layer = get_channel_layer()
+    

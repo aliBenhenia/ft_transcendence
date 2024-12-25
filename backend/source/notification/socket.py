@@ -93,13 +93,18 @@ class Notifications(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         """Handle received WebSocket messages and commands."""
         try:
-            information = json.loads(text_data)
-            command = information.get('command')
-
+            data = json.loads(text_data)
+            command = data.get('command')
             if command in {'invite', 'accept', 'cancel'}:
-                receiver, is_valid = await get_recipient(information['receiver'])
-                if is_valid:
-                    await forward_event_pingpong(self, information, receiver, self.user)
+                recipient, is_valid = await get_recipient(data['recipient'])
+                if command == 'invite':
+                    pass
+                elif command == 'accept':
+                    pass
+                elif command == 'cancel':
+                    pass
+                # if is_valid:
+                #     await forward_event_pingpong(self, information, receiver, self.user)
         except Exception as e:
             print(f'[ERROR] Processing command: {e}')
 
