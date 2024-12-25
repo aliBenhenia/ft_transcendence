@@ -59,7 +59,7 @@ def searching_view(request):
     data = {
 
         # GENERAL INFO
-
+        'id' : TARGET.id,
         'username': TARGET.username,
         'online' : TARGET.is_online,
         'picture' : TARGET.photo_url,

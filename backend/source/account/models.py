@@ -17,9 +17,9 @@ class STATICS(models.Model):
         if self.xp_total == 0:
             return 0
     
-        xp_for_each_level = [100, 300, 600, 1000]
+        xps_for_each_level = [100, 300, 600, 1000]
 
-        for i, xp_for_each_level in enumerate(xp_for_each_level):
+        for i, xp_for_each_level in enumerate(xps_for_each_level, start=1):
             if self.xp_total < xp_for_each_level:
                 return i - 1
 

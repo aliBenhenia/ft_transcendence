@@ -4,10 +4,30 @@ The WebSocket connection is made to the URL: "ws://ip:port/ws/pingpong/?token=to
 ,This is where players will connect to join the game.
 
 Waiting for Players: 
-If you're the first player to join, you'll see a message indicating that you're waiting for the second player to join.
+If you're added to queue, you'll see a message indicating that you're searching for a player that match your level or close to it
 {
-    'type': 'waiting',
-    'message': 'Waiting for another player to join...'
+    'type': 'searching',
+    'message': '
+}
+
+if 30 seconds passed without finding a player on your level, the searching range is expanded
+{
+    'type' : 'Searching expanded'
+}
+
+when no opponent it is found
+{
+    'type' : 'No_opponent'
+}
+
+when you are already in a queue
+{
+    'type' : 'Already in queue'
+}
+
+when you are already in a game
+{
+    'type' : 'Already in game'
 }
 
 Game Start:

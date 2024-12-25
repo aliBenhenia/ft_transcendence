@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from channels.layers import get_channel_layer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
-from .tools import create_message, account_status, is_blocked, chat_structure, new_message
+from .tools import create_message, account_status, is_blocked, chat_structure, new_message, invite
 
 @api_view(['GET'])
 def fix_online(request):
@@ -109,4 +109,29 @@ def send_message(request):
 
     new = create_message(account, obj, message)
     new_message(account, obj, new)
+    return Response({'success': SUCCESS[2]}, status=200)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def send_game_invite(request):
+    sender = request.user
+    if sender.SECURE.activate:
+        if sender.SECURE.on_login:
+            return Response({'2FA' : True, 'error' : ERROR[1]}, status=401)
+    data = request.data
+    receiver = data.get('account')
+    if not receiver:
+        return Response({'error': ERROR[3]}, status=400)
+    to_invite, state = AccountLookup(receiver)
+    if not state:
+        return Response({'error': ERROR[2]}, status=404)
+    message = data.get('message')
+    if not message:
+        return Response({'error': ERROR[5]}, status=400)
+    is_blk, option = is_blocked(sender, receiver)
+    if is_blk:
+        if option:
+            return Response({'error': ERROR[8]}, status=400)
+        return Response({'error': ERROR[9]}, status=400)
+    invite(sender, receiver)
     return Response({'success': SUCCESS[2]}, status=200)
