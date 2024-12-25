@@ -48,7 +48,9 @@ const Dashboard = () => {
                 win={profileState.win}
                 last_match={profileState.last_match}
               />
-                  <LastMatchesCard />
+                  {
+                    profileState.id && <LastMatchesCard userId={profileState.id}/>
+                  }
                </div>
                 <Achievements />
     </div>

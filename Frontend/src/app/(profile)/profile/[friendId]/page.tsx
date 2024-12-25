@@ -28,6 +28,7 @@ interface profileData {
   loss: number;
   total_match: number;
   last_match?: string;
+  id? : number
 }
 const ProfilePage = (props: any) => {
   const { unreadCount } = useSelector((state: RootState) => state.notifications);
@@ -35,7 +36,7 @@ const ProfilePage = (props: any) => {
   const router = useRouter();
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [profileData, setProfileData] = useState<profileData>({ username: "", full_name: "", picture: "", level: 0, win: 0, loss: 0, total_match: 0 });
+  const [profileData, setProfileData] = useState<profileData>({ username: "", full_name: "", picture: "", level: 0, win: 0, loss: 0, total_match: 0 ,id:0});
   const [friendStatus, setFriendStatus] = useState("not_friends");
   const [blockStatus, setBlockStatus] = useState(false);
   const [listFriends, setListFriends] = useState([]);
@@ -278,7 +279,7 @@ const ProfilePage = (props: any) => {
                     {blockStatus ? (
                       <button
                       onClick={handleUnblockUser}
-                      className="flex items-center justify-center py-3 px-5 bg-yellow-600 text-white text-lg font-semibold rounded-xl hover:bg-yellow-700 active:bg-yellow-800 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform hover:scale-105"
+                      className="flex items-center justify-center py-3 px-5 bg-yellow-600 text-white text-lg font-semibold rounded-xl hover:bg-yellow-700 active:bg-yellow-800 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform "
                     >
                       <TbLockOpen2 className="mr-2 text-xl" />
                       Unblock
@@ -287,7 +288,7 @@ const ProfilePage = (props: any) => {
                     ) : (
                           <button
       onClick={handleBlockUser}
-      className="flex items-center justify-center py-3 px-5 bg-red-600 text-white text-lg font-semibold rounded-xl hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform hover:scale-105"
+      className="flex items-center justify-center py-3 px-5 bg-red-600 text-white text-lg font-semibold rounded-xl hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform "
     >
       <MdBlockFlipped className="mr-2 text-xl" />
       Block
@@ -307,7 +308,9 @@ const ProfilePage = (props: any) => {
               isUser={props.params.friendId}
               last_match= {profileData.last_match}
             />
-            <LastMatchesCard />
+           {
+            profileData.id &&  <LastMatchesCard userId={profileData.id} />
+           }
           </div>
         </div>
         <Achievements />
