@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { VscSend } from "react-icons/vsc";
 import { FaGamepad } from "react-icons/fa";
 import Link from 'next/link'
+import {message} from 'antd'
 
 import sortLastConversations from '@/services/sortLastConversations'
 import FetchProfile from '@/services/FetchProfile'
@@ -123,7 +124,11 @@ export default function ChatPage() {
 
   const sendMessage = async () => {
     if (!newMessage || !selectedUser?.on_talk || isSending || !token) return
-
+    if (newMessage.length > 700)
+    {
+      message.error('message must be less then 700');
+      return;
+    }
     const messagePayload = {
       account: selectedUser.on_talk,
       message: newMessage,
