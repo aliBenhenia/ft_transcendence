@@ -5,7 +5,7 @@ from friends.models import FRIENDS
 from friends.tools import is_blocked
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
-from pingpong.match import LiveGameFlow 
+from .models import GameInvite
 
 def create_message(sender, reciver, message):
 
@@ -58,5 +58,5 @@ def new_message(sender, reciver, data):
     return True
 
 def invite(sender, receiver):
-    get_channel_layer = get_channel_layer()
     
+    return True

@@ -71,6 +71,7 @@ def searching_view(request):
         'rank' : TARGET.DETAILS.rank,
         'loss' :  TARGET.DETAILS.loss,
         'level' : TARGET.DETAILS.level,
+        'level_percentage' : TARGET.DETAILS.level_progress_percentage,
         'xp_total' : TARGET.DETAILS.xp_total,
         'total_match' : TARGET.DETAILS.total_match,
         'achievements' : ACHIEVEMENTS[TARGET.DETAILS.achievements],

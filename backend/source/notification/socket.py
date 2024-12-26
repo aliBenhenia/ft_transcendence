@@ -93,20 +93,16 @@ class Notifications(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         """Handle received WebSocket messages and commands."""
         try:
-            data = json.loads(text_data)
-            command = data.get('command')
-            if command in {'invite', 'accept', 'cancel'}:
-                recipient, is_valid = await get_recipient(data['recipient'])
-                if command == 'invite':
-                    pass
-                elif command == 'accept':
-                    pass
-                elif command == 'cancel':
-                    pass
-                # if is_valid:
-                #     await forward_event_pingpong(self, information, receiver, self.user)
+            message = json.loads(text_data)
+            message_type = message['type']
+            if message_type == "game_invite":
+                self.handle_game_invite(message)
+
         except Exception as e:
             print(f'[ERROR] Processing command: {e}')
+
+    async def handle_game_invite(self, data):
+        self.send_json(data)
 
     async def broadcast(self, event):
         """Send broadcast event to WebSocket."""
@@ -127,6 +123,21 @@ class Notifications(AsyncWebsocketConsumer):
             'sender': event['sender'],
             'picture': event['picture'],
             'full-name': event['full-name'],
+        })
+
+    async def game_invite(self, event):
+        await self.send_json({
+            'case': 'GAME_INVITE',
+            'room_name': event['room_name'],
+            'sender': event['sender'],
+            'picture': event['picture'],
+            'full-name': event['full-name'],
+        })
+
+    async def game_accepted(self, event):
+        await self.send_json({
+            'case': 'GAME_READY',
+            'room_name' : event['room_name'],
         })
 
     async def on_forward(self, event):

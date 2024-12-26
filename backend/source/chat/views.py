@@ -11,6 +11,9 @@ from channels.layers import get_channel_layer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from .tools import create_message, account_status, is_blocked, chat_structure, new_message, invite
+import json
+from .models import GameInvite
+from pingpong.match import LiveGameFlow 
 
 @api_view(['GET'])
 def fix_online(request):
@@ -119,19 +122,59 @@ def send_game_invite(request):
         if sender.SECURE.on_login:
             return Response({'2FA' : True, 'error' : ERROR[1]}, status=401)
     data = request.data
-    receiver = data.get('account')
+    receiver = data.get('to_invite')
     if not receiver:
         return Response({'error': ERROR[3]}, status=400)
     to_invite, state = AccountLookup(receiver)
     if not state:
         return Response({'error': ERROR[2]}, status=404)
-    message = data.get('message')
-    if not message:
-        return Response({'error': ERROR[5]}, status=400)
-    is_blk, option = is_blocked(sender, receiver)
+    is_blk, option = is_blocked(sender, to_invite)
     if is_blk:
         if option:
             return Response({'error': ERROR[8]}, status=400)
         return Response({'error': ERROR[9]}, status=400)
-    invite(sender, receiver)
-    return Response({'success': SUCCESS[2]}, status=200)
+
+    channel_layer = get_channel_layer()
+    room_name = LiveGameFlow.generate_room_id()
+    LiveGameFlow.games[room_name] = {}
+    GameInvite.objects.create(room_name=room_name, inviter=sender, invited=to_invite,status='pending')
+    notification_data =  {
+        'type': 'game_invite',
+        'room_name' : room_name,
+        'sender' : sender.username,
+        'picture' : str(sender.photo_url),
+        'full-name' : f"{sender.first_name} {sender.last_name}",
+    }    
+    async_to_sync(channel_layer.group_send)(to_invite.token_notify, notification_data)
+    return Response({'success': SUCCESS[3]}, status=200)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def accept_game_invite(request):
+    receiver = request.user
+    if not request.body:
+        return Response({"error": "Empty request body"}, status=400)
+    try:
+        data = json.loads(request.body)
+    except:
+        return Response({"error": "Invalid JSON format"}, status=400)
+    room_name = data.get('room_name', '')
+    try:
+        game_invite = GameInvite.objects.get(room_name=room_name, invited=receiver, status='pending')
+    except GameInvite.DoesNotExist:
+        return Response({'error': 'Invalid game invite'}, status=400)
+    game_invite.status = 'accepted'
+    game_invite.save()
+    inviter = game_invite.inviter
+    invited = receiver
+    players = [inviter, invited]
+    channel_layer = get_channel_layer()
+    for player in players:
+        async_to_sync(channel_layer.group_send)(
+            player.token_notify,
+            {
+                'type' : 'game_accepted',
+                'room_name' : room_name
+            }
+        )
+    return Response({'success': SUCCESS[4]})

@@ -9,6 +9,7 @@ from datetime import datetime
 import time
 from asgiref.sync import sync_to_async
 from channels.db import database_sync_to_async
+from urllib.parse import parse_qs
 
 math = __import__('math')
 green = "\033[92m"
@@ -31,6 +32,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
     game_queues = {}
     LEVEL_RANGE_INCREMENT = 1
     MAX_WAIT_TIME = 30
+    invites = {}
 
     @staticmethod
     def generate_room_id():
@@ -95,7 +97,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                                 if not self.game_queues[level]:
                                     del self.game_queues[level]
                             # Start the game
-                            await self.start_game_with_opponent(opponent)
+                            await self.start_game_with_opponent(opponent, None)
                             return
             wait_time = time.time() - current_time
             if wait_time >= self.MAX_WAIT_TIME:
@@ -120,13 +122,15 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             'score': [0, 0],
         }
 
-    async def start_game_with_opponent(self, opponent):
-            
-            room_name = self.generate_room_id()
+    async def start_game_with_opponent(self, opponent, room_name):
+            print("1")
+            if room_name == None:
+                room_name = self.generate_room_id()
             self.games[room_name] = {
                 'players' : [self, opponent],
                 'game_state' : self.initialize_game_state()
             }
+            print("2")
             for number, player in enumerate([self, opponent], start=1):
                 player.room_name = room_name
                 player.player_number = number
@@ -142,9 +146,11 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                     'player1_avatar' : getattr(self.scope['user'], 'photo_url', None),
                     'player2_avatar' : getattr(opponent.scope['user'], 'photo_url', None)
                 }))
-            self.in_game.append(self.user.username)
-            self.in_game.append(opponent.user.username)
+            print("3")
+            self.in_game.append(self.scope['user'].username)
+            self.in_game.append(opponent.scope['user'].username)
             await asyncio.sleep(5)
+            print("before game task")
             asyncio.create_task(self.game_task(room_name))
 
     def update_game_state(self, state):
@@ -321,40 +327,66 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 await self.end_game(room_name, winner=2)
             await asyncio.sleep(1 / 60)
 
+    async def check_for_second_player(self, room_name, timeout):
+        try:
+            await asyncio.sleep(timeout)
+            if room_name in self.invites and len(self.invites[room_name]) < 2:
+                player = self.invites[room_name][0]
+                await player.send(
+                    text_data=json.dumps({"error": "Timeout: No second player joined."})
+                )
+                del self.invites[room_name]
+        except Exception as e:
+            print(f"Error during timeout check: {e}")
+
     async def connect(self):
-        user = self.scope['user']
-        self.room_name = None
-        # print(f"New connection established {user.username} level {user.DETAILS.level}")
-
-        if user:
-            self.user = user
-            # if player is already in a queue
-            user_level = await sync_to_async(lambda: self.user.DETAILS.level)()
-            if user_level in self.game_queues:
-                queue = self.game_queues[user_level]
-                for p in queue:
-                    if p['player'].scope['user'] == self.user:
-                        await self.send(text_data=json.dumps(
-                        {
-                            'type' : 'Already in queue'
-                        }))
-                        self.close()
-                        return
-            # if player is in game
-            if user.username in self.in_game:
-                await self.send(text_data=json.dumps(
-                {
-                    'type' : 'Already in game'
-                }))
-                self.close()
-                return
+        query_params = parse_qs(self.scope['query_string'].decode())
+        room_name = query_params.get('room_name', [None])[0]
+        if room_name != None:
             await self.accept()
-
-
-
-            await self.add_to_waiting_queue()
+            if room_name in self.games:
+                print("room available")
+                if room_name not in self.invites:
+                    self.invites[room_name] = []
+                self.invites[room_name].append(self)
+                if (len(self.invites[room_name])) == 2:
+                    print("startimg game with opponent")
+                    await self.start_game_with_opponent(self.invites[room_name][1], room_name)
+                    del self.invites[room_name]
+                elif (len(self.invites[room_name])) == 1:
+                    asyncio.create_task(self.check_for_second_player(room_name, timeout=30))
+            else:
+                await self.send(text_data=json.dumps({"error": "Invalid room or game not found."}))
+                await self.close()
+        ##
         else:
-            await self.close()
+            user = self.scope['user']
+            if user:
+                self.user = user
+                # if player is already in a queue
+                user_level = await sync_to_async(lambda: self.user.DETAILS.level)()
+                if user_level in self.game_queues:
+                    queue = self.game_queues[user_level]
+                    for p in queue:
+                        if p['player'].scope['user'] == self.user:
+                            await self.send(text_data=json.dumps(
+                            {
+                                'type' : 'Already in queue'
+                            }))
+                            self.close()
+                            return
+                # if player is in game
+                if user.username in self.in_game:
+                    await self.send(text_data=json.dumps(
+                    {
+                        'type' : 'Already in game'
+                    }))
+                    self.close()
+                    return
+                await self.accept()
+                await self.add_to_waiting_queue()
+            else:
+                await self.close()
 
     async def disconnect(self, close_code):
         print(f"Player {self.scope['user'].username} disconnected")
