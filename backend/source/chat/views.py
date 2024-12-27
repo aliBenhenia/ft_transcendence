@@ -181,3 +181,30 @@ def accept_game_invite(request):
             }
         )
     return Response({'success': SUCCESS[4]})
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def reject_game_invite(request):
+    receiver = request.user
+    if not request.body:
+        return Response({"error": "Empty request body"}, status=400)
+    try:
+        data = json.loads(request.body)
+    except:
+        return Response({"error": "Invalid JSON format"}, status=400)
+    room_name = data.get('room_name', '')
+    try:
+        game_invite = GameInvite.objects.get(room_name=room_name, invited=receiver, status='pending')
+    except GameInvite.DoesNotExist:
+        return Response({'error': 'Invalid game invite'}, status=400)
+    game_invite.status = 'rejected'
+    game_invite.save()
+    inviter = game_invite.inviter
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+            inviter.token_notify,
+            {
+                'type' : 'game_rejected',
+            }
+        )
+    return Response({'success': 'Game invite rejected successfully'})

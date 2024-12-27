@@ -152,7 +152,3 @@ def activate_2FA(request):
             return Response({'success': SUCCESS_MSG['3']}, status=200)
         return Response({'error': ERROR_MSG['23']}, status=400)
     return Response({'error': ERROR_MSG['24']}, status=400)
-
-    
-
-

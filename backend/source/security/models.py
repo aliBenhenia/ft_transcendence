@@ -11,7 +11,6 @@ TOKEN_EXPIRE_TIME = 5
 class SECURITY(models.Model):
 
     # VERIFY 2FA #
-
     code_2fa = models.IntegerField(default=0)
     activate = models.BooleanField(default=False)
     on_login = models.BooleanField(default=False)
