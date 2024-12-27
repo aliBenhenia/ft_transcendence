@@ -27,12 +27,6 @@ export default function ChatPage() {
   const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null
   const online = useSelector((state: any) => state.notifications.online)
 
-  // useEffect(() => {
-  //   if (messagesEndRef.current) {
-  //     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
-  //   }
-  // }, [messages])
-
   useEffect(() => {
     fetchFriends()
 
@@ -210,6 +204,25 @@ export default function ChatPage() {
     }
   }
 
+  const sendGameRequest = async () => {
+    if (!selectedUser?.on_talk || !token) return
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/send_game_invite/`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ to_invite: selectedUser.on_talk }),
+      })
+      const data = await response.json()
+      if (!data.success) {
+        throw new Error(data.message || 'Error sending game request.')
+      }
+    } catch (err) {
+      // message
+    }
+  }
   return (
     <div className="flex flex-col h-screen bg-gray-900 text-white">
       {/* Header */}
@@ -367,7 +380,9 @@ export default function ChatPage() {
                       <VscSend />
                     )}
                   </button>
-                  <button className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <button
+                  onClick={sendGameRequest}
+                  className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <FaGamepad />
                   </button>
                 </div>

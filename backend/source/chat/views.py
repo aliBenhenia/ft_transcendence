@@ -123,6 +123,7 @@ def send_game_invite(request):
             return Response({'2FA' : True, 'error' : ERROR[1]}, status=401)
     data = request.data
     receiver = data.get('to_invite')
+    print (receiver)
     if not receiver:
         return Response({'error': ERROR[3]}, status=400)
     to_invite, state = AccountLookup(receiver)
