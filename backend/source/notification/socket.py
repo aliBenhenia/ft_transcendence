@@ -16,11 +16,8 @@ class Notifications(AsyncWebsocketConsumer):
 
     async def connect(self):
         try:
-            # Extract and authenticate user token
-            token = self.scope['query_string'].decode().split('=')[1]
-            self.user, is_authenticated = await extract_auth_user(token)
-            
-            if is_authenticated:
+            user = self.scope['user']
+            if user:
                 await self.set_online_status(True)  # Mark user as online in DB
                 await self.accept()
                 await self.add_user_to_online_group()  # Track online status in memory
