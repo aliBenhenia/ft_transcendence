@@ -8,9 +8,11 @@ import Notification from './components/notif';
 import { updateProfile } from "@/store/slices/profileSlice";
 import FetchProfile from '@/services/FetchProfile';
 import useWebSocket from '@/services/useWebSocket';
+import acceptGameInvite from '@/services/accept_game_invite';
 import { RootState } from '@/store/store';
 import styles from './layout.module.css';
 import DropdownMenu from './components/DropdownMenu';
+import {message,Button, notification} from 'antd'
 
 interface LayoutProps {
   children: ReactNode;
@@ -18,6 +20,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const dispatch = useDispatch();
   const urlSocket = process.env.NEXT_PUBLIC_API_URL || "localhost:9003";
+  const { notifications, unreadCount, error } = useSelector(state => (state as any).notifications);
   useWebSocket(`ws://${urlSocket.slice(7)}/ws/connection/?token=`);
   useEffect(() => {
     const token = localStorage.getItem("accessToken") || '';
@@ -29,6 +32,32 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
     getProfileData();
   }, []);
+
+
+  useEffect(()=>{
+    const latestNotification = notifications[notifications.length - 1]; 
+    if (latestNotification && latestNotification.subject === `GAME_INVITE`)
+    {
+      console.log(`recueved data ===>`,latestNotification);
+      notification.open({
+        message: `GAME INVITE from ${latestNotification.sender}`,
+        description: 'This is the content of the notification.',
+        duration: 33,
+        btn: (
+          <div>
+            <Button type="primary" onClick={() => acceptGameInvite(latestNotification.room_name)}>Accept</Button>
+            <Button onClick={() => console.log('Rejected')}>Reject</Button>
+          </div>
+        ),
+        onClick: () => {
+          console.log('Notification Clicked!');
+        },
+      });
+    }
+     
+  },[notifications])
+
+
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#001529]">

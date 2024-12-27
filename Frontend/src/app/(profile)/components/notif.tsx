@@ -18,6 +18,7 @@ const Notification:React.FC  = () => {
             dispatch(fetchNotifications(accessToken) as any); 
         }
     }, []);
+    
 
     const handleBellClick = () => {
         setDropdownOpen(prev => !prev);

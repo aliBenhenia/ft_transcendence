@@ -17,6 +17,7 @@ class Notifications(AsyncWebsocketConsumer):
     async def connect(self):
         try:
             user = self.scope['user']
+            self.user = user
             if user:
                 await self.set_online_status(True)  # Mark user as online in DB
                 await self.accept()
