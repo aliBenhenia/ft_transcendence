@@ -88,7 +88,10 @@ const useWebSocket = (url: string) => {
           handleNotification('Unfriended', `Unfriended by: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
           addNewNotification(serverMessage);
           break;
-
+        case "GAME_INVITE":
+          handleNotification('Game Invite', `Invite from: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
+          addNewNotification(serverMessage);
+          break;
         default:
           console.warn("Unhandled message case:", messageCase);
       }
