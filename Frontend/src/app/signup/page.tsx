@@ -172,6 +172,7 @@ export default function CreateAccount() {
             <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
               <div className="flex-1">
                 <input
+                autoComplete="off"
                   type="text"
                   name="firstName"
                   placeholder="First Name"
@@ -183,6 +184,7 @@ export default function CreateAccount() {
               </div>
               <div className="flex-1">
                 <input
+                autoComplete="off"
                   type="text"
                   name="lastName"
                   placeholder="Last Name"
@@ -196,6 +198,7 @@ export default function CreateAccount() {
 
             <div>
               <input
+               autoComplete="off"
                 type="text"
                 name="username"
                 placeholder="Username"
@@ -208,6 +211,7 @@ export default function CreateAccount() {
 
             <div>
               <input
+              autoComplete="off"
                 type="email"
                 name="email"
                 placeholder="Email"
@@ -228,6 +232,7 @@ export default function CreateAccount() {
                     {hidePass ? <FaEyeSlash /> : <FaEye />}
                   </span>
                   <input
+                  autoComplete="off"
                     type={hidePass ? 'password' : 'text'}
                     name="password"
                     placeholder="Password"
@@ -248,6 +253,7 @@ export default function CreateAccount() {
                     {hideConfirmPass ? <FaEyeSlash /> : <FaEye />}
                   </span>
                   <input
+                  autoComplete="off"
                     type={hideConfirmPass ? 'password' : 'text'}
                     name="confirmPassword"
                     placeholder="Confirm Password"

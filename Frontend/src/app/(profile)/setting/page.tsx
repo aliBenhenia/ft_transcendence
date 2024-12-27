@@ -162,6 +162,7 @@ export default function Settings() {
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-300">Username</label>
                     <input
+                    autoComplete = "username"
                       type="text"
                       value={profileState.username}
                       readOnly
@@ -171,6 +172,7 @@ export default function Settings() {
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-300">Email</label>
                     <input
+                    autoComplete = "email"
                       type="email"
                       value={profileState.email}
                       readOnly
@@ -180,6 +182,7 @@ export default function Settings() {
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-300">First Name</label>
                     <input
+                      autoComplete = "given-name"
                       type="text"
                       value={firstName}
                       onChange={(e) => setFirstName(e.target.value)}
@@ -190,6 +193,7 @@ export default function Settings() {
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-300">Last Name</label>
                     <input
+                    autoComplete = "family-name"
                       type="text"
                       value={lastName}
                       onChange={(e) => setLastName(e.target.value)}
@@ -209,6 +213,7 @@ export default function Settings() {
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-300">Current Password</label>
                     <input
+                     autoComplete = "current-password"
                       type="password"
                       value={oldPassword}
                       onChange={(e) => setOldPassword(e.target.value)}
@@ -219,6 +224,7 @@ export default function Settings() {
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-300">New Password</label>
                     <input
+                    autoComplete = "new-password"
                       type="password"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
@@ -229,6 +235,7 @@ export default function Settings() {
                   <div className="space-y-2">
                     <label className="block text-sm font-medium text-gray-300">Confirm New Password</label>
                     <input
+                    autoComplete = "new-password"
                       type="password"
                       value={rePassword}
                       onChange={(e) => setRePassword(e.target.value)}

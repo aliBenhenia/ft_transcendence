@@ -165,6 +165,7 @@ export default function SignIn() {
             </div>
             <div className="relative ">
               <input
+                autoComplete="off"
                 ref={inputPassword}
                 type={hidePass ? "password" : "text"}
                 name="password"
