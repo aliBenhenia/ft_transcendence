@@ -323,7 +323,9 @@ class LiveGameFlow(AsyncWebsocketConsumer):
 
     async def connect(self):
         user = self.scope['user']
+        self.room_name = None
         # print(f"New connection established {user.username} level {user.DETAILS.level}")
+
         if user:
             self.user = user
             # if player is already in a queue
@@ -347,6 +349,9 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 self.close()
                 return
             await self.accept()
+
+
+
             await self.add_to_waiting_queue()
         else:
             await self.close()

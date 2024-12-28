@@ -33,3 +33,4 @@ def match_history(request):
     games = Game.objects.filter(Q(winner=user) | Q(loser=user)).order_by('-end_time')
     serializer = GameSerializer(games, many=True)
     return Response(serializer.data)
+
