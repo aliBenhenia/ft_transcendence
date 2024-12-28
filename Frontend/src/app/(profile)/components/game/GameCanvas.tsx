@@ -57,29 +57,32 @@ const GameCanvas: React.FC = () => {
         console.log("Game starting: ", data);
         setPlayer1({ username: data.player1_username, avatar: data.player1_avatar });
         setPlayer2({ username: data.player2_username, avatar: data.player2_avatar });
-        setIsWaiting(false);
         setGameState(data.game_state);
       } else if (data.type === "game_state") {
         console.log("Game state: ", data.game_state);
         setGameState(data.game_state);
         setIsWaiting(false);
-
-        // if (data.game_state.score[0] === WINNING_SCORE) {
-        //   setWinner("Player 1");
-        //   setGameOver(true);
-        // } else if (data.game_state.score[1] === WINNING_SCORE) {
-        //   setWinner("Player 2");
-        //   setGameOver(true);
-        // }
       } else if (data.type === "waiting") {
         setIsWaiting(true);
       }
-      else if (data.type === 'game_ends') {
+      else if (data.type === "game ends") {
         setGameOver(true);
-        setGameResult({
-          message: data.message,
-          finalScore: data.final_score,
-        });
+        setGameState(data.game_state);
+        if (data.message === "You win! Opponent disconnected") {
+          setGameResult({
+            message: data.message,
+            finalScore: [gameState?.score[0] || 0, gameState?.score[1] || 0],
+          });
+        } else {
+          setGameResult({
+            message: data.message,
+            finalScore: data.final_score || [0, 0],
+          });
+        }
+      } else if (data.type === "Already in queue" || data.type === "Already in game") {
+        alert(data.type === "Already in queue" 
+          ? "You are already in a queue!" 
+          : "You are already in a game!");
       }
     };
 
@@ -112,11 +115,6 @@ const GameCanvas: React.FC = () => {
       ctx.fillRect(10, gameState.player1Y, 10, 100);
       ctx.fillRect(canvasRef.current.width - 20, gameState.player2Y, 10, 100);
 
-      // // Draw scores
-      // ctx.font = "20px Arial";
-      // ctx.fillText(gameState.score[0].toString(), canvasRef.current.width / 4, 30);
-      // ctx.fillText(gameState.score[1].toString(), (canvasRef.current.width * 3) / 4, 30);
-
     }
   }, [gameState]);
 
@@ -139,20 +137,33 @@ const GameCanvas: React.FC = () => {
       ws.close();
       console.log("Left the game.");
     }
+    // setWinner("You left the game.");
     setGameOver(true);
-    setWinner("You left the game.");
-    router.push("/game");
+    setIsWaiting(false);
+    setGameResult({
+      message: "You left the game.",
+      finalScore: [gameState?.score[0] || 0, gameState?.score[1] || 0],
+    });
+    setTimeout(() => {
+      router.push("/game");
+    }, 1000);
   };
   const leaveGame2 = () => {
     if (ws) {
       ws.close();
       console.log("Left the game.");
     }
+    // setGameOver(true);
+    // setWinner("You left the game.");
     setGameOver(true);
-    setWinner("You left the game.");
+    setIsWaiting(false);
+    setGameResult({
+      message: "You left the game.",
+      finalScore: [gameState?.score[0] || 0, gameState?.score[1] || 0],
+    });
     setTimeout(() => {
       router.push("/game");
-    }, 1000);
+    }, 5000);
   };
   const handleRestart = () => {
     setGameOver(false);
@@ -184,7 +195,7 @@ const GameCanvas: React.FC = () => {
               backgroundColor: '#07325F',
             }}
           ></canvas>
-          {gameOver && gameResult.message && (
+          {gameOver && gameResult && (
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
               <p className="text-4xl font-bold text-white mb-4">{gameResult.message}</p>
               <p className="text-2xl text-white">Final Score: {gameResult.finalScore[0]} : {gameResult.finalScore[1]}</p>
