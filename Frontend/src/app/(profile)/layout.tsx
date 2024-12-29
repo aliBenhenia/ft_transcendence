@@ -9,6 +9,7 @@ import { updateProfile } from "@/store/slices/profileSlice";
 import FetchProfile from '@/services/FetchProfile';
 import useWebSocket from '@/services/useWebSocket';
 import acceptGameInvite from '@/services/accept_game_invite';
+import rejectGameInvite  from '@/services/reject_game_invite';
 import { RootState } from '@/store/store';
 import styles from './layout.module.css';
 import DropdownMenu from './components/DropdownMenu';
@@ -46,7 +47,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         btn: (
           <div>
             <Button type="primary" onClick={() => acceptGameInvite(latestNotification.room_name)}>Accept</Button>
-            <Button onClick={() => console.log('Rejected')}>Reject</Button>
+            <Button type="danger" onClick={() => rejectGameInvite(latestNotification.room_name)()}>refuse</Button>
           </div>
         ),
         onClick: () => {

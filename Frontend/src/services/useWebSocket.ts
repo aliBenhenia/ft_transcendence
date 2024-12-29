@@ -101,7 +101,10 @@ const useWebSocket = (url: string) => {
           addNewNotification(serverMessage);
           break;
         case "GAME_READY":
-          router.push(`/game/${serverMessage.room_name}`)
+          router.push(`/game/`)
+            
+        case "GAME_REJECTED":
+          handleNotification('Game Invite Rejected', `Rejected by: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
             
             break;
         default:
