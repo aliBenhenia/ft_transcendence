@@ -67,13 +67,13 @@ const GameCanvas: React.FC = () => {
       }
       else if (data.type === "game ends") {
         setGameOver(true);
-        setGameState(data.game_state);
+        //setGameState(data.game_state);
         if (data.message === "You win! Opponent disconnected") {
           setGameResult({
             message: data.message,
             finalScore: [gameState?.score[0] || 0, gameState?.score[1] || 0],
           });
-        } else {
+        } else if (data.message === "You win!"){
           setGameResult({
             message: data.message,
             finalScore: data.final_score || [0, 0],
@@ -137,7 +137,6 @@ const GameCanvas: React.FC = () => {
       ws.close();
       console.log("Left the game.");
     }
-    // setWinner("You left the game.");
     setGameOver(true);
     setIsWaiting(false);
     setGameResult({
@@ -153,17 +152,14 @@ const GameCanvas: React.FC = () => {
       ws.close();
       console.log("Left the game.");
     }
-    // setGameOver(true);
-    // setWinner("You left the game.");
+
     setGameOver(true);
     setIsWaiting(false);
     setGameResult({
       message: "You left the game.",
       finalScore: [gameState?.score[0] || 0, gameState?.score[1] || 0],
     });
-    setTimeout(() => {
       router.push("/game");
-    }, 5000);
   };
   const handleRestart = () => {
     setGameOver(false);
@@ -216,7 +212,7 @@ const GameCanvas: React.FC = () => {
           )}
         </div>
       )}
-      {!gameOver && (
+      {!gameOver &&(
         <button
           onClick={leaveGame2}
           className="absolute bottom-8 right-8 px-4 py-2 bg-red-500 text-white font-bold rounded-lg hover:bg-red-700"
