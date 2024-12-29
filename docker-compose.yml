@@ -17,6 +17,7 @@ services:
       - ./backend/source:/server
     networks:
       - mynetwork
+    restart: on-failure
   
   nextjs:
     build:
@@ -31,6 +32,9 @@ services:
       - ./Frontend:/app
       - /app/node_modules
       - /app/.next
+    networks:
+      - mynetwork
+    restart: on-failure
     # command: npm run start
 
   # redis:

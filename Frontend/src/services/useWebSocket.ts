@@ -103,8 +103,8 @@ const useWebSocket = (url: string) => {
         case "GAME_READY":
           router.push(`/game/`)
             
-        case "GAME_REJECTED":
-          handleNotification('Game Invite Rejected', `Rejected by: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
+        // case "GAME_REJECTED":
+        //   handleNotification('Game Invite Rejected', `Rejected by: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
             
             break;
         default:
