@@ -74,7 +74,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
-    
+    'django.contrib.sessions',
 ]
 
 # ATHENTICATION MODLE
@@ -113,6 +113,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
 ]
 
 # CROSS-ORIGIN RESOURCE SHARING (CORS)
@@ -150,3 +151,15 @@ OAUTH2_CONFIG = {
     'redirect_uri': 'http://localhost:9001',
     'scope': 'public',
 }
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Default backend
+
+#
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'apikey'  # Replace with your email
+EMAIL_HOST_PASSWORD = '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'    # Replace with your email's app password
+DEFAULT_FROM_EMAIL = 'marwan.zaroual.1337.1@gmail.com'

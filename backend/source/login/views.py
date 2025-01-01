@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .tools import AccountLookup, generate_token, on_ready, make_api_call, ConnectToApplication
+from .tools import AccountLookup, generate_token, on_ready, make_api_call, ConnectToApplication, generate_code, send_email
 
 class TokenOnLoginPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
@@ -26,9 +26,13 @@ class TokenOnLoginPairView(TokenObtainPairView):
             token_serializer = TokenObtainPairSerializer(data={'email': account.email, 'password': password})
             if token_serializer.is_valid():
                 if account.SECURE.activate:
-                    account.SECURE.login(True)
-                token_serializer.validated_data['2FA'] = account.SECURE.on_login
-                return Response(token_serializer.validated_data, status=200)
+                    code  = generate_code()
+                    request.session[str(account.id)] = {'2fa' : '2fa_pending', 'code' : code}
+                    request.session.save()
+                    send_email(account.email, code)
+                    return Response({'2FA': True}, status=200)
+                else:
+                    return Response(token_serializer.validated_data, status=200)
         except:
             pass
         return Response({'error': ERROR_MSG[4]}, status=404)

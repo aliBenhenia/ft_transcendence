@@ -11,5 +11,3 @@ urlpatterns = [
     path('notification/', include('notification.urls')),
     
 ]
-
-
