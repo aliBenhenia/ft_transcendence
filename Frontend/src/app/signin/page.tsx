@@ -98,8 +98,8 @@ export default function SignIn() {
 
       const result = response.data;
       if (response.status == 200) {
-        localStorage.setItem("accessToken", result.access);
         if (result["2FA"] === true) {
+          localStorage.setItem(`user_id`,result.user_id)
           message.success("You need to verify 2FA authentication");
           router.push("/2fa");
           setLoading(false);
@@ -107,6 +107,7 @@ export default function SignIn() {
         }
         setLoading(true);
         message.success("Login success");
+        localStorage.setItem("accessToken", result.access);
         router.push("/dashboard");
       } else {
         message.error("Error during login");
@@ -176,7 +177,7 @@ export default function SignIn() {
               {passErr && <p className="text-red-500">Password must be at least 8 characters long.</p>}
               {error.password && !passErr && <p className="text-red-500">{error.password}</p>}
             <div className="flex justify-between items-center">
-              <Link className="text-gray-400 hover:underline" href="/reset-password">
+              <Link className="text-gray-400 hover:underline" href="/request-password-reset">
                 Forgot password?
               </Link>
             </div>

@@ -8,7 +8,7 @@ from .models import REQUEST, FRIENDS, BLOCKER
 from notification.tools import create_notification
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
-from .tools import get_user, re, on_block, is_twofactor, is_blocked
+from .tools import get_user, re, on_block, is_blocked
 
 def make_notification(sender, reciver, subject):
     notify = create_notification(sender, reciver, subject)
@@ -31,9 +31,7 @@ def make_notification(sender, reciver, subject):
 @permission_classes([IsAuthenticated])
 def account_request(request_id):
     account = request_id.user
-    if is_twofactor(account):
-        return Response({'error' : ERROR_MSG['15'], '2FA' : True}, status=401)
-
+    
     INFO = request_id.data
     reciver_user = INFO.get('username')
     client, error = get_user(reciver_user)
@@ -67,8 +65,7 @@ def account_request(request_id):
 @permission_classes([IsAuthenticated])
 def request_accept(request_id):
     account = request_id.user
-    if is_twofactor(account):
-        return Response({'error' : ERROR_MSG['15'], '2FA' : True}, status=401)
+    
     INFO = request_id.data
     reciver_user = INFO.get('username')
     client, error = get_user(reciver_user)
@@ -102,8 +99,7 @@ def request_accept(request_id):
 @permission_classes([IsAuthenticated])
 def request_decline(request_id):
     account = request_id.user
-    if is_twofactor(account):
-        return Response({'error' : ERROR_MSG['15'], '2FA' : True}, status=401)
+    
     INFO = request_id.data
     reciver_user = INFO.get('username')
     client, error = get_user(reciver_user)
@@ -128,8 +124,7 @@ def request_decline(request_id):
 @permission_classes([IsAuthenticated])
 def friend_remove(request_id):
     account = request_id.user
-    if is_twofactor(account):
-        return Response({'error' : ERROR_MSG['15'], '2FA' : True}, status=401)
+    
     INFO = request_id.data
     reciver_user = INFO.get('username')
     client, error = get_user(reciver_user)

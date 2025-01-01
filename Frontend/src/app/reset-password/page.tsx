@@ -2,115 +2,54 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Button, message, notification } from "antd";
-import { motion } from "framer-motion";
-import { UserOutlined, LockOutlined, CheckCircleOutlined, SendOutlined } from "@ant-design/icons";
-import { FiCheckCircle } from "react-icons/fi";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { message, notification } from "antd"; // For showing messages and notifications
 
 const ResetPassword = () => {
   const router = useRouter();
-  const [step, setStep] = useState(1);
-  const [account, setAccount] = useState("");
-  const [code, setCode] = useState("");
-  const [token, setToken] = useState("");
+  const searchParams = useSearchParams();
+  
+  // Extract the uid and token from query params
+  const uid = searchParams.get("uid");
+  const token = searchParams.get("token");
+
   const [password, setPassword] = useState("");
   const [repassword, setRepassword] = useState("");
   const [loading, setLoading] = useState(false);
-  const [locateLoading, setLocateLoading] = useState(false);
-  const [verifyLoading, setVerifyLoading] = useState(false);
-  const [user, setUser] = useState({ email: "", fullName: "", picture: "" });
 
-  useEffect(() => {
-    // console.log("Reset Password page loaded", process.env.NODE_ENV);
-    // console.log("Reset Password page loaded===>", process.env.NEXT_PUBLIC_API_URL);
-  }, []);
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // Prevent default form submission
 
-  // Step 1: Locate Account
-  const locateAccount = async () => {
-    setLocateLoading(true);
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_URL}/secure/reset-password/locate/?account=${account}`
-      );
-      setUser(response.data.success);
-      setStep(2);
-      message.success("Account located successfully.");
-    } catch (err) {
-      handleError(err);
-    } finally {
-      setLocateLoading(false);
-    }
-  };
-
-  // Step 2: Send Verification Code
-  const sendVerificationCode = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/secure/reset-password/send/`,
-        { account }
-      );
-      setStep(3);
-      message.success(response.data.success);
-    } catch (err) {
-      handleError(err);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Step 3: Verify Code
-  const verifyCode = async () => {
-    setVerifyLoading(true);
-    try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/secure/reset-password/verify/`,
-        { account, code }
-      );
-      setToken(response.data.token);
-      setStep(4);
-      message.success(response.data.success);
-    } catch (err) {
-      handleError(err);
-    } finally {
-      setVerifyLoading(false);
-    }
-  };
-
-  // Step 4: Change Password
-  const changePassword = async (e: React.FormEvent) => {
-    e.preventDefault(); // Prevent form submission
     if (password !== repassword) {
       message.error("Passwords do not match.");
       return;
     }
-    if (password.length < 8) {
-      message.error("Password must be at least 8 characters long.");
-      return;
-    }
-    if (password.trim() === "") {
-      message.error("Password cannot be empty.");
-      return;
-    }
 
     setLoading(true);
+    console.log(uid)
+    console.log(token)
     try {
       const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_API_URL}/secure/reset-password/update/${token}/`,
-        { password, repassword }
+        `${process.env.NEXT_PUBLIC_API_URL}/secure/reset-password/`, // Make sure this URL is correct for your backend
+        {
+          uid,
+          token,
+          newPassword:password,
+        }
       );
-      setStep(5);
-      message.success(response.data.success);
-    } catch (err: any) {
-      message.error(err.response?.data?.error || "An error occurred during password update.");
+
+      message.success("Password reset successful!");
+      router.push("/signin"); // Redirect to login page after successful password reset
+    } catch (err) {
+      handleError(err);
     } finally {
       setLoading(false);
     }
   };
 
   // Handle API errors
-  const handleError = (err: any) => {
+  const handleError = (err) => {
     if (err.response) {
       const { data } = err.response;
       if (data.error) message.error(data.error);
@@ -120,143 +59,47 @@ const ResetPassword = () => {
     }
   };
 
-  // Render steps with animations
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-900 to-gray-800 text-white">
-      <motion.div
-        className="w-full max-w-lg p-8 space-y-6 bg-gray-900 rounded-xl shadow-2xl"
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <h2 className="text-3xl font-semibold text-center">Reset Your Password now</h2>
+      <div className="w-full max-w-lg p-8 space-y-6 bg-gray-900 rounded-xl shadow-2xl">
+        <h2 className="text-3xl font-semibold text-center">Reset Your Password</h2>
 
-        {step === 1 && (
-          <div className="space-y-4">
-      <div className="flex items-center bg-gray-800 rounded-2xl p-4">
-          <UserOutlined className="text-gray-400 mr-3" />
-          <input
-            type="text"
-            placeholder="Enter Username or Email"
-            value={account}
-            onChange={(e) => setAccount(e.target.value)}  // Corrected here
-            className="bg-transparent w-full text-white outline-none"
-          />
-        </div>
-            <Button
-              type="primary"
-              icon={<SendOutlined />}
-              loading={locateLoading}
-              onClick={locateAccount}
-              className="w-full"
-            >
-              Locate Account
-            </Button>
-          </div>
-        )}
-
-        {step === 2 && (
-          <div className="space-y-4 text-center">
-            <img
-              src={user.picture}
-              alt="Avatar"
-              className="w-24 h-24 mx-auto rounded-full border-4 border-blue-600 shadow-lg"
+        {/* Password Input */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {/* New Password Input */}
+          <div className="flex items-center bg-gray-800 rounded-2xl p-4">
+            <input
+              type="password"
+              placeholder="Enter New Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="bg-transparent w-full text-white outline-none placeholder-gray-400"
+              required
             />
-            <p className="text-xl font-medium">{user.fullName}</p>
-            <p className="text-sm text-gray-400">{user.email}</p>
-            <Button
-              type="primary"
-              icon={<SendOutlined />}
-              loading={loading}
-              onClick={sendVerificationCode}
-              className="w-full"
-            >
-              Send Verification Code
-            </Button>
           </div>
-        )}
 
-        {step === 3 && (
-          <div className="space-y-4">
-            <div className="flex items-center bg-gray-800 rounded-2xl p-4">
-              <LockOutlined className="text-gray-400 mr-3" />
-              <input
-                type="number"
-                placeholder="Enter Verification Code"
-                value={code}
-                onChange={(e) => setCode(e.target.value)}  // Corrected here
-                className="bg-transparent w-full text-white outline-none"
-              />
-            </div>
-            <Button
-              type="primary"
-              icon={<CheckCircleOutlined />}
-              loading={verifyLoading}
-              onClick={verifyCode}
-              className="w-full"
-            >
-              Verify Code
-            </Button>
+          {/* Confirm Password Input */}
+          <div className="flex items-center bg-gray-800 rounded-2xl p-4">
+            <input
+              type="password"
+              placeholder="Confirm New Password"
+              value={repassword}
+              onChange={(e) => setRepassword(e.target.value)}
+              className="bg-transparent w-full text-white outline-none placeholder-gray-400"
+              required
+            />
           </div>
-        )}
 
-        {step === 4 && (
-        <form onSubmit={changePassword} className="space-y-4">
-      
-        {/* Password Input Field */}
-        <div className="flex items-center bg-gray-800 rounded-2xl p-4">
-          <LockOutlined className="text-gray-400 mr-3" />
-          <input
-            type="password"
-            placeholder="Enter New Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="bg-transparent w-full text-white outline-none"
-            autoComplete="new-password"
-            aria-label="New Password"   // For screen readers
-            required // Optional: Makes sure the field is required
-          />
-        </div>
-      
-        {/* Confirm Password Input Field */}
-        <div className="flex items-center bg-gray-800 rounded-2xl p-4">
-          <LockOutlined className="text-gray-400 mr-3" />
-          <input
-            type="password"
-            placeholder="Confirm New Password"
-            value={repassword}
-            onChange={(e) => setRepassword(e.target.value)}
-            className="bg-transparent w-full text-white outline-none"
-            autoComplete="new-password"
-            aria-label="Confirm New Password"  // For screen readers
-            required // Optional: Makes sure the field is required
-          />
-        </div>
-      
-        {/* Submit Button */}
-        <Button type="primary" icon={<CheckCircleOutlined />} loading={loading} htmlType="submit" className="w-full">
-          Change Password
-        </Button>
-      </form>
-      
-        )}
-
-        {step === 5 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="text-center space-y-3"
+          {/* Reset Password Button */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
           >
-            <FiCheckCircle className="text-green-500 text-6xl mx-auto" />
-            <p className="text-xl font-semibold text-green-400">Password Changed Successfully!</p>
-            <p>You can now log in with your new password.</p>
-            <Button type="primary" onClick={() => router.push("/signin")}>
-              Go to login page
-            </Button>
-          </motion.div>
-        )}
-      </motion.div>
+            {loading ? "Resetting..." : "Reset Password"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

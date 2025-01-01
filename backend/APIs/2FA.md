@@ -4,7 +4,7 @@ _______________________________________________________________________________
 
 # GET 2FA CODE
 
-['GET'] API : http://127.0.0.1:9003/secure/verification/send/
+['GET'] API : http://127.0.0.1:9003/secure/verification/send/ // unused
 
 # HEADERS :
 
@@ -47,7 +47,8 @@ _______________________________________________________________________________
 # PAYLOAD :
 
 {
-    "code" : "904854"
+    "code" : "904854",
+    user_id : number
 }
 
 # Note : After 3 request to incorrect 2FA Code the user will be Blocked for specific time

@@ -12,7 +12,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes
 from django.urls import reverse
-
+from login.tools import send_email
 
 @api_view(['GET'])
 def find_account(request):
@@ -114,7 +114,7 @@ def request_password_reset(request):
         frontend_url = 'http://localhost:9001'
         reset_path = f"/reset-password/?uid={uid}&token={token}"
         reset_link = frontend_url + reset_path
-
+        send_email(email, reset_link)
         print(reset_link)
         return Response({'message': 'Password reset link sent to your email.'}, status=200)
     except Register.DoesNotExist:

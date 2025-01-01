@@ -22,12 +22,6 @@ def on_block(account, client):
     block = BLOCKER.objects.create(blocker=account, blocked=client)
     return block, False
 
-def is_twofactor(account):
-    if account.SECURE.activate:
-        if account.SECURE.on_login:
-            return True
-    return False
-
 def is_blocked(account, client):
 
     already = BLOCKER.objects.filter(Q(blocker=account, blocked=client) | Q(blocker=client, blocked=account)).first()

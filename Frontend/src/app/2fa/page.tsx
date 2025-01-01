@@ -11,32 +11,33 @@ const TwoFactorAuth = () => {
     const [loading, setLoading] = useState(false);
     const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
 
-    const send2FACode = async () => {
-        try {
-            setLoading(true);
-            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/secure/verification/send/`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            message.success(response.data.success);
-        } catch (error:any) {
-            if (error.response) {
-            } else {
-                message.error("An unexpected error occurred.");
-            }
-            message.error(error.response.data.error);
-        } finally {
-            setLoading(false);
-        }
-    };
+    // const send2FACode = async () => {
+    //     try {
+    //         setLoading(true);
+    //         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/secure/verification/send/`, {
+    //             headers: { 'Authorization': `Bearer ${token}` }
+    //         });
+    //         message.success(response.data.success);
+    //     } catch (error:any) {
+    //         if (error.response) {
+    //         } else {
+    //             message.error("An unexpected error occurred.");
+    //         }
+    //         message.error(error.response.data.error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     const verify2FACode = async () => {
+        const user_id = localStorage.getItem(`user_id`);
         try {
             setLoading(true);
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/secure/verification/check/`, 
-                { code }, 
-                { headers: { 'Authorization': `Bearer ${token}` } }
+                { code,user_id }, 
             );
             message.success(response.data.success);
+            localStorage.setItem(`accessToken`,response.data.access);
             router.push("/dashboard");
         } catch (error:any) {
             if (error.response) {
@@ -53,13 +54,13 @@ const TwoFactorAuth = () => {
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-[#001529]">
             <h1 className="text-3xl font-bold text-white mb-6">Two-Factor Authentication</h1>
-            <button 
+            {/* <button 
                 onClick={send2FACode} 
                 className="mb-4 p-3 bg-[#07325F] text-white rounded-lg shadow hover:bg-[#0d0e0f] transition duration-300"
                 disabled={loading}
             >
                 Send 2FA Code
-            </button>
+            </button> */}
             <input 
                 type="text" 
                 value={code} 

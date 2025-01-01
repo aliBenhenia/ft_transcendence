@@ -31,9 +31,9 @@ def make_api_call(access_token):
         pass
     return False, None
 
-def send_email(recipient, code):
+def send_email(recipient, message):
     subject = "Test Email from Django"
-    message = str(code)
+    message = str(message)
     sender = "marwan.zaroual.1337.1@gmail.com"
     recipient_list = []
     recipient_list.append(recipient)

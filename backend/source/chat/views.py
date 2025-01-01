@@ -29,9 +29,6 @@ def fix_online(request):
 @permission_classes([IsAuthenticated])
 def query_conversation(request):
     account = request.user
-    if account.SECURE.activate:
-        if account.SECURE.on_login:
-            return Response({'2FA': True, 'error': ERROR[1]}, status=401)
     search = request.GET.get('account')
     if not search:
         return Response({'error': ERROR[3]}, status=400)
@@ -70,9 +67,6 @@ def query_conversation(request):
 @permission_classes([IsAuthenticated])
 def list_conversation(request):
     account = request.user
-    if account.SECURE.activate:
-        if account.SECURE.on_login:
-            return Response({'2FA': True, 'error': ERROR[1]}, status=401)
     
     messages = MESSAGES.objects.filter(Q(account=account) | Q(sender=account))
     if not messages:
@@ -89,10 +83,6 @@ def list_conversation(request):
 @permission_classes([IsAuthenticated])
 def send_message(request):
     account = request.user
-    if account.SECURE.activate:
-        if account.SECURE.on_login:
-            return Response({'2FA' : True, 'error' : ERROR[1]}, status=401)
-
     INFO = request.data
     reciver = INFO.get('account')
     if not reciver:
