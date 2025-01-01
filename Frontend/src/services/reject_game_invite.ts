@@ -26,7 +26,6 @@ const rejectGameInvite = (roomName) => async () => {
         
         // Handle success
         console.log('Game invite rejected:', response.data);
-        message.success('Game invite rejected successfully');
         
         return response.data;  
     } catch (error) {

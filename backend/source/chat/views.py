@@ -195,6 +195,9 @@ def reject_game_invite(request):
             inviter.token_notify,
             {
                 'type' : 'game_rejected',
+                'sender' : receiver.username,
+                'picture' : str(receiver.photo_url),
+                'full-name' : f"{receiver.first_name} {receiver.last_name}",
             }
         )
     return Response({'success': 'Game invite rejected successfully'})

@@ -140,7 +140,10 @@ class Notifications(AsyncWebsocketConsumer):
 
     async def game_rejected(self, event):
         await self.send_json({
-            'case': 'GAME_REJECTED'
+            'case': 'GAME_REJECTED',
+            'sender': event['sender'],
+            'picture': event['picture'],
+            'full-name': event['full-name'],
         })
 
     async def on_forward(self, event):

@@ -20,7 +20,6 @@ const useWebSocket = (url: string) => {
   const router = useRouter();
 
   useEffect(() => {
-    // const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
     const token = localStorage.getItem('accessToken');
     if (!url || !token) return;
     const socket = new WebSocket(`${url}${token}`);
@@ -57,7 +56,7 @@ const useWebSocket = (url: string) => {
     };
 
     socket.onmessage = (event: MessageEvent) => {
-      console.log("WebSocket message received:", event.data);
+      console.log("WebSocket message received:===>", event.data);
       const serverMessage = JSON.parse(event.data);
       const { case: messageCase, sender, picture } = serverMessage;
 
@@ -97,14 +96,14 @@ const useWebSocket = (url: string) => {
           addNewNotification(serverMessage);
           break;
         case "GAME_INVITE":
-          handleNotification('Game Invite', `Invite from: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
           addNewNotification(serverMessage);
           break;
         case "GAME_READY":
-          router.push(`/game/`)
+          // redirect to game
+          break;
             
-        // case "GAME_REJECTED":
-        //   handleNotification('Game Invite Rejected', `Rejected by: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
+        case "GAME_REJECTED":
+          handleNotification('Game Invite Rejected', `Rejected by: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
             
             break;
         default:

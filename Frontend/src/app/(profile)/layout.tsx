@@ -22,6 +22,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const dispatch = useDispatch();
   const urlSocket = process.env.NEXT_PUBLIC_API_URL || "localhost:9003";
   const { notifications, unreadCount, error } = useSelector(state => (state as any).notifications);
+  const keyNo = `test`
   useWebSocket(`ws://${urlSocket.slice(7)}/ws/connection/?token=`);
   useEffect(() => {
     const token = localStorage.getItem("accessToken") || '';
@@ -42,12 +43,15 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       console.log(`recueved data ===>`,latestNotification);
       notification.open({
         message: `GAME INVITE from ${latestNotification.sender}`,
+        placement: 'bottomLeft',
         description: 'This is the content of the notification.',
         duration: 33,
+        key:keyNo,
         btn: (
           <div>
-            <Button type="primary" onClick={() => acceptGameInvite(latestNotification.room_name)}>Accept</Button>
-            <Button type="danger" onClick={() => rejectGameInvite(latestNotification.room_name)()}>refuse</Button>
+            <Button type="primary" onClick={() => {acceptGameInvite(latestNotification.room_name),notification.destroy()}}>Accept</Button>
+            <Button type="danger" onClick={() => {rejectGameInvite(latestNotification.room_name)(),notification.destroy()}}>refuse</Button>
+        
           </div>
         ),
         onClick: () => {
