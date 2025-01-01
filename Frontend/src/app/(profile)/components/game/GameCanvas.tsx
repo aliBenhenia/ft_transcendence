@@ -2,7 +2,9 @@
 import React, {useEffect, useRef, useState} from "react";
 import { createWebSocketConnection } from "@/utils/websocket";
 import { GameState, Direction } from "@/utils/typess";
-  
+import { useSearchParams } from 'next/navigation';
+
+
 const WaitingIndicator: React.FC = () => (
     <div className="flex flex-col items-center justify-center h-full">
       <div className="loader mb-4"></div>
@@ -15,7 +17,9 @@ const WaitingIndicator: React.FC = () => (
     const [gameState, setGameState] = useState<GameState | null>(null);
     const [ws, setWs] = useState<WebSocket | null>(null);
     const [isWaiting, setIsWaiting] = useState(true); // Waiting state
-  
+    const room_name = useSearchParams().get('room_name'); // undefined
+
+
     useEffect(() => {
       const accestoken = localStorage.getItem("accessToken");
       if (!accestoken) {
@@ -23,7 +27,7 @@ const WaitingIndicator: React.FC = () => (
         return;
       }
   
-      const websocket = createWebSocketConnection(accestoken);
+      const websocket = createWebSocketConnection(accestoken, room_name);
       setWs(websocket);
   
       websocket.onmessage = (event) => {

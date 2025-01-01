@@ -28,9 +28,13 @@ def player_stats(request):
 
 @api_view(['GET'])
 def match_history(request):
-    user_id = int(request.query_params.get('user_id'))
-    user = Register.objects.get(id=user_id)
-    games = Game.objects.filter(Q(winner=user) | Q(loser=user)).order_by('-end_time')
-    serializer = GameSerializer(games, many=True)
-    return Response(serializer.data)
+    try:
+        user_id = int(request.query_params.get('user_id'))
+        user = Register.objects.get(id=user_id)
+        games = Game.objects.filter(Q(winner=user) | Q(loser=user)).order_by('-end_time')
+        serializer = GameSerializer(games, many=True)
+        return Response(serializer.data)
+    except:
+        # print("error :", )
+        return Response({'error' : 'id not found'}, status=404)
 

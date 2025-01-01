@@ -99,6 +99,7 @@ const useWebSocket = (url: string) => {
           addNewNotification(serverMessage);
           break;
         case "GAME_READY":
+          router.push(`/game/online?room_name=${serverMessage.room_name}`);
           // redirect to game
           break;
             

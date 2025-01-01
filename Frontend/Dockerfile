@@ -25,4 +25,6 @@ EXPOSE 3000
 # Start the app in production mode
 # CMD ["npm", "run", "start"]
 # start the app in development mode
+# RUN npm run build
+
 CMD ["npm", "run", "dev"]

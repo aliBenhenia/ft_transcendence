@@ -37,7 +37,8 @@ class Notifications(AsyncWebsocketConsumer):
         """Updates user's online status in the database."""
         if self.user:
             self.user.is_online = status
-            self.user.save()
+            self.user.save(update_fields=['is_online']) #
+            # await sync_to_async(self.user.save)(update_fields=['status'])
 
     async def add_user_to_online_group(self):
         """Add user to online group and manage online status in memory."""

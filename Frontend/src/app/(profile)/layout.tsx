@@ -50,7 +50,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         btn: (
           <div>
             <Button type="primary" onClick={() => {acceptGameInvite(latestNotification.room_name),notification.destroy()}}>Accept</Button>
-            <Button type="danger" onClick={() => {rejectGameInvite(latestNotification.room_name)(),notification.destroy()}}>refuse</Button>
+            {/* <Button type="danger" onClick={() => {rejectGameInvite(latestNotification.room_name)(),notification.destroy()}}>refuse</Button> */}
         
           </div>
         ),

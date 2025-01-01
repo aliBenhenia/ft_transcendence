@@ -52,7 +52,7 @@ const Profile: React.FC = () => {
             matches={profileState.total_match} 
             win={profileState.win} 
           />
-          <LastMatchesCard />
+          <LastMatchesCard userId={profileState?.id} />
         </div>
       </div>
       
