@@ -133,7 +133,6 @@ def request_password_reset(request):
 #     except (Register.DoesNotExist, ValueError, TypeError):
 #         return Response({'error': 'Invalid or expired token.'}, status=400)
 
-
 @api_view(['POST'])
 def reset_password(request):
     uid = request.data.get('uid')

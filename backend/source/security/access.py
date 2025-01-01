@@ -5,6 +5,7 @@ from rest_framework.decorators import api_view, permission_classes
 from django.contrib.auth import get_user_model
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from register.models import Register
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -23,12 +24,11 @@ def send_2FA(request):
 @api_view(['POST'])
 def verify_2FA(request):
     try:
-        email = request.data.get('email')
-        password = request.data.get('password')
+        user_id = request.data.get('user_id')
         code = int(request.data.get('code'))
     except:
         return Response({'error': ERROR_MSG['7']}, status=404)
-    account = authenticate(request, username=email, password=password)
+    account = Register.objects.get(pk=int(user_id))
     session_data = request.session.get(str(account.id))
     if session_data and session_data['2fa'] == '2fa_pending':
         if code == int(session_data['code']):

@@ -30,7 +30,7 @@ class TokenOnLoginPairView(TokenObtainPairView):
                     request.session[str(account.id)] = {'2fa' : '2fa_pending', 'code' : code}
                     request.session.save()
                     send_email(account.email, code)
-                    return Response({'2FA': True}, status=200)
+                    return Response({'2FA': True, 'user_id' : str(account.id)}, status=200)
                 else:
                     return Response(token_serializer.validated_data, status=200)
         except:
