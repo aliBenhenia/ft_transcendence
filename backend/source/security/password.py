@@ -8,6 +8,12 @@ from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.hashers import check_password
 from rest_framework.decorators import api_view, permission_classes
 
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.urls import reverse
+
+
 @api_view(['GET'])
 def find_account(request):
     account = request.GET.get('account')
@@ -98,14 +104,53 @@ def token_password(request, token):
     Account.save()
     return Response({'success': SUCCESS_MSG["5"]}, status=200)
 
+@api_view(['POST'])
+def request_password_reset(request):
+    email = request.data.get("email")
+    try:
+        user = Register.objects.get(email=email)
+        token = PasswordResetTokenGenerator().make_token(user)
+        uid = urlsafe_base64_encode(force_bytes(user.pk))
+        frontend_url = 'http://localhost:9001'
+        reset_path = f"/reset-password/?uid={uid}&token={token}"
+        reset_link = frontend_url + reset_path
 
-    
+        print(reset_link)
+        return Response({'message': 'Password reset link sent to your email.'}, status=200)
+    except Register.DoesNotExist:
+        return Response({'error': 'User with this email does not exist.'}, status=404)
+
+# @api_view(['GET'])
+# def validate_reset_token(request, uid, token):
+#     try:
+#         user_id = urlsafe_base64_decode(uid).decode()
+#         user = Register.objects.get(pk=user_id)
+
+#         if PasswordResetTokenGenerator().check_token(user, token):
+#             return Response({'message': 'Token is valid.'}, status=200)
+#         else:
+#             return Response({'error': 'Invalid or expired token.'}, status=400)
+#     except (Register.DoesNotExist, ValueError, TypeError):
+#         return Response({'error': 'Invalid or expired token.'}, status=400)
 
 
+@api_view(['POST'])
+def reset_password(request):
+    uid = request.data.get('uid')
+    token = request.data.get('token')
+    new_password = request.data.get('newPassword')
 
+    try:
+        user_id = urlsafe_base64_decode(uid).decode()
+        user = Register.objects.get(pk=user_id)
+    except (TypeError, ValueError, OverflowError, Register.DoesNotExist):
+        return Response({"error": "Invalid reset link"}, status=400)
 
+    token_generator = PasswordResetTokenGenerator()
+    if not token_generator.check_token(user, token):
+        return Response({"error": "Invalid or expired token"}, status=400)
 
+    user.set_password(new_password)
+    user.save()
 
-
-
-
+    return Response({"status": "Password reset successful"}, status=200)
