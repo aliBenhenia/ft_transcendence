@@ -12,7 +12,7 @@ const ProfileCard = () => {
 
   const [twoFactorEnabled, setTwoFactorEnabled] = useState<boolean | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const progressPercentage = profileState.level;
+  const progressPercentage = profileState.level_percentage;
 
   // Utility function for token retrieval
   const getAuthToken = (): string | null => localStorage.getItem('accessToken');
@@ -110,7 +110,7 @@ const ProfileCard = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 1.5, ease: 'easeInOut' }}
             >
-              {progressPercentage}xp
+              {progressPercentage}%
             </motion.div>
           </div>
 
@@ -120,7 +120,7 @@ const ProfileCard = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5, duration: 0.5 }}
           >
-            {progressPercentage} XP
+            Level {profileState.level} 
           </motion.p>
         </div>
       </div>
