@@ -12,7 +12,7 @@ const ProfileCard = () => {
 
   const [twoFactorEnabled, setTwoFactorEnabled] = useState<boolean | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const progressPercentage = profileState.level_percentage;
+  const progressPercentage = profileState.level_percentage !== undefined ? profileState.level_percentage : 0;
 
   // Utility function for token retrieval
   const getAuthToken = (): string | null => localStorage.getItem('accessToken');

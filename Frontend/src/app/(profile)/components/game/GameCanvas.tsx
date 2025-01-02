@@ -18,7 +18,7 @@ const WaitingIndicator: React.FC = () => (
     const [ws, setWs] = useState<WebSocket | null>(null);
     const [isWaiting, setIsWaiting] = useState(true); // Waiting state
     const room_name = useSearchParams().get('room_name'); // undefined
-
+    console.log( " game invite room "+ room_name)
 
     useEffect(() => {
       const accestoken = localStorage.getItem("accessToken");

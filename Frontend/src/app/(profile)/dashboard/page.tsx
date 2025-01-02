@@ -65,7 +65,7 @@ const Dashboard = (): JSX.Element => {
           win={profileState.win}
           last_match={profileState.last_match}
         />
-        {/* {profileState?.id && <LastMatchesCard userId={profileState.id} />} */}
+        {profileState?.id && <LastMatchesCard userId={profileState.id} />}
       </div>
       <Achievements />
     </div>

@@ -123,14 +123,12 @@ class LiveGameFlow(AsyncWebsocketConsumer):
         }
 
     async def start_game_with_opponent(self, opponent, room_name):
-            print("1")
             if room_name == None:
                 room_name = self.generate_room_id()
             self.games[room_name] = {
                 'players' : [self, opponent],
                 'game_state' : self.initialize_game_state()
             }
-            print("2")
             for number, player in enumerate([self, opponent], start=1):
                 player.room_name = room_name
                 player.player_number = number
@@ -146,10 +144,11 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                     'player1_avatar' : getattr(self.scope['user'], 'photo_url', None),
                     'player2_avatar' : getattr(opponent.scope['user'], 'photo_url', None)
                 }))
-            print("3")
             self.in_game.append(self.scope['user'].username)
             self.in_game.append(opponent.scope['user'].username)
-            await asyncio.sleep(5)
+            print(self.scope['user'].username)
+            print(opponent.scope['user'].username)
+            await asyncio.sleep(1)
             print("before game task")
             asyncio.create_task(self.game_task(room_name))
 
@@ -251,17 +250,14 @@ class LiveGameFlow(AsyncWebsocketConsumer):
         player_states.total_match += 1
         player_states.last_match = "win"
         player_states.xp_total += self.calculate_xp_to_add(winner_player.DETAILS, loser_player.DETAILS, "win")
-        print(player_states.xp_total)
-        print(player_states.level)
         player_states.save()
         #
         player_states = loser_player.DETAILS
         player_states.loss += 1
         player_states.total_match += 1
         player_states.last_match = "loss"
-        player_states.xp_total -= self.calculate_xp_to_add(winner_player.DETAILS, loser_player.DETAILS, "loss")
-        print(player_states.xp_total)
-        print(player_states.level)
+        if player_states.xp_total > 0:
+            player_states.xp_total -= self.calculate_xp_to_add(winner_player.DETAILS, loser_player.DETAILS, "loss")
         player_states.save()
 
     async def end_game(self, room_name, winner):
@@ -342,16 +338,18 @@ class LiveGameFlow(AsyncWebsocketConsumer):
     async def connect(self):
         query_params = parse_qs(self.scope['query_string'].decode())
         room_name = query_params.get('room_name', [None])[0]
+        print(room_name)
         if room_name != None:
+            print("game invite started")
+            self.user = self.scope['user']
             await self.accept()
             if room_name in self.games:
-                print("room available")
                 if room_name not in self.invites:
                     self.invites[room_name] = []
                 self.invites[room_name].append(self)
                 if (len(self.invites[room_name])) == 2:
                     print("startimg game with opponent")
-                    await self.start_game_with_opponent(self.invites[room_name][1], room_name)
+                    await self.start_game_with_opponent(self.invites[room_name][0], room_name)
                     del self.invites[room_name]
                 elif (len(self.invites[room_name])) == 1:
                     asyncio.create_task(self.check_for_second_player(room_name, timeout=30))
