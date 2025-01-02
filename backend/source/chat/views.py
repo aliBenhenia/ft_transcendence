@@ -110,7 +110,6 @@ def send_game_invite(request):
     sender = request.user
     data = request.data
     receiver = data.get('to_invite')
-    print (receiver)
     if not receiver:
         return Response({'error': ERROR[3]}, status=400)
     to_invite, state = AccountLookup(receiver)
@@ -122,6 +121,8 @@ def send_game_invite(request):
             return Response({'error': ERROR[8]}, status=400)
         return Response({'error': ERROR[9]}, status=400)
     #
+    if to_invite.username in LiveGameFlow.in_game:
+        return Response({'error', 'Currently in game'}, status=400)
     if GameInvite.objects.filter(inviter=sender, invited=to_invite, status='pending').exists():
         return Response({'error', 'A game invite is already pending.'}, status=400)
     channel_layer = get_channel_layer()

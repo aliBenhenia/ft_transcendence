@@ -34,7 +34,8 @@ const LastMatchesCard = ({ userId }) => {
               avatar: match.loser.photo_url,
               score: match.loser_score,
             },
-            date: new Date(match.end_time).toLocaleDateString(),
+            // date: new Date(match.end_time).toLocaleDateString(),
+            date: match.time_ago,
             result: match.winner.id === userId ? "Win" : "Loss",
           };
         }).filter(Boolean);
