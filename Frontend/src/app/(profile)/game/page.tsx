@@ -21,15 +21,15 @@ function PingPongGame() {
       setSelectedMap("Board 1");
     }
   };
-  const handleStartGame = () => {
+  const handlePlayLocally = () => {
     // Prepare settings object
     const settings = customSettingsEnabled
-      ? { scoreToWin, botLevel, selectedMap }
-      : { scoreToWin: 3, botLevel: "easy", selectedMap: "Board 1" };
+      ? { scoreToWin, selectedMap }
+      : { scoreToWin: 3, selectedMap: "Board 1" };
 
     // Pass settings via query parameters
     router.push(
-      `/game/online?scoreToWin=${settings.scoreToWin}&botLevel=${settings.botLevel}&selectedMap=${encodeURIComponent(settings.selectedMap)}`
+      `/game/localGame?scoreToWin=${settings.scoreToWin}&selectedMap=${encodeURIComponent(settings.selectedMap)}`
     );
   };
   const handlePlayWithBot = () => {
@@ -40,7 +40,18 @@ function PingPongGame() {
 
     // Pass settings via query parameters
     router.push(
-      `/game/offline?scoreToWin=${settings.scoreToWin}&botLevel=${settings.botLevel}&selectedMap=${encodeURIComponent(settings.selectedMap)}`
+      `/game/AiOpponent?scoreToWin=${settings.scoreToWin}&botLevel=${settings.botLevel}&selectedMap=${encodeURIComponent(settings.selectedMap)}`
+    );
+  };
+  const handleStartGame = () => {
+    // Prepare settings object
+    const settings = customSettingsEnabled
+      ? { selectedMap }
+      : { selectedMap: "Board 1" };
+
+    // Pass settings via query parameters
+    router.push(
+      `/game/online?selectedMap=${encodeURIComponent(settings.selectedMap)}`
     );
   };
   return (
@@ -135,7 +146,7 @@ function PingPongGame() {
             <h1 className="text-xl text-center text-[#041b34] font-bold">Friends</h1>
           </header>
           <div>
-            <h2 className="text-center text-gray-400 p-6">you havent add any friends yet!</h2>
+            <h2 className="text-center text-gray-400 p-6">you haven't add any friends yet!</h2>
 
           </div>
         </div>
@@ -148,6 +159,16 @@ function PingPongGame() {
            >
               <IoGameController className="text-xl" />
               <span className="text-lg font-semibold">Start Game</span>
+            </button>
+          </div>
+          <div>
+            {/* Play locally with friends */}
+            <button
+              className="bg-gradient-to-l from-green-300 to-green-700 text-white p-3 rounded-lg flex justify-center items-center gap-2 shadow-md hover:shadow-lg hover:from-green-600 hover:to-green-800 active:shadow-inner transition duration-200"
+              onClick={handlePlayLocally}
+            >
+              <IoGameController className="text-xl" />
+              <span className="text-lg font-semibold">Play Local</span>
             </button>
           </div>
           <div>

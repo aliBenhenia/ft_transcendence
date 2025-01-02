@@ -5,10 +5,14 @@ import Scoreboard from './Scoreboard';
 import { Ball, Paddle, checkCollisions } from '@/utils/bot';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
+import {useSelector, useDispatch} from 'react-redux';
+import { RootState } from '@/store/store';
+import { updateProfile } from '@/store/slices/profileSlice';
+import FetchProfile from '@/services/FetchProfile';
 
-const user1 = {
-  avatar: '/me.jpeg',
-};
+// const user1 = {
+//   avatar: '/me.jpeg',
+// };
 
 const user2 = {
   avatar: '/bot.jpg',
