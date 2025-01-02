@@ -160,7 +160,7 @@ function PingPongGame() {
               onClick={handlePlayWithBot}
             >
               <SiProbot className="text-xl" />
-              <span className="text-lg font-semibold">Play with Botq</span>
+              <span className="text-lg font-semibold">Play with Bota</span>
             </button>
           </div>
         </div>
