@@ -108,9 +108,6 @@ def send_message(request):
 @permission_classes([IsAuthenticated])
 def send_game_invite(request):
     sender = request.user
-    if sender.SECURE.activate:
-        if sender.SECURE.on_login:
-            return Response({'2FA' : True, 'error' : ERROR[1]}, status=401)
     data = request.data
     receiver = data.get('to_invite')
     print (receiver)
