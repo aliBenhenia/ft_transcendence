@@ -31,7 +31,10 @@ const GameCanvas: React.FC = () => {
   const [gameResult, setGameResult] = useState({ message: '', finalScore: [0, 0] });
   const [player1, setPlayer1] = useState<{ username: string; avatar: string }>({ username: "", avatar: "" });
   const [player2, setPlayer2] = useState({ username: "", avatar: "" });
+  const room_name = useSearchParams().get('room_name');
 
+  //
+  //
   // Map a selectedMap value to image URLS
   const mapBackgroundImage: Record<string, string> = {
     'Board 1': '/board 1.jpeg',
@@ -41,19 +44,20 @@ const GameCanvas: React.FC = () => {
   const backgroundImage = mapBackgroundImage[selectedMap] || '/board 1.jpeg';
 
   useEffect(() => {
+    
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
       console.error("No access token found in localStorage");
       return;
     }
 
-    const websocket = createWebSocketConnection(accessToken);
+    const websocket = createWebSocketConnection(accessToken, room_name);
     setWs(websocket);
 
     websocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
 
-      if (data.type === "game start") {
+      if (data.type === "game_start") {
         console.log("Game starting: ", data);
         setPlayer1({ username: data.player1_username, avatar: data.player1_avatar });
         setPlayer2({ username: data.player2_username, avatar: data.player2_avatar });
@@ -65,7 +69,7 @@ const GameCanvas: React.FC = () => {
       } else if (data.type === "waiting") {
         setIsWaiting(true);
       }
-      else if (data.type === "game ends") {
+      else if (data.type === "game_ends") {
         setGameOver(true);
         //setGameState(data.game_state);
         if (data.message === "You win! Opponent disconnected") {
@@ -74,6 +78,11 @@ const GameCanvas: React.FC = () => {
             finalScore: [gameState?.score[0] || 0, gameState?.score[1] || 0],
           });
         } else if (data.message === "You win!"){
+          setGameResult({
+            message: data.message,
+            finalScore: data.final_score || [0, 0],
+          });
+        } else if (data.message === "You lost!"){
           setGameResult({
             message: data.message,
             finalScore: data.final_score || [0, 0],

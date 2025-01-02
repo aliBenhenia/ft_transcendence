@@ -40,24 +40,61 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     const latestNotification = notifications[notifications.length - 1]; 
     if (latestNotification && latestNotification.subject === `GAME_INVITE`)
     {
-      console.log(`recueved data ===>`,latestNotification);
+      let isInteracted = false; // Flag to track user interaction
+
       notification.open({
         message: `GAME INVITE from ${latestNotification.sender}`,
         placement: 'bottomLeft',
         description: 'This is the content of the notification.',
-        duration: 33,
-        key:keyNo,
+        duration: 15, // Notification duration in seconds
+        
         btn: (
           <div>
-            <Button type="primary" onClick={() => {acceptGameInvite(latestNotification.room_name),notification.destroy()}}>Accept</Button>
-            {/* <Button type="danger" onClick={() => {rejectGameInvite(latestNotification.room_name)(),notification.destroy()}}>refuse</Button> */}
-        
+            <Button
+              type="primary"
+              onClick={() => {
+                isInteracted = true; // Mark as interacted
+                acceptGameInvite(latestNotification.room_name);
+                notification.destroy(); // Close the notification
+              }}
+            >
+              Accept
+            </Button>
+            
+            <Button 
+              type="danger" 
+              onClick={() => {
+                isInteracted = true; // Mark as interacted
+                rejectGameInvite(latestNotification.room_name)();
+                notification.destroy(); // Close the notification
+              }}
+            >
+              Refuse
+            </Button>
           </div>
         ),
         onClick: () => {
           console.log('Notification Clicked!');
         },
+        onClose: () => {
+          if (!isInteracted) {
+            isInteracted = true;
+            rejectGameInvite(latestNotification.room_name)();
+          }
+          console.log('Notification Closed!');
+        },
       });
+      
+      // Handle rejection after the duration if no interaction occurs
+      setTimeout(() => {
+        if (!isInteracted) {
+          isInteracted = true;
+          rejectGameInvite(latestNotification.room_name)();
+          notification.destroy(); // Close the notification if still open
+         
+        }
+      }, 15000); // 15 seconds in milliseconds
+      
     }
      
   },[notifications])

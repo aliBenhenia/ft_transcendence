@@ -17,7 +17,7 @@ CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 400
 PADDLE_WIDTH = 10
 PADDLE_HEIGHT = 100
-PADDLE_SPEED = 5
+PADDLE_SPEED = 10
 BALL_SPEED = 5
 BALL_RADIUS = 10
 INITIAL_BALL_SPEED = 4
@@ -134,7 +134,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 player.player_number = number
                 await player.send(text_data=json.dumps(
                 {
-                    'type': 'game start',
+                    'type': 'game_start',
                     'player_number' : player.player_number,
                     'room_name' : room_name,
                     'player1_level' : await sync_to_async(lambda: self.scope['user'].DETAILS.level)(),
@@ -146,8 +146,6 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 }))
             self.in_game.append(self.scope['user'].username)
             self.in_game.append(opponent.scope['user'].username)
-            print(self.scope['user'].username)
-            print(opponent.scope['user'].username)
             await asyncio.sleep(1)
             print("before game task")
             asyncio.create_task(self.game_task(room_name))
@@ -278,6 +276,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                             'message': 'You win!',
                             'final_score': game['game_state']['score']
                         }))
+                        print(f"sending result of the game for player winner : {player.user.username}")
                         
                     # Loser
                     else:
@@ -288,6 +287,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                             'message': 'You lost!',
                             'final_score': game['game_state']['score']
                         }))
+                        print(f"sending result of the game for player loser : {player.user.username}")
                         
                 except:
                     pass
@@ -338,9 +338,8 @@ class LiveGameFlow(AsyncWebsocketConsumer):
     async def connect(self):
         query_params = parse_qs(self.scope['query_string'].decode())
         room_name = query_params.get('room_name', [None])[0]
-        print(room_name)
         if room_name != None:
-            print("game invite started")
+            print("from invite")
             self.user = self.scope['user']
             await self.accept()
             if room_name in self.games:
@@ -348,7 +347,6 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                     self.invites[room_name] = []
                 self.invites[room_name].append(self)
                 if (len(self.invites[room_name])) == 2:
-                    print("startimg game with opponent")
                     await self.start_game_with_opponent(self.invites[room_name][0], room_name)
                     del self.invites[room_name]
                 elif (len(self.invites[room_name])) == 1:
@@ -400,11 +398,17 @@ class LiveGameFlow(AsyncWebsocketConsumer):
         if hasattr(self, 'room_name') and self.room_name in self.games:
                 game = self.games[self.room_name]
                 game['players'].remove(self)
+                await self.send(text_data=json.dumps(
+                {
+                    'type' : 'game_ends',
+                    'message' : 'You disconnected'
+                }))
                 if game['players']:
                     remaining_player = game['players'][0]
+                    print(f"remaining one : {remaining_player.user.username}")
                     await remaining_player.send(text_data=json.dumps(
                     {
-                        'type' : 'game ends',
+                        'type' : 'game_ends',
                         'message' : 'You win! Opponent disconnected'
                     }))
                     game['players'].remove(remaining_player)
