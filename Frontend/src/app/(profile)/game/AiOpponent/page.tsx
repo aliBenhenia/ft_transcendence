@@ -1,9 +1,8 @@
 "use client";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+
 import Ai from "../../components/game/OfflineGame";
 
-const OfflineScreen = () => {
+const AiOpponent = () => {
 
   return (
     <div className="flex flex-col items-center justify-center h-screen w-screen">
@@ -12,4 +11,4 @@ const OfflineScreen = () => {
   );
 };
 
-export default OfflineScreen;
+export default AiOpponent;

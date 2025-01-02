@@ -21,9 +21,17 @@ function PingPongGame() {
       setSelectedMap("Board 1");
     }
   };
-  // const handleStartGame = () => {
-  //   router.push("/game/online");
-  // };
+  const handlePlayLocally = () => {
+    // Prepare settings object
+    const settings = customSettingsEnabled
+      ? { scoreToWin, selectedMap }
+      : { scoreToWin: 3, selectedMap: "Board 1" };
+
+    // Pass settings via query parameters
+    router.push(
+      `/game/localGame?scoreToWin=${settings.scoreToWin}&selectedMap=${encodeURIComponent(settings.selectedMap)}`
+    );
+  };
   const handlePlayWithBot = () => {
     // Prepare settings object
     const settings = customSettingsEnabled
@@ -32,7 +40,7 @@ function PingPongGame() {
 
     // Pass settings via query parameters
     router.push(
-      `/game/offline?scoreToWin=${settings.scoreToWin}&botLevel=${settings.botLevel}&selectedMap=${encodeURIComponent(settings.selectedMap)}`
+      `/game/AiOpponent?scoreToWin=${settings.scoreToWin}&botLevel=${settings.botLevel}&selectedMap=${encodeURIComponent(settings.selectedMap)}`
     );
   };
   const handleStartGame = () => {
@@ -154,13 +162,23 @@ function PingPongGame() {
             </button>
           </div>
           <div>
+            {/* Play locally with friends */}
+            <button
+              className="bg-gradient-to-l from-green-300 to-green-700 text-white p-3 rounded-lg flex justify-center items-center gap-2 shadow-md hover:shadow-lg hover:from-green-600 hover:to-green-800 active:shadow-inner transition duration-200"
+              onClick={handlePlayLocally}
+            >
+              <IoGameController className="text-xl" />
+              <span className="text-lg font-semibold">Play Local</span>
+            </button>
+          </div>
+          <div>
             {/* Play with Bot Button */}
             <button
               className="bg-gradient-to-r from-green-500 to-green-700 text-white p-3 rounded-lg flex justify-center items-center gap-2 shadow-md hover:shadow-lg hover:from-green-600 hover:to-green-800 active:shadow-inner transition duration-200"
               onClick={handlePlayWithBot}
             >
               <SiProbot className="text-xl" />
-              <span className="text-lg font-semibold">Play with Bota</span>
+              <span className="text-lg font-semibold">Play with Bot</span>
             </button>
           </div>
         </div>
