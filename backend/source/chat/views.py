@@ -123,7 +123,7 @@ def send_game_invite(request):
     #
     if to_invite.username in LiveGameFlow.in_game:
         return Response({'error', 'Currently in game'}, status=400)
-    if GameInvite.objects.filter(inviter=sender, invited=to_invite, status='pending').exists():
+    if GameInvite.objects.filter(inviter=sender, invited=to_invite).exists():
         return Response({'error', 'A game invite is already pending.'}, status=400)
     channel_layer = get_channel_layer()
     room_name = LiveGameFlow.generate_room_id()
@@ -137,6 +137,8 @@ def send_game_invite(request):
         'full-name' : f"{sender.first_name} {sender.last_name}",
     }    
     async_to_sync(channel_layer.group_send)(to_invite.token_notify, notification_data)
+    async_to_sync(channel_layer.group_send)(sender.token_notify, {'type' : 'join_room', 'room_name' : room_name})
+
     return Response({'success': SUCCESS[3]}, status=200)
 
 @api_view(['POST'])
@@ -156,18 +158,10 @@ def accept_game_invite(request):
         return Response({'error': 'Invalid game invite'}, status=400)
     game_invite.status = 'accepted'
     game_invite.save()
-    inviter = game_invite.inviter
     invited = receiver
-    players = [inviter, invited]
     channel_layer = get_channel_layer()
-    for player in players:
-        async_to_sync(channel_layer.group_send)(
-            player.token_notify,
-            {
-                'type' : 'game_accepted',
-                'room_name' : room_name
-            }
-        )
+    async_to_sync(channel_layer.group_send)(invited.token_notify, {'type' : 'join_room', 'room_name' : room_name})
+
     return Response({'success': SUCCESS[4]})
 
 @api_view(['POST'])

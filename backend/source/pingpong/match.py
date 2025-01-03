@@ -5,6 +5,7 @@ import random
 import string
 import asyncio
 from .models import Game
+from chat.models import GameInvite
 from datetime import datetime
 import time
 from asgiref.sync import sync_to_async
@@ -328,9 +329,8 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             await asyncio.sleep(timeout)
             if room_name in self.invites and len(self.invites[room_name]) < 2:
                 player = self.invites[room_name][0]
-                await player.send(
-                    text_data=json.dumps({"error": "Timeout: No second player joined."})
-                )
+                await player.send(text_data=json.dumps({"error": "Timeout: No second player joined."}))
+                await sync_to_async(lambda: GameInvite.objects.filter(room_name=room_name).delete())()
                 del self.invites[room_name]
         except Exception as e:
             print(f"Error during timeout check: {e}")
@@ -355,7 +355,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                         "type": "waiting",
                         "message": "Waiting for player to join..."
                     }))
-                    asyncio.create_task(self.check_for_second_player(room_name, timeout=30))
+                    asyncio.create_task(self.check_for_second_player(room_name, timeout=15))
             else:
                 await self.send(text_data=json.dumps({"error": "Invalid room or game not found."}))
                 await self.close()
