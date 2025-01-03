@@ -68,8 +68,8 @@ const useWebSocket = (url: string) => {
 
         case 'NEW_MESSAGE':
           handleNotification(
-            'New Message',
-            `Request from: ${sender}`,
+            ` from ${sender}`,
+            `${(serverMessage.message as string).slice(0, 14)}...`,
             React.createElement(Avatar, { src: picture }),
             2
           );
