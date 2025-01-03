@@ -133,7 +133,7 @@ class Notifications(AsyncWebsocketConsumer):
             'full-name': event['full-name'],
         })
 
-    async def game_accepted(self, event):
+    async def join_room(self, event):
         await self.send_json({
             'case': 'GAME_READY',
             'room_name' : event['room_name'],

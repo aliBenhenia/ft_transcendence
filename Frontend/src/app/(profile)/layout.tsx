@@ -11,6 +11,8 @@ import useWebSocket from '@/services/useWebSocket';
 import styles from './layout.module.css';
 import DropdownMenu from './components/DropdownMenu';
 import GameNotification from './components/GameNotification';
+import ProtectedRoute from './components/protectRoute';
+
 
 interface LayoutProps {
   children: ReactNode;
@@ -31,24 +33,26 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, []);
   return (
     <div className="flex h-screen overflow-hidden bg-[#001529]">
-      <GameNotification />
-      <Nav />
-      <div className="flex-1 flex flex-col">
-        <header className="flex items-center justify-between bg-[#001529] shadow-lg text-white p-4 border-gray-200">
-          <div className="relative w-[250px] mx-auto">
-            <FriendSearch />
-          </div>
-          <div className="flex items-center space-x-4">
-            <Notification />
-            <DropdownMenu />
-          </div>
-        </header>
-        <main className="flex-1 " style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          <div className={styles.home} style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            {children}
-          </div>
-        </main>
-      </div>
+        <ProtectedRoute>
+        <GameNotification />
+        <Nav />
+        <div className="flex-1 flex flex-col">
+          <header className="flex items-center justify-between bg-[#001529] shadow-lg text-white p-4 border-gray-200">
+            <div className="relative w-[250px] mx-auto">
+              <FriendSearch />
+            </div>
+            <div className="flex items-center space-x-4">
+              <Notification />
+              <DropdownMenu />
+            </div>
+          </header>
+          <main className="flex-1 " style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            <div className={styles.home} style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              {children}
+            </div>
+          </main>
+        </div>
+      </ProtectedRoute>
     </div>
   );
 };

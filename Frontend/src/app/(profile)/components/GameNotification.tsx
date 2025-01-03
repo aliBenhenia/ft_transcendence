@@ -49,22 +49,8 @@ const GameNotification = () => {
         onClick: () => {
         
         },
-        onClose: () => {
-          if (!isInteracted) {
-            isInteracted = true;
-            rejectGameInvite(latestNotification.room_name);
-          }
-          
-        },
+       
       });
-
-      setTimeout(() => {
-        if (!isInteracted) {
-          isInteracted = true;
-          rejectGameInvite(latestNotification.room_name);
-          notification.destroy();
-        }
-      }, 15000);
     }
   }, [notifications]);
 

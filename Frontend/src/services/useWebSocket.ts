@@ -117,7 +117,6 @@ const useWebSocket = (url: string) => {
     };
 
     socket.onclose = () => {
-      alert("Connection closed");
       console.log("WebSocket connection closed.");
     };
 
