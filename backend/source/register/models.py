@@ -128,7 +128,7 @@ class Register(AbstractBaseUser):
     token_game = models.CharField(max_length=60, blank=True, null=True,default='')
 
     photo_url = models.URLField(default=FULL_PICTURE)
-    picture = models.ImageField(upload_to='avatars/', default='avatars/unknown.jpg', blank=True)
+    picture = models.ImageField(upload_to='avatars/', default='avatars/unknown.jpeg', blank=True)
 
     SECURE = models.OneToOneField(SECURITY, on_delete=models.CASCADE, null=True)
     DETAILS = models.OneToOneField(STATICS, on_delete=models.CASCADE, null=True)

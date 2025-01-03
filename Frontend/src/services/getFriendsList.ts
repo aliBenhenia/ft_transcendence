@@ -10,7 +10,7 @@ const getFriendListUser = async (token:any, username:any) => {
 
     try {
         const response = await axios.get(url, { headers });
-        return response.data.details.friends;
+        return response.data.details?.friends;
     } catch (error:any) {
         console.log("err++>",error);
         if (error.response) {

@@ -34,6 +34,8 @@ def match_history(request):
         user_id = int(request.query_params.get('user_id'))
         user = Register.objects.get(id=user_id)
         games = Game.objects.filter(Q(winner=user) | Q(loser=user)).order_by('-end_time')
+        if not games:
+            return Response({'error': 'No games found'})
         for game in games:
             game.time_ago = timesince(game.end_time, now()) + " ago"
             game.save()

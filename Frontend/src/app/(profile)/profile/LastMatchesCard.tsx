@@ -16,7 +16,15 @@ const LastMatchesCard = ({ userId }) => {
       }
 
       try {
-        const response = await axios.get(`http://localhost:9003/pingpong/match_history/?user_id=${userId}`);
+        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/pingpong/match_history/?user_id=${userId}`);
+        
+        if (response.status !== 200) {
+            return;
+        }
+        if (response.data.error === "No games found") {
+          setMatches([]);
+          return;
+        }
         const formattedMatches = response.data.map(match => {
           // Check if necessary properties exist
           if (!match.loser || !match.winner) {
@@ -116,7 +124,7 @@ const LastMatchesCard = ({ userId }) => {
                   <div className={`text-lg font-bold ${match.result === "Loss" ? "text-green-500" : "text-red-500"}`}>
                     {match.player2.score}
                   </div>
-                </div>
+                </div>ƒƒ
               </div>
 
               {/* Result Icon */}

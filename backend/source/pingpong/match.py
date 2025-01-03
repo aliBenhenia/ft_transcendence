@@ -350,6 +350,11 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                     await self.start_game_with_opponent(self.invites[room_name][0], room_name)
                     del self.invites[room_name]
                 elif (len(self.invites[room_name])) == 1:
+                    await self.send(text_data=json.dumps(
+                    {
+                        "type": "waiting",
+                        "message": "Waiting for player to join..."
+                    }))
                     asyncio.create_task(self.check_for_second_player(room_name, timeout=30))
             else:
                 await self.send(text_data=json.dumps({"error": "Invalid room or game not found."}))

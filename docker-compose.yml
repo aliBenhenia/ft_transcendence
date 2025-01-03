@@ -18,6 +18,8 @@ services:
     networks:
       - mynetwork
     restart: on-failure
+    env_file:
+      - .env
   
   nextjs:
     build:

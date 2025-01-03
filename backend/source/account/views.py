@@ -78,6 +78,7 @@ def update_profile(request):
     Account = request.user
     data = request.data
     photo = data.get('picture')
+    print(photo)
     if photo:
         try:
             Image.open(photo)

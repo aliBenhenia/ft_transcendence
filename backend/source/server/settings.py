@@ -1,10 +1,25 @@
 from pathlib import Path
 from datetime import timedelta
 import os
+import environ
 
+env = environ.Env()
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent # this will give me the root directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
+environ.Env.read_env(os.path.join(ROOT_DIR, '.env'))
+##
+HOST_IP = env('HOST_IP')
+SECRET_KEY = env('SECRET_KEY')
 
-SECRET_KEY = 'django-insecure-bdu%lxz4&6o-xbqg)2==vj#go*^9n&u7a-c#0i5zq)f@e-^k^3'
+# MEDIA CONFIGURATIONS
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
+
+# PICTURE FULL URL
+
+FULL_PICTURE = f'http://{HOST_IP}:9003/media/avatars/unknown.jpeg'
+PATH_PICTURE = f'http://{HOST_IP}:9003'
 
 DEBUG = True
 
@@ -95,16 +110,6 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
 }
-
-# MEDIA CONFIGURATIONS
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# PICTURE FULL URL
-
-FULL_PICTURE = 'http://127.0.0.1:9003/register/media/avatars/unknown.jpg'
-PATH_PICTURE = 'http://127.0.0.1:9003/register'
 
 
 MIDDLEWARE = [
