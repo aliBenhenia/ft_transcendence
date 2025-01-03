@@ -12,7 +12,13 @@ const WINNING_SCORE = 5;
 const WaitingIndicator: React.FC = () => (
   <div className="flex flex-col items-center justify-center h-full">
     <div className="loader mb-4"></div>
-    <p className="text-xl font-bold text-white">Waiting for another player...</p>
+    <p className="text-xl font-bold text-white">waiting for another player...</p>
+  </div>
+);
+const SearchingIndicator: React.FC = () => (
+  <div className="flex flex-col items-center justify-center h-full">
+    <div className="loader mb-4"></div>
+    <p className="text-xl font-bold text-white">searching for another player...</p>
   </div>
 );
 
@@ -26,12 +32,17 @@ const GameCanvas: React.FC = () => {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [isWaiting, setIsWaiting] = useState(true);
+  const [isSearching, setIsSearching] = useState(true);
   const [gameOver, setGameOver] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
   const [gameResult, setGameResult] = useState({ message: '', finalScore: [0, 0] });
   const [player1, setPlayer1] = useState<{ username: string; avatar: string }>({ username: "", avatar: "" });
   const [player2, setPlayer2] = useState({ username: "", avatar: "" });
   const room_name = useSearchParams().get('room_name');
+  console.log("room_name", room_name);
+  window.onload = function() {
+      router.push("/game");
+  }
 
   //
   //
@@ -66,7 +77,10 @@ const GameCanvas: React.FC = () => {
         console.log("Game state: ", data.game_state);
         setGameState(data.game_state);
         setIsWaiting(false);
-      } else if (data.type === "waiting") {
+      } else if (data.type === "searching") {
+        setIsSearching(true);
+      }
+       else if (data.type === "waiting") {
         setIsWaiting(true);
       }
       else if (data.type === "game_ends") {
@@ -88,6 +102,7 @@ const GameCanvas: React.FC = () => {
             finalScore: data.final_score || [0, 0],
           });
         }
+        
       } else if (data.type === "Already in queue" || data.type === "Already in game") {
         alert(data.type === "Already in queue" 
           ? "You are already in a queue!" 
@@ -173,7 +188,7 @@ const GameCanvas: React.FC = () => {
   const handleRestart = () => {
     setGameOver(false);
     setGameResult({ message: '', finalScore: [0, 0] });
-    window.location.reload();
+    // window.location.reload();
   };
 
   return (
