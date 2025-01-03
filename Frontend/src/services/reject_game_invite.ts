@@ -2,7 +2,7 @@ import axios from 'axios';
 import { message } from 'antd';
 
 
-const rejectGameInvite = (roomName) => async () => {
+const rejectGameInvite = async (roomName)  => {
     const token = localStorage.getItem('accessToken'); 
     
     if (!token) {

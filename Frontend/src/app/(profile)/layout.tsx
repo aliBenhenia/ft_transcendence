@@ -1,19 +1,16 @@
 "use client";
 
 import React, { useEffect, ReactNode } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import {useDispatch } from 'react-redux';
 import Nav from './components/bar';
 import FriendSearch from './components/FriendSearch';
 import Notification from './components/notif';
 import { updateProfile } from "@/store/slices/profileSlice";
 import FetchProfile from '@/services/FetchProfile';
 import useWebSocket from '@/services/useWebSocket';
-import acceptGameInvite from '@/services/accept_game_invite';
-import rejectGameInvite  from '@/services/reject_game_invite';
-import { RootState } from '@/store/store';
 import styles from './layout.module.css';
 import DropdownMenu from './components/DropdownMenu';
-import {message,Button, notification} from 'antd'
+import GameNotification from './components/GameNotification';
 
 interface LayoutProps {
   children: ReactNode;
@@ -21,8 +18,6 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const dispatch = useDispatch();
   const urlSocket = process.env.NEXT_PUBLIC_API_URL || "localhost:9003";
-  const { notifications, unreadCount, error } = useSelector(state => (state as any).notifications);
-  const keyNo = `test`
   useWebSocket(`ws://${urlSocket.slice(7)}/ws/connection/?token=`);
   useEffect(() => {
     const token = localStorage.getItem("accessToken") || '';
@@ -34,75 +29,9 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     };
     getProfileData();
   }, []);
-
-
-  useEffect(()=>{
-    const latestNotification = notifications[notifications.length - 1]; 
-    if (latestNotification && latestNotification.subject === `GAME_INVITE`)
-    {
-      let isInteracted = false; // Flag to track user interaction
-
-      notification.open({
-        message: `GAME INVITE from ${latestNotification.sender}`,
-        placement: 'bottomLeft',
-        description: 'This is the content of the notification.',
-        duration: 15, // Notification duration in seconds
-        
-        btn: (
-          <div>
-            <Button
-              type="primary"
-              onClick={() => {
-                isInteracted = true; // Mark as interacted
-                acceptGameInvite(latestNotification.room_name);
-                notification.destroy(); // Close the notification
-              }}
-            >
-              Accept
-            </Button>
-            
-            <Button 
-              type="danger" 
-              onClick={() => {
-                isInteracted = true; // Mark as interacted
-                rejectGameInvite(latestNotification.room_name)();
-                notification.destroy(); // Close the notification
-              }}
-            >
-              Refuse
-            </Button>
-          </div>
-        ),
-        onClick: () => {
-          console.log('Notification Clicked!');
-        },
-        onClose: () => {
-          if (!isInteracted) {
-            isInteracted = true;
-            rejectGameInvite(latestNotification.room_name)();
-          }
-          console.log('Notification Closed!');
-        },
-      });
-      
-      // Handle rejection after the duration if no interaction occurs
-      setTimeout(() => {
-        if (!isInteracted) {
-          isInteracted = true;
-          rejectGameInvite(latestNotification.room_name)();
-          notification.destroy(); // Close the notification if still open
-         
-        }
-      }, 15000); // 15 seconds in milliseconds
-      
-    }
-     
-  },[notifications])
-
-
-
   return (
     <div className="flex h-screen overflow-hidden bg-[#001529]">
+      <GameNotification />
       <Nav />
       <div className="flex-1 flex flex-col">
         <header className="flex items-center justify-between bg-[#001529] shadow-lg text-white p-4 border-gray-200">
