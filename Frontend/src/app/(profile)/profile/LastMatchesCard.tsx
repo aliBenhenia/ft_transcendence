@@ -124,7 +124,7 @@ const LastMatchesCard = ({ userId }) => {
                   <div className={`text-lg font-bold ${match.result === "Loss" ? "text-green-500" : "text-red-500"}`}>
                     {match.player2.score}
                   </div>
-                </div>ƒƒ
+                </div>
               </div>
 
               {/* Result Icon */}

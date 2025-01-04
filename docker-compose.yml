@@ -17,7 +17,7 @@ services:
       - ./backend/source:/server
     networks:
       - mynetwork
-    restart: on-failure
+    restart: always
     env_file:
       - .env
   
@@ -36,7 +36,8 @@ services:
       - /app/.next
     networks:
       - mynetwork
-    restart: on-failure
+    # make restart always to avoid any issues
+    restart: always
     # command: npm run start
 
   # redis:

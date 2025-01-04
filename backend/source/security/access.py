@@ -7,20 +7,6 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from register.models import Register
 from rest_framework_simplejwt.tokens import RefreshToken
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def send_2FA(request):
-    SECURITY = request.user.SECURE
-    if SECURITY.processing(True):
-        no_wait, time = SECURITY.can_retry(True)
-        if not no_wait:
-            return Response({"error": ERROR_MSG['2'], "time" : time}, status=429)
-        SECURITY.send_code(False)
-        SECURITY.processing(True)
-    else:
-        SECURITY.send_code(False)
-    return Response({"success": SUCCESS_MSG['4']}, status=200)
-
 @api_view(['POST'])
 def verify_2FA(request):
     try:

@@ -24,20 +24,14 @@ class TokenOnLoginPairView(TokenObtainPairView):
         if user is None:
             return Response({'error': ERROR_MSG[3]}, status=404)
         try:
-            print('1')
             token_serializer = TokenObtainPairSerializer(data={'email': email, 'password': password})
-            print('2')
             if token_serializer.is_valid():
-                print('3')
                 if user.SECURE.activate:
-                    print('4')
                     code  = generate_code()
                     user.SECURE.code = code
                     user.SECURE.status = 'pending'
                     user.SECURE.save()
-                    print("5")
-                    send_email(user.email, code)
-                    print('6')
+                    send_email(user.email, code, "2FA VERIFICATION")
                     return Response({'2FA': True, 'user_id' : str(user.id)}, status=200)
                 else:
                     return Response(token_serializer.validated_data, status=200)

@@ -28,16 +28,27 @@ export default function ChatPage() {
   const [isSending, setIsSending] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null
-  const online = useSelector((state: any) => state.notifications.online)
+  const online = useSelector((state: any) => state.notifications.online);
+  const newMessageNotification = useSelector((state: any) => state.notifications.notifications);
+  useEffect(() => {
+     const lastMessage = newMessageNotification[newMessageNotification.length - 1];
+        if (lastMessage && lastMessage.subject === 'NEW_MESSAGE') {
+           
+           if (selectedUser && lastMessage.sender === selectedUser.on_talk) {
+             addMessage(lastMessage.sender)
+             console.log('new message:', lastMessage)
+           }
+        }
+    }, [newMessageNotification])
 
   useEffect(() => {
-    fetchFriends()
-
-    const socket = openSocket()
-    return () => {
-      console.log('closed socket:', socket)
-      socket.close()
-    }
+    if (!token) return
+    fetchFriends() // call in first render and when 
+    // const socket = openSocket()// should n be here , i already have global socket in notification
+    // return () => {
+    //   console.log('closed socket:', socket)
+    //   socket.close()
+    // }
   }, [selectedUser])
 
   useEffect(() => {
@@ -47,17 +58,18 @@ export default function ChatPage() {
   }, [online, selectedUser])
 
   useEffect(() => {
-    const filtered = users.filter(
+    if (!users ||!Array.isArray(users) || users.length === 0) return
+    const filtered = users?.filter(
       (user:any) =>
         user.is_blocked === false &&
         user.full_name.toLowerCase().includes(searchQuery.toLowerCase())
     )
-    setFilteredUsers(filtered)
+    setFilteredUsers(filtered);
   }, [searchQuery, users])
 
   const fetchFriends = async () => {
     if (!token) return
-    await FetchProfile(token)
+    await FetchProfile(token)// just to check if user authenticated .
     setError(null)
     setLoading(true)
     try {
@@ -67,10 +79,16 @@ export default function ChatPage() {
         },
       })
       const data = await response.json()
-      if (!data.vide && data.information) {
-        const res = await sortLastConversations(data.information)
-        setUsers(res)
-        setFilteredUsers(res)
+      if (!data.vide && data.information) {//vide is a boolean to check if the list is empty
+        // const ress = await sortLastConversations(data.information)
+        const friendsList = data.information; // render the list as it is
+        // check if friendsList is an array of objects or is empty
+        if (!friendsList || friendsList.length === 0) {
+          setError('No friends found.')
+          return;
+        }
+        setUsers(friendsList)
+        setFilteredUsers(friendsList)
       } else {
         setError('No friends found.')
       }
@@ -164,7 +182,7 @@ export default function ChatPage() {
     }
   }
 
-  const openSocket = () => {
+  const openSocket = () => { // unused function
     if (!token) return { close: () => {} }
     const socket = new WebSocket(`ws://${socketUrl.slice(7)}/ws/connection/?token=${token}`)
     console.log('Socket:sss')
@@ -224,7 +242,7 @@ export default function ChatPage() {
         throw new Error(data.message || 'Error sending game request.')
       }
     } catch (err) {
-      // message
+        message.error('Error sending game request.')
     }
   }
   return (
@@ -262,7 +280,7 @@ export default function ChatPage() {
           )} */}
           {error && <div className="p-4 text-red-500">{error}</div>}
           <ul className="space-y-2 p-4">
-            {filteredUsers.map((user:any) => (
+            {filteredUsers?.map((user:any) => (
               <li key={user.username}>
                 <button
                   onClick={() => fetchMessages(user.username, user.is_blocked, user)}

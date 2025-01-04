@@ -329,19 +329,47 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             await asyncio.sleep(timeout)
             if room_name in self.invites and len(self.invites[room_name]) < 2:
                 player = self.invites[room_name][0]
-                await player.send(text_data=json.dumps({"error": "Timeout: No second player joined."}))
-                await sync_to_async(lambda: GameInvite.objects.filter(room_name=room_name).delete())()
+                await player.send(text_data=json.dumps({"type": "Timeout" , "message" : "No second player joined."}))
+                print("SECOND PLAYER DIDNT JOIN")
+                try:
+                    game_invite = await GameInvite.objects.aget(room_name=room_name)
+                    game_invite.status = 'timeout'
+                    await sync_to_async(game_invite.save)()
+                except GameInvite.DoesNotExist:
+                    print(f"GameInvite with room_name '{room_name}' does not exist.")
                 del self.invites[room_name]
+                await self.close()
         except Exception as e:
             print(f"Error during timeout check: {e}")
+
+    async def game_rejected(self, event):
+        room_name = event['room_name']
+        if room_name in self.invites:
+            await self.send(text_data=json.dumps({"type": "game_rejected"}))
+            await self.channel_layer.group_send(
+            self.user.token_notify,
+            {
+                "type": "game_rejected",  # Message handler type
+                "sender": self.user.username,
+                "picture" : str(self.user.photo_url),
+                "full-name" : f"{self.user.first_name} {self.user.last_name}",
+            }
+        ) 
+            del self.invites[room_name]
+            await self.close()
+            print("GAME REJECTED")
 
     async def connect(self):
         query_params = parse_qs(self.scope['query_string'].decode())
         room_name = query_params.get('room_name', [None])[0]
+        await self.channel_layer.group_add(
+            room_name,
+            self.channel_name
+        )
+        await self.accept()
         if room_name != None:
             print("from invite")
             self.user = self.scope['user']
-            await self.accept()
             if room_name in self.games:
                 if room_name not in self.invites:
                     self.invites[room_name] = []
@@ -384,7 +412,6 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                     }))
                     self.close()
                     return
-                await self.accept()
                 await self.add_to_waiting_queue()
             else:
                 await self.close()

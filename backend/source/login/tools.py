@@ -31,17 +31,16 @@ def make_api_call(access_token):
         pass
     return False, None
 
-def send_email(recipient, message):
-    subject = "Test Email from Django"
+def send_email(recipient, message, subject):
+    subject = str(subject)
     message = str(message)
     sender = "marwan.zaroual.1337.1@gmail.com"
     recipient_list = []
     recipient_list.append(recipient)
-    print('sending email')
     try:
         send_mail(subject, message, sender, recipient_list)
     except Exception as e:
-        print(e)
+        print(f"{e}")
 
 def generate_code():
     otp = random.randint(100000, 999999)
