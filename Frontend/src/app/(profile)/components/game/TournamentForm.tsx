@@ -59,21 +59,23 @@ const RegistrationForm: React.FC = () => {
   };
 
   return (
-    <div className="">
+    <div className="max-w-4xl mx-auto p-6 bg-[#06294a] rounded-lg shadow-lg">
       {!registeredPlayers ? (
-        <form onSubmit={handleSubmit} className='p-4 space-y-4 bg-gray-100 rounded shadow-md'>
-          <h2 className="text-lg font-bold">Register Players</h2>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <h2 className="text-2xl font-bold text-gray-100 text-center">Register Players</h2>
           {players.map((player, index) => (
-            <div key={index} className="space-y-2">
-              <label className="block text-sm font-medium">Player {index + 1}</label>
+            <div key={index} className="space-y-4 bg-gray-800 p-4 rounded-lg shadow-md">
+              <label className="block text-lg font-semibold text-gray-200">
+                Player {index + 1}
+              </label>
               <input
                 type="text"
                 value={player.alias}
                 onChange={(e) => handleAliasChange(index, e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded"
+                className="w-full p-3 text-gray-900 rounded-lg border border-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder={`Enter alias for Player ${index + 1}`}
               />
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-4">
                 {avatars.map((avatar) => (
                   <label key={avatar} className="cursor-pointer">
                     <input
@@ -87,8 +89,10 @@ const RegistrationForm: React.FC = () => {
                     <img
                       src={avatar}
                       alt="avatar"
-                      className={`w-10 h-10 rounded-full border-2 ${
-                        player.avatar === avatar ? 'border-blue-500' : 'border-gray-300'
+                      className={`w-12 h-12 rounded-full border-4 transition ${
+                        player.avatar === avatar
+                          ? 'border-blue-500 scale-105'
+                          : 'border-gray-500'
                       }`}
                     />
                   </label>
@@ -96,8 +100,11 @@ const RegistrationForm: React.FC = () => {
               </div>
             </div>
           ))}
-          <button type="submit" className="px-4 py-2 text-white bg-blue-500 rounded">
-            Start Tournament
+          <button
+            type="submit"
+            className="w-full py-3 bg-blue-600 text-white text-lg font-semibold rounded-lg hover:bg-blue-500 transition"
+          >
+            Create Tournament
           </button>
         </form>
       ) : (
@@ -111,3 +118,4 @@ const RegistrationForm: React.FC = () => {
 };
 
 export default RegistrationForm;
+
