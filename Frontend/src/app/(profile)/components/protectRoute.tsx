@@ -30,7 +30,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   }, [token, dispatch, router]);
 
   if (isLoading) {
-    return <div>Loading...</div>; 
+    return null; 
   }
 
   return <>{children}</>;

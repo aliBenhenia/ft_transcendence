@@ -126,7 +126,7 @@ def send_game_invite(request):
     if GameInvite.objects.filter(inviter=sender, invited=to_invite, status='pending').exists():
         return Response({'error', 'A game invite is already pending.'}, status=400)
     room_name = LiveGameFlow.generate_room_id()
-    GameInvite.objects.create(room_name=room_name, inviter=sender, invited=to_invite,status='pending')
+    GameInvite.objects.create(room_name=room_name, inviter=sender, invited=to_invite, status='pending')
     LiveGameFlow.games[room_name] = {}
     notification_data =  {
         'type': 'game_invite',
