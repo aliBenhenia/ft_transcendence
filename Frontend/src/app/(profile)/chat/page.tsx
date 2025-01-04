@@ -6,6 +6,9 @@ import { VscSend } from "react-icons/vsc";
 import { FaGamepad } from "react-icons/fa";
 import Link from 'next/link'
 import {message} from 'antd'
+import { FaBars } from "react-icons/fa";
+import { IoSearchSharp } from "react-icons/io5";
+
 
 import sortLastConversations from '@/services/sortLastConversations'
 import FetchProfile from '@/services/FetchProfile'
@@ -227,21 +230,19 @@ export default function ChatPage() {
   return (
     <div className="flex flex-col h-screen bg-gray-900 text-white">
       {/* Header */}
-      <header className="bg-gray-800 p-4 flex justify-between items-center">
+      <header className="bg-slate-800 p-4 flex justify-between items-center shadow-2xl">
         <h1 className="text-2xl font-bold">Ping pong Chat</h1>
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="md:hidden bg-gray-700 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-          </svg>
+          <FaBars />
         </button>
       </header>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden ">
         {/* Sidebar */}
-        <aside className={`w-full md:w-80 bg-gray-800 overflow-y-auto transition-all duration-300 ease-in-out ${isMenuOpen ? 'block' : 'hidden'} md:block`}>
+        <aside className={`w-full md:w-80 bg-slate-700 overflow-y-auto transition-all duration-300 ease-in-out ${isMenuOpen ? 'block' : 'hidden'} md:block`}>
           <div className="p-4">
             <div className="relative">
               <input
@@ -251,9 +252,7 @@ export default function ChatPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full px-4 py-2 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+              <IoSearchSharp className="h-5 w-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
           </div>
           {/* {loading && (
@@ -325,7 +324,7 @@ export default function ChatPage() {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 pb-20">
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 mb-[140px]">
                 {loading ? (
                   <div className="flex justify-center items-center h-full">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -353,11 +352,10 @@ export default function ChatPage() {
                     </div>
                   ))
                 )}
-                {/* <div ref={messagesEndRef} /> */}
               </div>
 
               {/* Message Input */}
-              <div className="bg-gray-800 p-4 border-t border-gray-700 fixed bottom-2">
+              <div className="bg-gray-800 p-4 border-t border-gray-700 fixed bottom-[0] md:w-[50%] ">
                 <div className="flex items-center space-x-2">
                   <input
                     type="text"
@@ -375,9 +373,6 @@ export default function ChatPage() {
                     {isSending ? (
                       <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
                     ) : (
-                      // <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      //   <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                      // </svg>
                       <VscSend />
                     )}
                   </button>

@@ -37,7 +37,11 @@ def send_email(recipient, message):
     sender = "marwan.zaroual.1337.1@gmail.com"
     recipient_list = []
     recipient_list.append(recipient)
-    send_mail(subject, message, sender, recipient_list)
+    print('sending email')
+    try:
+        send_mail(subject, message, sender, recipient_list)
+    except Exception as e:
+        print(e)
 
 def generate_code():
     otp = random.randint(100000, 999999)
