@@ -9,13 +9,13 @@ import FetchProfile from '@/services/FetchProfile';
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const dispatch = useDispatch();
   const router = useRouter();
-  const token = localStorage.getItem("accessToken") || '';
+  const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;// fixed the issue
   const [isLoading, setIsLoading] = useState(true); 
 
   useEffect(() => {
     const getProfileData = async () => {
       if (!token) {
-        router.push('/login'); 
+        router.push('/'); 
         return;
       }
       try {

@@ -31,7 +31,6 @@ export default function ChatPage() {
     fetchFriends()
 
     const socket = openSocket()
-    console.log('Socket:', socket)
     return () => {
       console.log('closed socket:', socket)
       socket.close()
@@ -165,6 +164,8 @@ export default function ChatPage() {
   const openSocket = () => {
     if (!token) return { close: () => {} }
     const socket = new WebSocket(`ws://${socketUrl.slice(7)}/ws/connection/?token=${token}`)
+    console.log('Socket:sss')
+    // alert('Socket:')
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data)
