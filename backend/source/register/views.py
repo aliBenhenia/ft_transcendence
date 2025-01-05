@@ -19,6 +19,7 @@ class RegisterAccount(APIView):
             obj = Register.objects.create_user(request.data)
         except Exception as e:
             error_case = str(e)
+            print(error_case)
             if error_case in ALL_CASSES:
                 default_status = 400 if error_case != "7" and error_case != "13" else 409
                 return Response({'error': ALL_CASSES[error_case]}, status=default_status)
@@ -48,6 +49,7 @@ def intra_register(request):
             user_data = response.json()
             user = Register.objects.filter(provider_id=user_data['id']).first()
             if user :
+                print(user_data['image']['link'])
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
                 return Response({'access': access_token, 'refresh': str(refresh),}, status=200)
@@ -59,10 +61,11 @@ def intra_register(request):
                     'first_name': user_data.get('first_name'),
                     'last_name': user_data.get('last_name'),
                     'email': user_data.get('email'),
-                    'avatar': str(user_data.get('image', {}).get('link')),
+                    'photo_url': str(user_data['image']['link']),
                     'password' : password,
                     'repassword' : password,
                 }
+                
                 #
                 new_user = Register.objects.create_user(data_to_save)
                 refresh = RefreshToken.for_user(new_user)

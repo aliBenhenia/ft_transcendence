@@ -5,7 +5,7 @@ class STATICS(models.Model):
     win = models.IntegerField(default=0)
     loss = models.IntegerField(default=0)
     total_match = models.IntegerField(default=0)
-    last_match = models.CharField(max_length=10, default="Unnamed")
+    last_match = models.CharField(max_length=10, default="-")
     xp_total = models.IntegerField(default=0)
     level = models.IntegerField(default=0)
     level_progress_percentage = models.IntegerField(default=0)

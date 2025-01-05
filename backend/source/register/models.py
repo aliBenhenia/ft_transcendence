@@ -22,7 +22,8 @@ class RegisterManager(BaseUserManager):
 
         fields = {
             'SECURE' : SEC,
-            'provider_id' : requested.get('provider_id'),
+            'provider_id' : requested.get('provider_id', None),
+            'photo_url' : requested.get('photo_url', FULL_PICTURE),
             'username': requested.get('username'),
             'password' :  requested.get('password'),
             'last_name': requested.get('last_name'),

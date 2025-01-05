@@ -7,6 +7,9 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useRef, useState, ChangeEvent } from "react";
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import logoOAuth from "../assets/42_logo.png";
+import Image from "next/image";
+
 
 interface ErrorProps {
   [key: string]: string;//ma3loma (Index Signature is used to define an object with any number of properties())
@@ -161,22 +164,25 @@ export default function CreateAccount() {
     
     }
   };
+  const handleLogin = () => {
+    const redirectUri = encodeURIComponent(window.location.href); // current page, or a page to redirect after OAuth success
+    const oauthURL = `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-91a40abe8c1949a76f93a4f72d02422dbd3b71245c8a07fbeb3221cddfae08e3&redirect_uri=http%3A%2F%2Flocalhost%3A9001%2Foauth&response_type=code`;
 
+    window.location.href = oauthURL;  // Redirect user to the 42 login page
+  };
   return (
     <div className={`${styles.singup} min-h-screen flex items-center justify-center w-full`}>
       <div className='lg:w-[50%] w-full flex items-center justify-center'>
         <div className='w-full max-w-md p-8 bg-[#00152993] rounded-2xl bg-[#001529] shadow-lg '>
           <h2 className="text-2xl font-semibold text-white text-center mb-6">Create Account </h2>
           <div className="flex flex-col space-y-4 mb-6">
-            <button className="w-full bg-[#3E3C49] text-white p-2 rounded shadow flex items-center justify-center">
-              <img
-                src="data:image/png;base64,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"
-                alt="GitHub"
-                className="w-4 h-4 mr-2"
-              />
-              Sign up with intra 42
-            </button>
-          </div>
+                <button 
+                onClick={handleLogin}
+                className="w-full bg-[#3E3C49] text-white p-4 rounded-lg shadow-lg flex items-center justify-center space-x-3 hover:bg-[#5A575F] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3E3C49] transition duration-300 ease-in-out">
+                  <Image src={logoOAuth} alt="42 logo" width={24} height={24} />
+                  <span className="text-lg font-semibold">Sign up with 42</span>
+                </button>
+              </div>
           <p className="text-white text-center mb-5">or</p>
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
