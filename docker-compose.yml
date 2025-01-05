@@ -38,6 +38,8 @@ services:
       - mynetwork
     # make restart always to avoid any issues
     restart: always
+    env_file:
+      - ./Frontend/.env
     # command: npm run start
 
   # redis:

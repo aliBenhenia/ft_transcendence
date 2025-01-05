@@ -11,7 +11,7 @@ const GameNotification = () => {
   const notifications = useSelector((state: RootState) => state.notifications.notifications);
 
   useEffect(() => {
-    const latestNotification = notifications[notifications.length - 1];
+    const latestNotification:any = notifications[notifications.length - 1];
 
     if (latestNotification && latestNotification.subject === 'GAME_INVITE') {
       let isInteracted = false;
@@ -35,7 +35,7 @@ const GameNotification = () => {
             </Button>
 
             <Button
-              type="danger"
+              type="default"
               onClick={() => {
                 isInteracted = true;
                 rejectGameInvite(latestNotification.room_name);

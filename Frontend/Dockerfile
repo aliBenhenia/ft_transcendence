@@ -16,6 +16,7 @@ COPY . .
 # RUN npm run build
 
 # Check if build output exists in .next directory
+
 # RUN ls -l .next
 # ENV NODE_ENV=production
 
@@ -23,8 +24,4 @@ COPY . .
 EXPOSE 3000
 
 # Start the app in production mode
-# CMD ["npm", "run", "start"]
-# start the app in development mode
-# RUN npm run build
-
 CMD ["npm", "run", "dev"]

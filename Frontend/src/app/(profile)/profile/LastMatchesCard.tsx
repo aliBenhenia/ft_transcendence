@@ -4,7 +4,10 @@ import { motion } from "framer-motion";
 import { FaTrophy, FaTimesCircle } from "react-icons/fa";
 import axios from "axios";
 
-const LastMatchesCard = ({ userId }) => {
+interface LastMatchesCardProps {
+  userId: number; 
+}
+const LastMatchesCard = ({ userId }:LastMatchesCardProps) => {
   const [matches, setMatches] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -25,7 +28,7 @@ const LastMatchesCard = ({ userId }) => {
           setMatches([]);
           return;
         }
-        const formattedMatches = response.data.map(match => {
+        const formattedMatches = response.data.map((match:any) => {
           // Check if necessary properties exist
           if (!match.loser || !match.winner) {
             return null;
@@ -85,7 +88,7 @@ const LastMatchesCard = ({ userId }) => {
       {/* Matches List (Scrollable Section) */}
       <div className="p-6 overflow-y-auto max-h-[400px]">
         <div className="space-y-4">
-          {matches.map((match, index) => (
+          {matches.map((match:any, index) => (
             <motion.div
               key={index}
               className={`p-4 rounded-2xl shadow-md flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0 md:space-x-4 transition-all duration-300 ease-in-out transform hover:bg-opacity-90 ${
