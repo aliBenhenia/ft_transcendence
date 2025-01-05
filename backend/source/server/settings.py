@@ -31,8 +31,12 @@ WSGI_APPLICATION = 'server.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': env('POSTGRES_DB'),
+        'USER': env('POSTGRES_USER'),
+        'PASSWORD': env('POSTGRES_PASSWORD'),
+        'HOST': 'postgres',
+        'PORT': '5432',
     }
 }
 
@@ -119,6 +123,11 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:9001",
 ]
 
 # CROSS-ORIGIN RESOURCE SHARING (CORS)
@@ -170,3 +179,5 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'apikey'  # Replace with your email
 EMAIL_HOST_PASSWORD = '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'    # Replace with your email's app password
 DEFAULT_FROM_EMAIL = 'marwan.zaroual.1337.1@gmail.com'
+
+CSRF_COOKIE_SECURE = False

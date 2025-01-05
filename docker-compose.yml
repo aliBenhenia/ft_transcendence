@@ -6,11 +6,11 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     
-    image: django
-    container_name: django
+    image: backend
+    container_name: backend
 
-    # depends_on:
-    #   - redis
+    depends_on:
+      - db
     ports:
       - 9003:8001
     volumes:
@@ -20,12 +20,24 @@ services:
     restart: always
     env_file:
       - .env
+
+  nginx:
+    image: nginx
+    container_name: nginx
+    build: ./nginx
+    ports:
+      - "443:443"
+    networks:
+      - mynetwork
+    depends_on:
+      - backend
+      - frontend
   
-  nextjs:
+  frontend:
     build:
       context: ./Frontend
       dockerfile: Dockerfile
-    container_name: nextjs
+    container_name: frontend
     # environment:
     #   NEXT_PUBLIC_API_URL: "http://localhost:9003" # change this to your local ip or use localhost
     ports:
@@ -36,9 +48,22 @@ services:
       - /app/.next
     networks:
       - mynetwork
-    # make restart always to avoid any issues
     restart: always
-    # command: npm run start
+
+  db:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - mynetwork
 
   # redis:
   #   build:
@@ -49,7 +74,11 @@ services:
     
   #   networks:
   #     - mynetwork
+
     
+
+volumes:
+  postgres_data:
 
 networks:
   mynetwork:

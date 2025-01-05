@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -43,4 +43,10 @@ const OAuthCallback = () => {
   return null;  
 };
 
-export default OAuthCallback;
+const OAuthCallbackWrapper = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <OAuthCallback />
+  </Suspense>
+);
+
+export default OAuthCallbackWrapper;
