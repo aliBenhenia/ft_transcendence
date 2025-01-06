@@ -5,12 +5,8 @@ services:
     image: postgres:latest
     container_name: postgres
     restart: always
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    ports:
-      - "5432:5432"
+    env_file:
+      - .env
     volumes:
       - postgres_data:/var/lib/postgresql/data
     networks:
@@ -25,8 +21,6 @@ services:
     container_name: backend
     depends_on:
       - db
-    ports:
-      - 9003:8001
     volumes:
       - ./backend/source:/server
     networks:
@@ -40,10 +34,8 @@ services:
       context: ./Frontend
       dockerfile: Dockerfile
     container_name: frontend
-    # environment:
-    #   NEXT_PUBLIC_API_URL: "http://localhost:9003" # change this to your local ip or use localhost
-    ports:
-      - 9001:3000
+    env_file:
+      - .env
     volumes:
       - ./Frontend:/app
       - /app/node_modules
