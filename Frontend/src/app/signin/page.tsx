@@ -9,6 +9,7 @@ import { message } from "antd";
 import axios from "axios";
 import logoOAuth from "../assets/42_logo.png";
 import Image from "next/image";
+import FetchProfile from "@/services/FetchProfile";
 
 export default function SignIn() {
   const inputEmail = useRef<HTMLInputElement>(null);
@@ -22,11 +23,27 @@ export default function SignIn() {
   const router = useRouter();
   useEffect(() => {
     const token = localStorage.getItem("accessToken") || '';
-    if (token) {
+    const checkisLogged = async () => {
       setIsLogged(false);
-      router.push("/dashboard");
+      try {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/account/profile/`, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+            },
+        });
+        if (res.status === 200) {
+          router.push("/dashboard");
+        }
+    } catch (err: any) {
+      console.log(err.status);
+        if (err.status === 401) {
+          setIsLogged(true);
+        }
     }
-    
+      
+    };
+    checkisLogged();
   }, []);
 
   const isAllSpaces = (str: string): boolean => {
@@ -136,7 +153,7 @@ export default function SignIn() {
   // OAuth login
   const handleLogin = () => {
     const redirectUri = encodeURIComponent(window.location.href); // current page, or a page to redirect after OAuth success
-    const oauthURL = `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-b93401036d9c415b3e031abb22dacc0b7f99002cf7e86532930540a641970b63&redirect_uri=http%3A%2F%2Flocalhost%3A9001%2Foauth&response_type=code`;
+    const oauthURL = `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-91a40abe8c1949a76f93a4f72d02422dbd3b71245c8a07fbeb3221cddfae08e3&redirect_uri=http%3A%2F%2Flocalhost%3A9001%2Foauth&response_type=code`;
 
     window.location.href = oauthURL;  // Redirect user to the 42 login page
   };

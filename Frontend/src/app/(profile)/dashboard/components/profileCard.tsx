@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 
 const ProfileCard = () => {
   const router = useRouter();
-  const profileState = useSelector((state: RootState) => state.profile);
+  const profileState:any = useSelector((state: RootState) => state.profile);
 
   const [twoFactorEnabled, setTwoFactorEnabled] = useState<boolean | null>(null);
   const [loading, setLoading] = useState<boolean>(false);

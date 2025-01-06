@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { message, notification } from "antd"; // For showing messages and notifications
@@ -18,7 +18,7 @@ const ResetPassword = () => {
   const [loading, setLoading] = useState(false);
 
   // Handle form submission
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e:any) => {
     e.preventDefault(); // Prevent default form submission
 
     if (password !== repassword) {
@@ -49,7 +49,7 @@ const ResetPassword = () => {
   };
 
   // Handle API errors
-  const handleError = (err) => {
+  const handleError = (err:any) => {
     if (err.response) {
       const { data } = err.response;
       if (data.error) message.error(data.error);
@@ -104,4 +104,10 @@ const ResetPassword = () => {
   );
 };
 
-export default ResetPassword;
+const ResetPasswordWrapper = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <ResetPassword />
+  </Suspense>
+);
+
+export default ResetPasswordWrapper;

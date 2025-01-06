@@ -2,7 +2,7 @@ import axios from 'axios';
 import { message } from 'antd';
 
 
-const rejectGameInvite = async (roomName)  => {
+const rejectGameInvite = async (roomName:any)  => {
     const token = localStorage.getItem('accessToken'); 
     
     if (!token) {
@@ -28,7 +28,7 @@ const rejectGameInvite = async (roomName)  => {
         console.log('Game invite rejected:', response.data);
         
         return response.data;  
-    } catch (error) {
+    } catch (error:any) {
         
         if (error.response) {
             console.error('Error rejecting invite:', error.response.data);

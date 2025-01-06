@@ -1,12 +1,14 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
 
 const OAuthCallback = () => {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(true); 
+  const router = useRouter();
 
   useEffect(() => {
     const code = searchParams.get('code'); 
@@ -14,10 +16,11 @@ const OAuthCallback = () => {
 
     if (code) {
       axios
-        .post('/api/auth/42/register', { code }) 
+        .post(`${process.env.NEXT_PUBLIC_API_URL}/register/intra-42/`, { code }) 
         .then((response) => {
           console.log('OAuth successful:', response.data);
-        
+          window.localStorage.setItem('accessToken', response.data.access);
+          router.push("/dashboard");
         })
         .catch((error) => {
           console.error('OAuth error:', error);
@@ -34,10 +37,16 @@ const OAuthCallback = () => {
   }, [searchParams]); 
 
   if (loading) {
-    return <div>Loading...</div>;  
+    return null;  
   }
 
   return null;  
 };
 
-export default OAuthCallback;
+const OAuthCallbackWrapper = () => (
+  <Suspense fallback={<div>Loading...</div>}>
+    <OAuthCallback />
+  </Suspense>
+);
+
+export default OAuthCallbackWrapper;
