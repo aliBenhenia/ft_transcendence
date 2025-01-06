@@ -1,6 +1,21 @@
 version: '2.29.2'
 
 services:
+  db:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - mynetwork
+
   backend:
     build:
       context: ./backend
@@ -8,7 +23,6 @@ services:
     
     image: backend
     container_name: backend
-
     depends_on:
       - db
     ports:
@@ -21,18 +35,6 @@ services:
     env_file:
       - .env
 
-  nginx:
-    image: nginx
-    container_name: nginx
-    build: ./nginx
-    ports:
-      - "443:443"
-    networks:
-      - mynetwork
-    depends_on:
-      - backend
-      - frontend
-  
   frontend:
     build:
       context: ./Frontend
@@ -50,20 +52,19 @@ services:
       - mynetwork
     restart: always
 
-  db:
-    image: postgres:latest
-    container_name: postgres
-    restart: always
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  nginx:
+    image: nginx
+    container_name: nginx
+    build: ./nginx
     ports:
-      - "5432:5432"
+      - "443:443"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - ./backend/source/media:/media
     networks:
       - mynetwork
+    depends_on:
+      - backend
+      - frontend
 
   # redis:
   #   build:
@@ -74,8 +75,6 @@ services:
     
   #   networks:
   #     - mynetwork
-
-    
 
 volumes:
   postgres_data:

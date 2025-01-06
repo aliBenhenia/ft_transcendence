@@ -37,7 +37,7 @@ def intra_register(request):
     data = {
         'grant_type': 'authorization_code',
         'code': code,
-        'redirect_uri': 'http://localhost:9001/oauth',
+        'redirect_uri': settings.OAUTH_REDIRECT_URI,
         'client_id': settings.OAUTH_CLIENT_ID, 
         'client_secret': settings.OAUTH_CLIENT_SECRET,
     }

@@ -153,7 +153,7 @@ export default function SignIn() {
   // OAuth login
   const handleLogin = () => {
     const redirectUri = encodeURIComponent(window.location.href); // current page, or a page to redirect after OAuth success
-    const oauthURL = `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-91a40abe8c1949a76f93a4f72d02422dbd3b71245c8a07fbeb3221cddfae08e3&redirect_uri=http%3A%2F%2Flocalhost%3A9001%2Foauth&response_type=code`;
+    const oauthURL = process.env.NEXT_PUBLIC_REDIRECT_URI;
 
     window.location.href = oauthURL;  // Redirect user to the 42 login page
   };

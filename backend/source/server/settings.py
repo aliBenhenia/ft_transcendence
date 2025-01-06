@@ -18,8 +18,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 
 # PICTURE FULL URL
 
-FULL_PICTURE = f'http://{HOST_IP}:9003/media/avatars/unknown.jpeg'
-PATH_PICTURE = f'http://{HOST_IP}:9003'
+FULL_PICTURE = f'https://{HOST_IP}:443/media/avatars/unknown.jpeg'
+PATH_PICTURE = f'https://{HOST_IP}:443'
 
 DEBUG = True
 
@@ -158,15 +158,16 @@ CHANNEL_LAYERS = {
 #  42 CONFIGURATIONS
 OAUTH_CLIENT_ID=env('UID')
 OAUTH_CLIENT_SECRET=env('SECRET')
+OAUTH_REDIRECT_URI=env('REDIRECT_URI')
 
-OAUTH2_CONFIG = {
-    'client_id': 'u-s4t2ud-18a834e3d07630161d8cf7e12c386f1e2bec5b1365e140159b685cd060b8f5bf',
-    'client_secret': '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',
-    'authorize_url': 'https://api.intra.42.fr/oauth/authorize',
-    'token_url': 'https://api.intra.42.fr/oauth/token',
-    'redirect_uri': 'http://localhost:9001',
-    'scope': 'public',
-}
+# OAUTH2_CONFIG = {
+#     'client_id': 'u-s4t2ud-18a834e3d07630161d8cf7e12c386f1e2bec5b1365e140159b685cd060b8f5bf',
+#     'client_secret': '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',
+#     'authorize_url': 'https://api.intra.42.fr/oauth/authorize',
+#     'token_url': 'https://api.intra.42.fr/oauth/token',
+#     'redirect_uri': 'http://localhost:9001',
+#     'scope': 'public',
+# }
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Default backend
 

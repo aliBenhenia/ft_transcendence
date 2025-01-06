@@ -14,8 +14,8 @@ class RegisterException(Exception):
 
 class RegisterManager(BaseUserManager):
     def create_user(self, requested):
-
-        self.ValidateRegister(requested)
+        if requested.get('provider_id', None) is None:
+            self.ValidateRegister(requested)
         
         SEC = SECURITY.objects.create()
         SEC.save()
