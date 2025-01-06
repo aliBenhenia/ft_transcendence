@@ -119,7 +119,7 @@ export default function SignIn() {
     }
 
     try {
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/login/api/token/`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/login/token/`, {
         email: data.email,
         password: data.password,
       });

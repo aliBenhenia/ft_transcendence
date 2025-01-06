@@ -49,7 +49,7 @@ services:
     container_name: nginx
     build: ./nginx
     ports:
-      - "443:443"
+      - "8443:443"
     volumes:
       - ./backend/source/media:/media
     networks:
