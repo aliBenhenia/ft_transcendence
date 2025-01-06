@@ -36,11 +36,16 @@ def match_history(request):
         games = Game.objects.filter(Q(winner=user) | Q(loser=user)).order_by('-end_time')
         if not games:
             return Response({'error': 'No games found'})
-        for game in games:
-            game.time_ago = timesince(game.end_time, now()) + " ago"
-            game.save()
+        # try:
+        # for game in games:
+        #     game.time_ago = str(timesince(game.end_time, now())) + " ago"
+        #         # print(game.time_ago
+        #     game.save()
+        # except Exception as e:
+            # print("hna", str(e))
         serializer = GameSerializer(games, many=True)
         return Response(serializer.data)
     except Exception as e:
-        return Response({'error': str(e)}, status=500)
+        print(f"exception : {type(e).__name__}")
+        return Response({'error': 'not found'}, status=404)
 

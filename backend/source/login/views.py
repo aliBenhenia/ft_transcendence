@@ -1,6 +1,6 @@
 import urllib.parse, json, requests
 from register.models import Register
-from server.settings import OAUTH2_CONFIG
+# from server.settings import OAUTH2_CONFIG
 from .cases import ERROR_MSG, SUCCESS_MSG
 from rest_framework.response import Response
 from rest_framework.decorators import api_view

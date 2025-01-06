@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FaTrophy, FaTimesCircle } from "react-icons/fa";
+// import moment from 'moment';
 import axios from "axios";
 
 interface LastMatchesCardProps {
@@ -20,7 +21,7 @@ const LastMatchesCard = ({ userId }:LastMatchesCardProps) => {
 
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/pingpong/match_history/?user_id=${userId}`);
-        
+        // let date = new Date()
         if (response.status !== 200) {
             return;
         }
@@ -45,8 +46,8 @@ const LastMatchesCard = ({ userId }:LastMatchesCardProps) => {
               avatar: match.loser.photo_url,
               score: match.loser_score,
             },
-            // date: new Date(match.end_time).toLocaleDateString(),
-            date: match.time_ago,
+            date: new Date(match.end_time).toString(), // to modify
+            // date: new Date().getDate(),// match.time_ago,
             result: match.winner.id === userId ? "Win" : "Loss",
           };
         }).filter(Boolean);

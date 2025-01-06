@@ -184,7 +184,7 @@ export default function ChatPage() {
 
   const openSocket = () => { // unused function
     if (!token) return { close: () => {} }
-    const socket = new WebSocket(`ws://${socketUrl.slice(7)}/ws/connection/?token=${token}`)
+    const socket = new WebSocket(`${socketUrl}/connection/?token=${token}`)
     console.log('Socket:sss')
     // alert('Socket:')
 

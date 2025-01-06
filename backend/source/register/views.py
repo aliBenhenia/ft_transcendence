@@ -8,6 +8,7 @@ import requests
 from server import settings
 from rest_framework_simplejwt.tokens import RefreshToken
 import uuid
+from datetime import timedelta
 
 class RegisterAccount(APIView):
     
@@ -36,7 +37,7 @@ def intra_register(request):
     data = {
         'grant_type': 'authorization_code',
         'code': code,
-        'redirect_uri': 'http://localhost:9001/oauth',
+        'redirect_uri': settings.OAUTH_REDIRECT_URI,
         'client_id': settings.OAUTH_CLIENT_ID, 
         'client_secret': settings.OAUTH_CLIENT_SECRET,
     }
@@ -65,11 +66,10 @@ def intra_register(request):
                     'password' : password,
                     'repassword' : password,
                 }
-                
                 #
                 new_user = Register.objects.create_user(data_to_save)
                 refresh = RefreshToken.for_user(new_user)
                 access_token = str(refresh.access_token)
                 return Response({'access': access_token, 'refresh': str(refresh),}, status=200)
-                
+
     return Response({'error' : ''}, status=404)

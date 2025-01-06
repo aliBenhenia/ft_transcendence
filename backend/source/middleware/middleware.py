@@ -7,6 +7,10 @@ from server.settings import SECRET_KEY
 
 class TokenAuthMiddleware(BaseMiddleware):
     async def __call__(self, scope, receive, send):
+        path = scope['path']
+        print(path)
+        if path not in ("/ws/pingpong/", "/ws/connection/"):
+            return
         query_params = parse_qs(scope['query_string'].decode())
         token = query_params.get('token', [None])[0]
         if token:
