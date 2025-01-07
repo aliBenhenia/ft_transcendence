@@ -12,6 +12,8 @@ class NOTIFY(models.Model):
     content = models.CharField(default='NONE', max_length=20)
     time = models.DateTimeField(null=True, blank=True, default=timezone.now)
 
+    class Meta:
+        ordering = ['-time']
     def mark_as_read(self):
         self.mark = True
         self.save()

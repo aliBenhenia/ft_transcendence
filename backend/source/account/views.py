@@ -78,7 +78,6 @@ def update_profile(request):
     Account = request.user
     data = request.data
     photo = data.get('picture')
-    print(photo)
     if photo:
         try:
             Image.open(photo)
@@ -88,6 +87,15 @@ def update_profile(request):
         Account.save()
         Account.photo_url = PATH_PICTURE + str(Account.picture.url)
         Account.save()
+    if data.get('username', None):
+        if Register.objects.filter(username=data.get('username')).first():
+            return Response({'error', 'username already in use.'})
+        Account.username = data.get('username')
+
+    if data.get('email', None):
+        if Register.objects.filter(email=data.get('email')).exists():
+            return Response({'error', 'email already in use'})
+        Account.email = data.get('email')
 
     firstname = data.get('first_name')
     lastname = data.get('last_name')

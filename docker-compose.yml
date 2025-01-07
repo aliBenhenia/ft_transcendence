@@ -7,8 +7,6 @@ services:
     restart: always
     env_file:
       - .env
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     networks:
       - mynetwork
 
@@ -67,9 +65,6 @@ services:
     
   #   networks:
   #     - mynetwork
-
-volumes:
-  postgres_data:
 
 networks:
   mynetwork:

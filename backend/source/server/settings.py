@@ -166,11 +166,12 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Default backend
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST =  env('EMAIL_HOST')#'smtp.sendgrid.net'
+EMAIL_HOST =  env('EMAIL_HOST')
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = env('EMAIL_HOST_USER') # Replace with your email
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')    # Replace with your email's app password
-DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 CSRF_COOKIE_SECURE = False
+
+FRONT_END_URL= env('FRONT_END_URL')

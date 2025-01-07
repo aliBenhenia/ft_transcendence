@@ -9,6 +9,7 @@ from server import settings
 from rest_framework_simplejwt.tokens import RefreshToken
 import uuid
 from datetime import timedelta
+import random
 
 class RegisterAccount(APIView):
     
@@ -50,15 +51,18 @@ def intra_register(request):
             user_data = response.json()
             user = Register.objects.filter(provider_id=user_data['id']).first()
             if user :
-                print(user_data['image']['link'])
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
                 return Response({'access': access_token, 'refresh': str(refresh),}, status=200)
             else:
+                if Register.objects.filter(email=user_data['email']).first():
+                    return Response({'error', 'Email already associated with an account.'})
                 password = uuid.uuid4().hex
+                random_numbers = ''.join([str(random.randint(0, 9)) for _ in range(4)])
+                generated_username = user_data.get('login') + random_numbers
                 data_to_save = {
                     'provider_id' : int(user_data.get('id')),
-                    'username' :user_data.get('login'),
+                    'username' : generated_username,
                     'first_name': user_data.get('first_name'),
                     'last_name': user_data.get('last_name'),
                     'email': user_data.get('email'),

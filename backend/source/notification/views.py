@@ -41,7 +41,6 @@ def notification_mark(request):
 
 # "message": "all notifications has marked as read"
 
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def notification_delete(request):
