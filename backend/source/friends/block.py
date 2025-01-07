@@ -3,15 +3,14 @@ from .models import FRIENDS, BLOCKER
 from .cases import ERROR_MSG, SUCCESS_MSG
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from .tools import get_user, is_twofactor, re, on_block
+from .tools import get_user, re, on_block
 from rest_framework.decorators import api_view, permission_classes
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def friend_block(request_id):
     account = request_id.user
-    if is_twofactor(account):
-        return Response({'error' : ERROR_MSG['15'], '2FA' : True}, status=401)
+
     INFO = request_id.data
     reciver_user = INFO.get('username')
     client, error = get_user(reciver_user)
@@ -31,8 +30,7 @@ def friend_block(request_id):
 @permission_classes([IsAuthenticated])
 def friend_unblock(request_id):
     account = request_id.user
-    if is_twofactor(account):
-        return Response({'error' : ERROR_MSG['15'], '2FA' : True}, status=401)
+    
     INFO = request_id.data
     reciver_user = INFO.get('username')
     client, error = get_user(reciver_user)

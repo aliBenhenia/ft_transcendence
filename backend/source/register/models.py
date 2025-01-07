@@ -22,6 +22,8 @@ class RegisterManager(BaseUserManager):
 
         fields = {
             'SECURE' : SEC,
+            'provider_id' : requested.get('provider_id', None),
+            'photo_url' : requested.get('photo_url', FULL_PICTURE),
             'username': requested.get('username'),
             'password' :  requested.get('password'),
             'last_name': requested.get('last_name'),
@@ -119,7 +121,7 @@ class Register(AbstractBaseUser):
     email = models.EmailField(max_length=100, unique=True)
     username = models.CharField(max_length=30, unique=True)
     
-    password = models.CharField(max_length=100)
+    password = models.CharField(max_length=100, null=True)
     
     is_online = models.BooleanField(default=False)
 
@@ -128,7 +130,7 @@ class Register(AbstractBaseUser):
     token_game = models.CharField(max_length=60, blank=True, null=True,default='')
 
     photo_url = models.URLField(default=FULL_PICTURE)
-    picture = models.ImageField(upload_to='avatars/', default='avatars/unknown.jpg', blank=True)
+    picture = models.ImageField(upload_to='avatars/', default='avatars/unknown.jpeg', blank=True)
 
     SECURE = models.OneToOneField(SECURITY, on_delete=models.CASCADE, null=True)
     DETAILS = models.OneToOneField(STATICS, on_delete=models.CASCADE, null=True)
@@ -136,6 +138,8 @@ class Register(AbstractBaseUser):
     ACCOUNT = models.CharField(max_length=20, default='NORMAL')
     
     USERNAME_FIELD = 'email'
+
+    provider_id = models.BigIntegerField(null=True)
     
     objects = RegisterManager()
 

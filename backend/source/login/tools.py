@@ -3,6 +3,8 @@ from security.tools import AccountLookup
 from register.models import generate_token
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.core.mail import send_mail
+import random
 
 def on_ready(username, on_check):
     i = 1
@@ -28,4 +30,18 @@ def make_api_call(access_token):
     except:
         pass
     return False, None
-    
+
+def send_email(recipient, message, subject):
+    subject = str(subject)
+    message = str(message)
+    sender = "marwan.zaroual.1337.1@gmail.com"
+    recipient_list = []
+    recipient_list.append(recipient)
+    try:
+        send_mail(subject, message, sender, recipient_list)
+    except Exception as e:
+        print(f"{e}")
+
+def generate_code():
+    otp = random.randint(100000, 999999)
+    return otp

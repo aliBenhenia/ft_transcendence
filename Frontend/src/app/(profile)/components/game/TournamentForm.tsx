@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import RegisteredPlayers from './RegisteredPlayers';
 import AllMatches from './AllMatches';
+import { useRouter } from 'next/navigation';
 
 interface Player {
   alias: string;
@@ -17,6 +18,7 @@ const avatars = [
 ];
 
 const RegistrationForm: React.FC = () => {
+  const router = useRouter();
   const [players, setPlayers] = useState<Player[]>([
     { alias: '', avatar: avatars[0] },
     { alias: '', avatar: avatars[1] },
@@ -25,6 +27,18 @@ const RegistrationForm: React.FC = () => {
   ]);
   const [registeredPlayers, setRegisteredPlayers] = useState<Player[] | null>(null);
   const [matches, setMatches] = useState<{ player1: Player; player2: Player }[] | null>(null);
+
+// function to save the registered players and matches in the local storage
+  useEffect(() => {
+    const savedPlayers = localStorage.getItem('registeredPlayers');
+    const savedMatches = localStorage.getItem('matches');
+    if (savedPlayers) {
+      setRegisteredPlayers(JSON.parse(savedPlayers));
+    }
+    if (savedMatches) {
+      setMatches(JSON.parse(savedMatches));
+    }
+  }, []);
 
   const handleAliasChange = (index: number, value: string) => {
     const updatedPlayers = [...players];
@@ -38,6 +52,7 @@ const RegistrationForm: React.FC = () => {
     setPlayers(updatedPlayers);
   };
 
+  // match making system
   const generateMatches = (players: Player[]) => {
     const matches: { player1: Player; player2: Player }[] = [];
     for (let i = 0; i < players.length; i++) {
@@ -50,12 +65,39 @@ const RegistrationForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (players.every((p) => p.alias.trim() !== '')) {
-      setRegisteredPlayers(players);
-      setMatches(generateMatches(players));
-    } else {
+  
+    // Check for empty aliases
+    if (players.some((p) => p.alias.trim() === '')) {
       alert('All players must have aliases!');
+      return;
     }
+  
+    // Check for duplicate aliases
+    const aliases = players.map((p) => p.alias.trim().toLowerCase());
+    const hasDuplicates = aliases.some((alias, index) => aliases.indexOf(alias) !== index);
+  
+    if (hasDuplicates) {
+      alert('Each player must have a unique alias!');
+      return;
+    }
+  
+    // Save players and matches
+    setRegisteredPlayers(players);
+    setMatches(generateMatches(players));
+    localStorage.setItem('registeredPlayers', JSON.stringify(players));
+    localStorage.setItem('matches', JSON.stringify(generateMatches(players)));
+  };
+  // function to end the tournament
+  const handleEndTournament = () => {
+    setRegisteredPlayers(null);
+    setMatches(null);
+    localStorage.removeItem('registeredPlayers');
+    localStorage.removeItem('matches');
+  };
+  // function to start the tournament
+  const handleStartTournament = () => {
+    router.push('/game/TournamentGame');
+
   };
 
   return (
@@ -111,6 +153,24 @@ const RegistrationForm: React.FC = () => {
         <>
           <RegisteredPlayers players={registeredPlayers} />
           <AllMatches matches={matches!} />
+
+          <button
+  onClick={handleStartTournament}
+  className={`w-full py-3 text-white text-lg font-semibold rounded-lg transition ${
+    matches && matches.length > 0
+      ? 'bg-blue-600 hover:bg-blue-500'
+      : 'bg-gray-400 cursor-not-allowed'
+  }`}
+  disabled={!matches || matches.length === 0}
+>
+  Start Tournament
+</button>
+          <button
+            onClick={handleEndTournament}
+            className="mt-4 w-full py-3 bg-red-600 text-white text-lg font-semibold rounded-lg hover:bg-red-500 transition"
+          >
+            Delete Tournament
+          </button>
         </>
       )}
     </div>

@@ -1,21 +1,25 @@
 
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { notification, Avatar } from 'antd';
+import { notification, Avatar,Button } from 'antd';
 import { addNotification, togleOnline } from '@/store/slices/notificationsSlice';
+import { useRouter } from 'next/navigation';
+
 
 interface ServerMessage {
-  case: 'ONLINE' | 'OFFLINE' | 'NEW_MESSAGE' | 'INVITATION' | 'DECLINE' | 'ACCEPT' | 'UNFRIEND';
+  case: 'ONLINE' | 'OFFLINE' | 'NEW_MESSAGE' | 'INVITATION' | 'DECLINE' | 'ACCEPT' | 'UNFRIEND' | `GAME_INVITE`;
   sender: string;
   picture?: string;
   'full-name'?: string;
+  room_name ? : string
+
 }
 
 const useWebSocket = (url: string) => {
   const dispatch = useDispatch();
+  const router = useRouter();
 
   useEffect(() => {
-    // const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
     const token = localStorage.getItem('accessToken');
     if (!url || !token) return;
     const socket = new WebSocket(`${url}${token}`);
@@ -33,6 +37,7 @@ const useWebSocket = (url: string) => {
       });
     };
 
+
     const addNewNotification = (serverMessage: ServerMessage) => {
       const newNotification = {
         seen: false,
@@ -41,6 +46,7 @@ const useWebSocket = (url: string) => {
         sender: serverMessage.sender,
         picture: serverMessage.picture,
         'full-name': serverMessage['full-name'] || 'Unknown Sender',
+        room_name :serverMessage.room_name
       };
       dispatch(addNotification(newNotification));
     };
@@ -50,8 +56,8 @@ const useWebSocket = (url: string) => {
     };
 
     socket.onmessage = (event: MessageEvent) => {
-      console.log("WebSocket message received:", event.data);
-      const serverMessage: ServerMessage = JSON.parse(event.data);
+      console.log("WebSocket message received:===>", event.data);
+      const serverMessage = JSON.parse(event.data);
       const { case: messageCase, sender, picture } = serverMessage;
 
       switch (messageCase) {
@@ -62,11 +68,12 @@ const useWebSocket = (url: string) => {
 
         case 'NEW_MESSAGE':
           handleNotification(
-            'New Message',
-            `Request from: ${sender}`,
+            ` from ${sender}`,
+            `${(serverMessage.message as string).slice(0, 14)}...`,
             React.createElement(Avatar, { src: picture }),
             2
           );
+          addNewNotification(serverMessage);
           break;
 
         case 'INVITATION':
@@ -88,7 +95,17 @@ const useWebSocket = (url: string) => {
           handleNotification('Unfriended', `Unfriended by: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
           addNewNotification(serverMessage);
           break;
-
+        case "GAME_INVITE":
+          addNewNotification(serverMessage);
+          break;
+        case "GAME_READY":
+          router.push(`/game/online?room_name=${serverMessage.room_name}`);
+          break;
+            
+        case "GAME_REJECTED":
+          handleNotification('Game Invite Rejected', `Rejected by: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
+            
+            break;
         default:
           console.warn("Unhandled message case:", messageCase);
       }

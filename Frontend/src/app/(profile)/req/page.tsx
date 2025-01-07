@@ -99,10 +99,10 @@ export default function NotificationsPage() {
 
       try {
         const [invitationsRes, friendsRes] = await Promise.all([
-          customAxios.get('http://127.0.0.1:9003/friends/invitations/', {
+          customAxios.get(`${process.env.NEXT_PUBLIC_API_URL}/friends/invitations/`, {
             headers: { Authorization: `Bearer ${accessToken}` },
           }),
-          customAxios.get('http://127.0.0.1:9003/friends/list/', {
+          customAxios.get(`${process.env.NEXT_PUBLIC_API_URL}/friends/list/`, {
             headers: { Authorization: `Bearer ${accessToken}` },
           }),
         ])
@@ -139,7 +139,7 @@ export default function NotificationsPage() {
     }
 
     try {
-      const response = await axios.post(`http://127.0.0.1:9003/friends/block/`, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/friends/block/`, {
         username: username,
       }, {
         headers: { 'Authorization': `Bearer ${token}` },
@@ -161,15 +161,15 @@ export default function NotificationsPage() {
 
     const actions = {
       accept: {
-        url: 'http://127.0.0.1:9003/friends/accept/',
+        url: `${process.env.NEXT_PUBLIC_API_URL}/friends/accept/`,
         successMessage: 'Invitation accepted! You are now friends.',
       },
       decline: {
-        url: 'http://127.0.0.1:9003/friends/decline/',
+        url: `${process.env.NEXT_PUBLIC_API_URL}/friends/decline/`,
         successMessage: 'Invitation declined successfully.',
       },
       unblock: {
-        url: 'http://127.0.0.1:9003/friends/unblock/',
+        url: `${process.env.NEXT_PUBLIC_API_URL}/friends/unblock/`,
         successMessage: 'User has been unblocked successfully!',
       },
     }

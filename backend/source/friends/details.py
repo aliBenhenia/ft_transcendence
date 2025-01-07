@@ -3,7 +3,7 @@ from register.models import Register
 from .cases import ERROR_MSG, SUCCESS_MSG
 from rest_framework.response import Response
 from .models import REQUEST, FRIENDS, BLOCKER
-from .tools import get_user, is_twofactor, re
+from .tools import get_user, re
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 
@@ -11,8 +11,7 @@ from rest_framework.decorators import api_view, permission_classes
 @permission_classes([IsAuthenticated])
 def friend_status(request_id):
     account = request_id.user
-    if is_twofactor(account):
-        return Response({'error' : ERROR_MSG['15'], '2FA' : True}, status=401)
+    
     reciver_user = request_id.GET.get('username')
     client, error = get_user(reciver_user)
     if error:
@@ -47,8 +46,7 @@ def friend_status(request_id):
 @permission_classes([IsAuthenticated])
 def search_query(request):
     account = request.user
-    if is_twofactor(account):
-        return Response({'error' : ERROR_MSG['15'], '2FA' : True}, status=401)
+    
     username = request.GET.get('username')
     if not username:
         return Response({'error': ERROR_MSG['3']}, status=400)
@@ -71,8 +69,7 @@ def search_query(request):
 @permission_classes([IsAuthenticated])
 def query_friends(request):
     account = request.user
-    if is_twofactor(account):
-        return Response({'error' : ERROR_MSG['15'], '2FA' : True}, status=401)
+    
     _friends = FRIENDS.objects.filter(Q(account=account) | Q(friends=account))
     if not _friends:
         return Response({'vide': True}, status=200)
@@ -97,8 +94,7 @@ def query_friends(request):
 @permission_classes([IsAuthenticated])
 def query_invitations(request):
     account = request.user
-    if is_twofactor(account):
-        return Response({'error' : ERROR_MSG['15'], '2FA' : True}, status=401)
+    
     open_request = REQUEST.objects.filter(Q(reciver=account) | Q(sender=account))
     if not open_request:
         return Response({'vide': True}, status=200)

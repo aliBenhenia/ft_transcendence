@@ -13,9 +13,6 @@ from .tools import ValidateName, ValidatePassword, get_friends_list
 @permission_classes([IsAuthenticated])
 def account_view(request):
     Account = request.user
-    if Account.SECURE.activate:
-        if Account.SECURE.on_login:
-            return Response({'error' : ERROR_MSG['1'], '2FA' : True}, status=401)
     data = {
         
         # GENERAL INFO
@@ -45,9 +42,6 @@ def account_view(request):
 @permission_classes([IsAuthenticated])
 def searching_view(request):
     Account = request.user
-    if Account.SECURE.activate:
-        if Account.SECURE.on_login:
-            return Response({'error' : ERROR_MSG['1'], '2FA' : True}, status=401)
     try:
         username = request.GET.get('username')
         if not username:
@@ -71,6 +65,7 @@ def searching_view(request):
         'rank' : TARGET.DETAILS.rank,
         'loss' :  TARGET.DETAILS.loss,
         'level' : TARGET.DETAILS.level,
+        'level_percentage' : TARGET.DETAILS.level_progress_percentage,
         'xp_total' : TARGET.DETAILS.xp_total,
         'total_match' : TARGET.DETAILS.total_match,
         'achievements' : ACHIEVEMENTS[TARGET.DETAILS.achievements],
@@ -81,11 +76,9 @@ def searching_view(request):
 @permission_classes([IsAuthenticated])
 def update_profile(request):
     Account = request.user
-    if Account.SECURE.activate:
-        if Account.SECURE.on_login:
-            return Response({'error' : ERROR_MSG['1'], '2FA' : True}, status=401)
     data = request.data
     photo = data.get('picture')
+    print(photo)
     if photo:
         try:
             Image.open(photo)
@@ -131,9 +124,6 @@ def update_profile(request):
 @permission_classes([IsAuthenticated])
 def activate_2FA(request):
     account = request.user
-    if account.SECURE.activate:
-        if account.SECURE.on_login:
-            return Response({'error' : ERROR_MSG['1'], '2FA' : True}, status=401)
     if request.method == 'GET':
         return Response({'success': {'2FA' : account.SECURE.activate}}, status=200)
     INFO = request.data
@@ -151,7 +141,3 @@ def activate_2FA(request):
             return Response({'success': SUCCESS_MSG['3']}, status=200)
         return Response({'error': ERROR_MSG['23']}, status=400)
     return Response({'error': ERROR_MSG['24']}, status=400)
-
-    
-
-

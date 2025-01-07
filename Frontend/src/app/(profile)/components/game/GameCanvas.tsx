@@ -12,7 +12,13 @@ const WINNING_SCORE = 5;
 const WaitingIndicator: React.FC = () => (
   <div className="flex flex-col items-center justify-center h-full">
     <div className="loader mb-4"></div>
-    <p className="text-xl font-bold text-white">Waiting for another player...</p>
+    <p className="text-xl font-bold text-white">waiting for another player...</p>
+  </div>
+);
+const SearchingIndicator: React.FC = () => (
+  <div className="flex flex-col items-center justify-center h-full">
+    <div className="loader mb-4"></div>
+    <p className="text-xl font-bold text-white">searching for another player...</p>
   </div>
 );
 
@@ -26,12 +32,20 @@ const GameCanvas: React.FC = () => {
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [ws, setWs] = useState<WebSocket | null>(null);
   const [isWaiting, setIsWaiting] = useState(true);
+  const [isSearching, setIsSearching] = useState(true);
   const [gameOver, setGameOver] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
   const [gameResult, setGameResult] = useState({ message: '', finalScore: [0, 0] });
   const [player1, setPlayer1] = useState<{ username: string; avatar: string }>({ username: "", avatar: "" });
   const [player2, setPlayer2] = useState({ username: "", avatar: "" });
+  const room_name = useSearchParams().get('room_name');
+  console.log("room_name", room_name);
+  window.onload = function() {
+      router.push("/game");
+  }
 
+  //
+  //
   // Map a selectedMap value to image URLS
   const mapBackgroundImage: Record<string, string> = {
     'Board 1': '/board 1.jpeg',
@@ -41,19 +55,20 @@ const GameCanvas: React.FC = () => {
   const backgroundImage = mapBackgroundImage[selectedMap] || '/board 1.jpeg';
 
   useEffect(() => {
+    
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
       console.error("No access token found in localStorage");
       return;
     }
 
-    const websocket = createWebSocketConnection(accessToken);
+    const websocket = createWebSocketConnection(accessToken, room_name);
     setWs(websocket);
 
     websocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
 
-      if (data.type === "game start") {
+      if (data.type === "game_start") {
         console.log("Game starting: ", data);
         setPlayer1({ username: data.player1_username, avatar: data.player1_avatar });
         setPlayer2({ username: data.player2_username, avatar: data.player2_avatar });
@@ -62,10 +77,13 @@ const GameCanvas: React.FC = () => {
         console.log("Game state: ", data.game_state);
         setGameState(data.game_state);
         setIsWaiting(false);
-      } else if (data.type === "waiting") {
+      } else if (data.type === "searching") {
+        setIsSearching(true);
+      }
+       else if (data.type === "waiting") {
         setIsWaiting(true);
       }
-      else if (data.type === "game ends") {
+      else if (data.type === "game_ends") {
         setGameOver(true);
         //setGameState(data.game_state);
         if (data.message === "You win! Opponent disconnected") {
@@ -78,7 +96,13 @@ const GameCanvas: React.FC = () => {
             message: data.message,
             finalScore: data.final_score || [0, 0],
           });
+        } else if (data.message === "You lost!"){
+          setGameResult({
+            message: data.message,
+            finalScore: data.final_score || [0, 0],
+          });
         }
+        
       } else if (data.type === "Already in queue" || data.type === "Already in game") {
         alert(data.type === "Already in queue" 
           ? "You are already in a queue!" 
@@ -164,7 +188,7 @@ const GameCanvas: React.FC = () => {
   const handleRestart = () => {
     setGameOver(false);
     setGameResult({ message: '', finalScore: [0, 0] });
-    window.location.reload();
+    // window.location.reload();
   };
 
   return (

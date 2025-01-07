@@ -1,6 +1,8 @@
-export const createWebSocketConnection = (token: string | null): WebSocket => {
+export const createWebSocketConnection = (token: string | null, room_name : string | undefined): WebSocket => {
     if (!token) {
       throw new Error("Invalid token: WebSocket connection cannot be created");
     }
-    return new WebSocket(`ws://127.0.0.1:9003/ws/pingpong/?token=${token}`);
+    const url = process.env.NEXT_PUBLIC_API_URL || "localhost:9003";
+    const query = room_name ? `token=${token}&room_name=${room_name}`:`token=${token}`;
+    return new WebSocket(`ws://${url.slice(7)}/ws/pingpong/?${query}`);
   };

@@ -8,9 +8,7 @@ from rest_framework.decorators import api_view, permission_classes
 @permission_classes([IsAuthenticated])
 def notification_view(request):
     account = request.user
-    if account.SECURE.activate:
-        if account.SECURE.on_login:
-            return Response({'error' : ERROR_MSG['1'], '2FA' : True}, status=401)
+    
     Notifications = account.recive_notifications.all()
     if not Notifications:
         return Response({'vide' : True, 'message': 'No notifications at the current time.'}, status=200)
@@ -33,9 +31,7 @@ def notification_view(request):
 @permission_classes([IsAuthenticated])
 def notification_mark(request):
     account = request.user
-    if account.SECURE.activate:
-        if account.SECURE.on_login:
-            return Response({'error' : ERROR_MSG['1'], '2FA' : True}, status=401)
+    
     Notifications = account.recive_notifications.all()
     if not Notifications:
         return Response({'vide' : True, 'message': 'No notifications at the current time !'}, status=200)
@@ -50,9 +46,7 @@ def notification_mark(request):
 @permission_classes([IsAuthenticated])
 def notification_delete(request):
     account = request.user
-    if account.SECURE.activate:
-        if account.SECURE.on_login:
-            return Response({'error' : ERROR_MSG['1'], '2FA' : True}, status=401)
+
     Notifications = account.recive_notifications.all()
     if not Notifications:
         return Response({'vide' : True, 'message': 'No notifications at the current time !'}, status=200)

@@ -56,8 +56,9 @@ interface GameStatsProps {
   matches: number;
   win: number;
   isUser?: string;
+  last_match?: string;
 }
-const GameStats = ({ level, loss, matches, win,isUser }:GameStatsProps) => {
+const GameStats = ({ level, loss, matches, win,isUser ,last_match="win"}:GameStatsProps) => {
   const [activeTab, setActiveTab] = useState('stats');
   const [friends, setFriends] = useState([]);
   const [error, setError] = useState(null);
@@ -75,7 +76,7 @@ const GameStats = ({ level, loss, matches, win,isUser }:GameStatsProps) => {
       }
            
         try {
-            const response = await axios.get('http://127.0.0.1:9003/friends/list/', {
+            const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/friends/list/`, {
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
                     'Content-Type': 'application/json',
@@ -148,8 +149,8 @@ const GameStats = ({ level, loss, matches, win,isUser }:GameStatsProps) => {
               </div>
               <div className="text-white bg-[#07325F] rounded-2xl p-3 transition-all shadow-2xl">
                 <p className="text-sm uppercase tracking-wide text-gray-400">Last Match</p>
-                <p className={`text-2xl font-bold ${win > loss ? 'text-green-500' : 'text-red-500'}`}>
-                  {win > loss ? 'Win' : 'Loss'}
+                <p className={`text-2xl font-bold ${last_match === "win" ? 'text-green-500' : 'text-red-500'}`}>
+                  {last_match}
                 </p>
               </div>
             </div>

@@ -8,11 +8,11 @@ import { useRouter } from 'next/navigation';
 
 const ProfileCard = () => {
   const router = useRouter();
-  const profileState = useSelector((state: RootState) => state.profile);
+  const profileState:any = useSelector((state: RootState) => state.profile);
 
   const [twoFactorEnabled, setTwoFactorEnabled] = useState<boolean | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const progressPercentage = profileState.level;
+  const progressPercentage = profileState.level_percentage !== undefined ? profileState.level_percentage : 0;
 
   // Utility function for token retrieval
   const getAuthToken = (): string | null => localStorage.getItem('accessToken');
@@ -26,7 +26,7 @@ const ProfileCard = () => {
     }
 
     try {
-      const response = await axios.get('http://127.0.0.1:9003/account/2FA/', {
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/account/2FA/`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
@@ -51,7 +51,7 @@ const ProfileCard = () => {
 
     try {
       setLoading(true);
-      const response = await axios.post('http://127.0.0.1:9003/account/2FA/', payload, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/account/2FA/`, payload, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
@@ -110,7 +110,7 @@ const ProfileCard = () => {
               animate={{ opacity: 1 }}
               transition={{ duration: 1.5, ease: 'easeInOut' }}
             >
-              {progressPercentage}xp
+              {progressPercentage}%
             </motion.div>
           </div>
 
@@ -120,7 +120,7 @@ const ProfileCard = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 1.5, duration: 0.5 }}
           >
-            {progressPercentage} XP
+            Level {profileState.level} 
           </motion.p>
         </div>
       </div>

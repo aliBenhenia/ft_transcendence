@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const getFriendListUser = async (token:any, username:any) => {
 
-    const url = `http://127.0.0.1:9003/account/search/?username=${username}`;
+    const url = `${process.env.NEXT_PUBLIC_API_URL}/account/search/?username=${username}`;
     
     const headers = {
         'Authorization': `Bearer ${token}`
@@ -10,7 +10,7 @@ const getFriendListUser = async (token:any, username:any) => {
 
     try {
         const response = await axios.get(url, { headers });
-        return response.data.details.friends;
+        return response.data.details?.friends;
     } catch (error:any) {
         console.log("err++>",error);
         if (error.response) {

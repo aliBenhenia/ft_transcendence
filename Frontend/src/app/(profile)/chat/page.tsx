@@ -5,11 +5,16 @@ import { useDispatch, useSelector } from 'react-redux'
 import { VscSend } from "react-icons/vsc";
 import { FaGamepad } from "react-icons/fa";
 import Link from 'next/link'
+import {message} from 'antd'
+import { FaBars } from "react-icons/fa";
+import { IoSearchSharp } from "react-icons/io5";
+
 
 import sortLastConversations from '@/services/sortLastConversations'
 import FetchProfile from '@/services/FetchProfile'
 
 export default function ChatPage() {
+  const socketUrl = process.env.NEXT_PUBLIC_API_URL || 'localhost:9003';
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [users, setUsers] = useState<any>([])
   const [filteredUsers, setFilteredUsers] = useState<any>([])
@@ -23,23 +28,27 @@ export default function ChatPage() {
   const [isSending, setIsSending] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null
-  const online = useSelector((state: any) => state.notifications.online)
+  const online = useSelector((state: any) => state.notifications.online);
+  const newMessageNotification = useSelector((state: any) => state.notifications.notifications);
+  useEffect(() => {
+     const lastMessage = newMessageNotification[newMessageNotification.length - 1];
+        if (lastMessage && lastMessage.subject === 'NEW_MESSAGE') {
+           
+           if (selectedUser && lastMessage.sender === selectedUser.on_talk) {
+             addMessage(lastMessage.sender)
+             console.log('new message:', lastMessage)
+           }
+        }
+    }, [newMessageNotification])
 
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
-    }
-  }, [messages])
-
-  useEffect(() => {
-    fetchFriends()
-
-    const socket = openSocket()
-    console.log('Socket:', socket)
-    return () => {
-      console.log('closed socket:', socket)
-      socket.close()
-    }
+    if (!token) return
+    fetchFriends() // call in first render and when 
+    // const socket = openSocket()// should n be here , i already have global socket in notification
+    // return () => {
+    //   console.log('closed socket:', socket)
+    //   socket.close()
+    // }
   }, [selectedUser])
 
   useEffect(() => {
@@ -49,30 +58,37 @@ export default function ChatPage() {
   }, [online, selectedUser])
 
   useEffect(() => {
-    const filtered = users.filter(
+    if (!users ||!Array.isArray(users) || users.length === 0) return
+    const filtered = users?.filter(
       (user:any) =>
         user.is_blocked === false &&
         user.full_name.toLowerCase().includes(searchQuery.toLowerCase())
     )
-    setFilteredUsers(filtered)
+    setFilteredUsers(filtered);
   }, [searchQuery, users])
 
   const fetchFriends = async () => {
     if (!token) return
-    await FetchProfile(token)
+    await FetchProfile(token)// just to check if user authenticated .
     setError(null)
     setLoading(true)
     try {
-      const response = await fetch('http://127.0.0.1:9003/friends/list/', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/friends/list/`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       })
       const data = await response.json()
-      if (!data.vide && data.information) {
-        const res = await sortLastConversations(data.information)
-        setUsers(res)
-        setFilteredUsers(res)
+      if (!data.vide && data.information) {//vide is a boolean to check if the list is empty
+        // const ress = await sortLastConversations(data.information)
+        const friendsList = data.information; // render the list as it is
+        // check if friendsList is an array of objects or is empty
+        if (!friendsList || friendsList.length === 0) {
+          setError('No friends found.')
+          return;
+        }
+        setUsers(friendsList)
+        setFilteredUsers(friendsList)
       } else {
         setError('No friends found.')
       }
@@ -88,7 +104,7 @@ export default function ChatPage() {
     setError(null)
     setLoading(true)
     try {
-      const response = await fetch(`http://127.0.0.1:9003/chat/conversation/?account=${username}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/conversation/?account=${username}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -122,7 +138,11 @@ export default function ChatPage() {
 
   const sendMessage = async () => {
     if (!newMessage || !selectedUser?.on_talk || isSending || !token) return
-
+    if (newMessage.length > 700)
+    {
+      message.error('message must be less then 700');
+      return;
+    }
     const messagePayload = {
       account: selectedUser.on_talk,
       message: newMessage,
@@ -140,7 +160,7 @@ export default function ChatPage() {
     setIsSending(true)
 
     try {
-      const response = await fetch('http://127.0.0.1:9003/chat/message/', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/message/`, {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
@@ -162,18 +182,20 @@ export default function ChatPage() {
     }
   }
 
-  const openSocket = () => {
+  const openSocket = () => { // unused function
     if (!token) return { close: () => {} }
-    const socket = new WebSocket(`ws://127.0.0.1:9003/ws/connection/?token=${token}`)
+    const socket = new WebSocket(`ws://${socketUrl.slice(7)}/ws/connection/?token=${token}`)
+    console.log('Socket:sss')
+    // alert('Socket:')
 
     socket.onmessage = (event) => {
       const data = JSON.parse(event.data)
       if (data.case === 'NEW_MESSAGE') {
         if (selectedUser && data.sender === selectedUser.on_talk) {
           addMessage(data.sender)
-          if (messagesEndRef.current) {
-            messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
-          }
+          // if (messagesEndRef.current) {
+          //   messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
+          // }
         }
       }
     }
@@ -184,7 +206,7 @@ export default function ChatPage() {
   const addMessage = async (username:any) => {
     if (!selectedUser || selectedUser.on_talk !== username || !token) return
     try {
-      const response = await fetch(`http://127.0.0.1:9003/chat/conversation/?account=${username}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/conversation/?account=${username}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -204,24 +226,41 @@ export default function ChatPage() {
     }
   }
 
+  const sendGameRequest = async () => {
+    if (!selectedUser?.on_talk || !token) return
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/send_game_invite/`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ to_invite: selectedUser.on_talk }),
+      })
+      const data = await response.json()
+      if (!data.success) {
+        throw new Error(data.message || 'Error sending game request.')
+      }
+    } catch (err) {
+        message.error('Error sending game request.')
+    }
+  }
   return (
     <div className="flex flex-col h-screen bg-gray-900 text-white">
       {/* Header */}
-      <header className="bg-gray-800 p-4 flex justify-between items-center">
+      <header className="bg-slate-800 p-4 flex justify-between items-center shadow-2xl">
         <h1 className="text-2xl font-bold">Ping pong Chat</h1>
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="md:hidden bg-gray-700 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16m-7 6h7" />
-          </svg>
+          <FaBars />
         </button>
       </header>
 
-      <div className="flex-1 flex overflow-hidden">
+      <div className="flex-1 flex overflow-hidden ">
         {/* Sidebar */}
-        <aside className={`w-full md:w-80 bg-gray-800 overflow-y-auto transition-all duration-300 ease-in-out ${isMenuOpen ? 'block' : 'hidden'} md:block`}>
+        <aside className={`w-full md:w-80 bg-slate-700 overflow-y-auto transition-all duration-300 ease-in-out ${isMenuOpen ? 'block' : 'hidden'} md:block`}>
           <div className="p-4">
             <div className="relative">
               <input
@@ -231,9 +270,7 @@ export default function ChatPage() {
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full px-4 py-2 rounded-full bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+              <IoSearchSharp className="h-5 w-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
           </div>
           {/* {loading && (
@@ -243,7 +280,7 @@ export default function ChatPage() {
           )} */}
           {error && <div className="p-4 text-red-500">{error}</div>}
           <ul className="space-y-2 p-4">
-            {filteredUsers.map((user:any) => (
+            {filteredUsers?.map((user:any) => (
               <li key={user.username}>
                 <button
                   onClick={() => fetchMessages(user.username, user.is_blocked, user)}
@@ -305,7 +342,7 @@ export default function ChatPage() {
               </div>
 
               {/* Messages */}
-              <div className="flex-1 overflow-y-auto p-4 space-y-4">
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 mb-[140px]">
                 {loading ? (
                   <div className="flex justify-center items-center h-full">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -333,11 +370,10 @@ export default function ChatPage() {
                     </div>
                   ))
                 )}
-                <div ref={messagesEndRef} />
               </div>
 
               {/* Message Input */}
-              <div className="bg-gray-800 p-4 border-t border-gray-700">
+              <div className="bg-gray-800 p-4 border-t border-gray-700 fixed bottom-[0] md:w-[50%] ">
                 <div className="flex items-center space-x-2">
                   <input
                     type="text"
@@ -355,13 +391,12 @@ export default function ChatPage() {
                     {isSending ? (
                       <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
                     ) : (
-                      // <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                      //   <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
-                      // </svg>
                       <VscSend />
                     )}
                   </button>
-                  <button className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <button
+                  onClick={sendGameRequest}
+                  className="p-2 bg-gray-700 rounded-full hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
                     <FaGamepad />
                   </button>
                 </div>

@@ -5,6 +5,8 @@ from pingpong.models import Game
 from django.db.models import Q
 from pingpong.serializers import GameSerializer
 from rest_framework.response import Response
+from django.utils.timesince import timesince
+from django.utils.timezone import now
 
 # Create your views here.
 @api_view(['GET'])
@@ -28,9 +30,17 @@ def player_stats(request):
 
 @api_view(['GET'])
 def match_history(request):
-    user_id = int(request.query_params.get('user_id'))
-    user = Register.objects.get(id=user_id)
-    games = Game.objects.filter(Q(winner=user) | Q(loser=user)).order_by('-end_time')
-    serializer = GameSerializer(games, many=True)
-    return Response(serializer.data)
+    try:
+        user_id = int(request.query_params.get('user_id'))
+        user = Register.objects.get(id=user_id)
+        games = Game.objects.filter(Q(winner=user) | Q(loser=user)).order_by('-end_time')
+        if not games:
+            return Response({'error': 'No games found'})
+        for game in games:
+            game.time_ago = timesince(game.end_time, now()) + " ago"
+            game.save()
+        serializer = GameSerializer(games, many=True)
+        return Response(serializer.data)
+    except Exception as e:
+        return Response({'error': str(e)}, status=500)
 

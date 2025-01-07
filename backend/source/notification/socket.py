@@ -16,11 +16,9 @@ class Notifications(AsyncWebsocketConsumer):
 
     async def connect(self):
         try:
-            # Extract and authenticate user token
-            token = self.scope['query_string'].decode().split('=')[1]
-            self.user, is_authenticated = await extract_auth_user(token)
-            
-            if is_authenticated:
+            user = self.scope['user']
+            self.user = user
+            if user:
                 await self.set_online_status(True)  # Mark user as online in DB
                 await self.accept()
                 await self.add_user_to_online_group()  # Track online status in memory
@@ -39,7 +37,8 @@ class Notifications(AsyncWebsocketConsumer):
         """Updates user's online status in the database."""
         if self.user:
             self.user.is_online = status
-            self.user.save()
+            self.user.save(update_fields=['is_online']) #
+            # await sync_to_async(self.user.save)(update_fields=['status'])
 
     async def add_user_to_online_group(self):
         """Add user to online group and manage online status in memory."""
@@ -93,20 +92,16 @@ class Notifications(AsyncWebsocketConsumer):
     async def receive(self, text_data):
         """Handle received WebSocket messages and commands."""
         try:
-            data = json.loads(text_data)
-            command = data.get('command')
-            if command in {'invite', 'accept', 'cancel'}:
-                recipient, is_valid = await get_recipient(data['recipient'])
-                if command == 'invite':
-                    pass
-                elif command == 'accept':
-                    pass
-                elif command == 'cancel':
-                    pass
-                # if is_valid:
-                #     await forward_event_pingpong(self, information, receiver, self.user)
+            message = json.loads(text_data)
+            message_type = message['type']
+            if message_type == "game_invite":
+                self.handle_game_invite(message)
+
         except Exception as e:
             print(f'[ERROR] Processing command: {e}')
+
+    async def handle_game_invite(self, data):
+        self.send_json(data)
 
     async def broadcast(self, event):
         """Send broadcast event to WebSocket."""
@@ -124,6 +119,29 @@ class Notifications(AsyncWebsocketConsumer):
             'case': 'NEW_MESSAGE',
             'time': event['time'],
             'message': event['message'],
+            'sender': event['sender'],
+            'picture': event['picture'],
+            'full-name': event['full-name'],
+        })
+
+    async def game_invite(self, event):
+        await self.send_json({
+            'case': 'GAME_INVITE',
+            'room_name': event['room_name'],
+            'sender': event['sender'],
+            'picture': event['picture'],
+            'full-name': event['full-name'],
+        })
+
+    async def join_room(self, event):
+        await self.send_json({
+            'case': 'GAME_READY',
+            'room_name' : event['room_name'],
+        })
+
+    async def game_rejected(self, event):
+        await self.send_json({
+            'case': 'GAME_REJECTED',
             'sender': event['sender'],
             'picture': event['picture'],
             'full-name': event['full-name'],

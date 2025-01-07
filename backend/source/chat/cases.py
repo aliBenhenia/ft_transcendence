@@ -12,5 +12,7 @@ ERROR = {
 
 SUCCESS = {
     1 : 'No Messages Recived at the current time !',
-    2 : "Message sent successfully."
+    2 : "Message sent successfully.",
+    3 : "Game invite sent successfully",
+    4 : "Game invite accepted successfully"
 }

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-async function cancelRequest(username) {
+async function cancelRequest(username:string) {
     const token = localStorage.getItem('accessToken');
     const url = `http://127.0.0.1:9000/friends/new-request/${username}/cancel`;
 

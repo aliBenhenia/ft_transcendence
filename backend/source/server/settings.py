@@ -1,10 +1,25 @@
 from pathlib import Path
 from datetime import timedelta
 import os
+import environ
 
+env = environ.Env()
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent # this will give me the root directory of the project
 BASE_DIR = Path(__file__).resolve().parent.parent
+environ.Env.read_env(os.path.join(ROOT_DIR, '.env'))
+##
+HOST_IP = env('HOST_IP')
+SECRET_KEY = env('SECRET_KEY')
 
-SECRET_KEY = 'django-insecure-bdu%lxz4&6o-xbqg)2==vj#go*^9n&u7a-c#0i5zq)f@e-^k^3'
+# MEDIA CONFIGURATIONS
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
+
+# PICTURE FULL URL
+
+FULL_PICTURE = f'http://{HOST_IP}:9003/media/avatars/unknown.jpeg'
+PATH_PICTURE = f'http://{HOST_IP}:9003'
 
 DEBUG = True
 
@@ -74,7 +89,7 @@ INSTALLED_APPS = [
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.staticfiles',
-    
+    'django.contrib.sessions',
 ]
 
 # ATHENTICATION MODLE
@@ -96,16 +111,6 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
 }
 
-# MEDIA CONFIGURATIONS
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# PICTURE FULL URL
-
-FULL_PICTURE = 'http://127.0.0.1:9003/register/media/avatars/unknown.jpg'
-PATH_PICTURE = 'http://127.0.0.1:9003/register'
-
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
@@ -113,6 +118,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
 ]
 
 # CROSS-ORIGIN RESOURCE SHARING (CORS)
@@ -140,7 +146,9 @@ CHANNEL_LAYERS = {
     },
 }
 
-#  42 CONFIGURATIONS 
+#  42 CONFIGURATIONS
+OAUTH_CLIENT_ID=env('UID')
+OAUTH_CLIENT_SECRET=env('SECRET')
 
 OAUTH2_CONFIG = {
     'client_id': 'u-s4t2ud-18a834e3d07630161d8cf7e12c386f1e2bec5b1365e140159b685cd060b8f5bf',
@@ -150,3 +158,15 @@ OAUTH2_CONFIG = {
     'redirect_uri': 'http://localhost:9001',
     'scope': 'public',
 }
+
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Default backend
+
+#
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'apikey'  # Replace with your email
+EMAIL_HOST_PASSWORD = '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'    # Replace with your email's app password
+DEFAULT_FROM_EMAIL = 'marwan.zaroual.1337.1@gmail.com'

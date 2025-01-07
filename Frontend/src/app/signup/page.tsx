@@ -7,6 +7,9 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { useRef, useState, ChangeEvent } from "react";
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import logoOAuth from "../assets/42_logo.png";
+import Image from "next/image";
+
 
 interface ErrorProps {
   [key: string]: string;//ma3loma (Index Signature is used to define an object with any number of properties())
@@ -122,7 +125,7 @@ export default function CreateAccount() {
     }
 
     try {
-      const response = await axios.post('http://127.0.0.1:9003/register/create-account/', newData, {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/register/create-account/`, newData, {
         headers: {
           'Content-Type': 'application/json',
         },
@@ -161,17 +164,31 @@ export default function CreateAccount() {
     
     }
   };
+  const handleLogin = () => {
+    const redirectUri = encodeURIComponent(window.location.href); // current page, or a page to redirect after OAuth success
+    const oauthURL = `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-91a40abe8c1949a76f93a4f72d02422dbd3b71245c8a07fbeb3221cddfae08e3&redirect_uri=http%3A%2F%2Flocalhost%3A9001%2Foauth&response_type=code`;
 
+    window.location.href = oauthURL;  // Redirect user to the 42 login page
+  };
   return (
     <div className={`${styles.singup} min-h-screen flex items-center justify-center w-full`}>
       <div className='lg:w-[50%] w-full flex items-center justify-center'>
         <div className='w-full max-w-md p-8 bg-[#00152993] rounded-2xl bg-[#001529] shadow-lg '>
           <h2 className="text-2xl font-semibold text-white text-center mb-6">Create Account </h2>
-
+          <div className="flex flex-col space-y-4 mb-6">
+                <button 
+                onClick={handleLogin}
+                className="w-full bg-[#3E3C49] text-white p-4 rounded-lg shadow-lg flex items-center justify-center space-x-3 hover:bg-[#5A575F] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3E3C49] transition duration-300 ease-in-out">
+                  <Image src={logoOAuth} alt="42 logo" width={24} height={24} />
+                  <span className="text-lg font-semibold">Sign up with 42</span>
+                </button>
+              </div>
+          <p className="text-white text-center mb-5">or</p>
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="flex flex-col lg:flex-row space-y-4 lg:space-y-0 lg:space-x-4">
               <div className="flex-1">
                 <input
+                autoComplete="off"
                   type="text"
                   name="firstName"
                   placeholder="First Name"
@@ -183,6 +200,7 @@ export default function CreateAccount() {
               </div>
               <div className="flex-1">
                 <input
+                autoComplete="off"
                   type="text"
                   name="lastName"
                   placeholder="Last Name"
@@ -196,6 +214,7 @@ export default function CreateAccount() {
 
             <div>
               <input
+               autoComplete="off"
                 type="text"
                 name="username"
                 placeholder="Username"
@@ -208,6 +227,7 @@ export default function CreateAccount() {
 
             <div>
               <input
+              autoComplete="off"
                 type="email"
                 name="email"
                 placeholder="Email"
@@ -228,6 +248,7 @@ export default function CreateAccount() {
                     {hidePass ? <FaEyeSlash /> : <FaEye />}
                   </span>
                   <input
+                  autoComplete="off"
                     type={hidePass ? 'password' : 'text'}
                     name="password"
                     placeholder="Password"
@@ -248,6 +269,7 @@ export default function CreateAccount() {
                     {hideConfirmPass ? <FaEyeSlash /> : <FaEye />}
                   </span>
                   <input
+                  autoComplete="off"
                     type={hideConfirmPass ? 'password' : 'text'}
                     name="confirmPassword"
                     placeholder="Confirm Password"

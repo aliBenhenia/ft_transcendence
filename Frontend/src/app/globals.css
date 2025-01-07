@@ -4,7 +4,7 @@
 
 body
 {
-    background-image: linear-gradient(to top, #001529 0%, #07325F 100%);
+    /* background-image: linear-gradient(to top, #001529 0%, #07325F 100%); */
 }
 .loader {
     border: 8px solid #f3f3f3; /* Light gray */

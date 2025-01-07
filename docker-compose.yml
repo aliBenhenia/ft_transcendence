@@ -9,36 +9,48 @@ services:
     image: django
     container_name: django
 
-    depends_on:
-      - redis
+    # depends_on:
+    #   - redis
     ports:
       - 9003:8001
     volumes:
       - ./backend/source:/server
     networks:
       - mynetwork
+    restart: always
+    env_file:
+      - .env
   
   nextjs:
     build:
       context: ./Frontend
       dockerfile: Dockerfile
     container_name: nextjs
+    # environment:
+    #   NEXT_PUBLIC_API_URL: "http://localhost:9003" # change this to your local ip or use localhost
     ports:
       - 9001:3000
     volumes:
       - ./Frontend:/app
       - /app/node_modules
-    command: npm run dev
-
-  redis:
-    build:
-      context: ./tools/Redis
-      dockerfile: Dockerfile
-    
-    container_name: redis
-    
+      - /app/.next
     networks:
       - mynetwork
+    # make restart always to avoid any issues
+    restart: always
+    env_file:
+      - ./Frontend/.env
+    # command: npm run start
+
+  # redis:
+  #   build:
+  #     context: ./tools/Redis
+  #     dockerfile: Dockerfile
+    
+  #   container_name: redis
+    
+  #   networks:
+  #     - mynetwork
     
 
 networks:

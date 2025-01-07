@@ -18,7 +18,7 @@ export default function ConfirmEmail() {
     try {
       const token = localStorage.getItem("accessToken");
       const response = await axios.get(
-        "http://127.0.0.1:9003/secure/verification/send/",
+        "http://localhost:9003/secure/verification/send/",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -68,7 +68,7 @@ export default function ConfirmEmail() {
     try {
       const token = localStorage.getItem("accessToken");
       const response = await axios.post(
-        "http://127.0.0.1:9003/secure/verification/check/",
+        "http://localhost:9003/secure/verification/check/",
         { code: otpNumber },
         {
           headers: {

@@ -13,15 +13,3 @@ function tournament() {
 
 export default tournament;
 
-
-// const generatedMatches = generateMatches(players);
-//     setMatches(generatedMatches);
-
-//     // Redirect to the game with the first match's players
-//     const firstMatch = generatedMatches[0];
-//     router.push(
-//       `/game/TournamentGame?player1=${encodeURIComponent(
-//         JSON.stringify(firstMatch.player1)
-//       )}&player2=${encodeURIComponent(JSON.stringify(firstMatch.player2))}`
-//     );
-
