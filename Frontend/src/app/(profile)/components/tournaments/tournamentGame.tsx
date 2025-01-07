@@ -59,7 +59,7 @@ export default function OneVone() {
             setTournamentWinner(headToHeadWins1 > headToHeadWins2 ? player2 : player1);
         } else {
             // Fallback to another criterion
-            setTournamentWinner(tiedPlayers[1]);
+            setTournamentWinner(tiedPlayers[0]);
         }
     };
 
@@ -169,6 +169,7 @@ export default function OneVone() {
         const remainingMatches = matches.slice(1);
         setMatches(remainingMatches);
         localStorage.setItem('matches', JSON.stringify(remainingMatches));
+        console.log("current match: ",currentMatch);
 
         if (remainingMatches.length) {
             setCurrentMatch(remainingMatches[0]);
