@@ -144,8 +144,8 @@ def activate_2FA(request):
     account = request.user
     if request.method == 'GET':
         return Response({'success': {'2FA' : account.SECURE.activate}}, status=200)
-    INFO = request.data
-    state = INFO.get('status')
+    data = request.data
+    state = data.get('status')
     if not state:
         return Response({'error': ERROR_MSG['24']}, status=400)
     if state == 'true':
