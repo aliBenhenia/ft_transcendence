@@ -8,7 +8,7 @@ import { updateProfile } from '@/store/slices/profileSlice'
 import FetchProfile from '@/services/FetchProfile';
 import { message } from 'antd';
 import axios from 'axios';
-
+import SendResetLink from './SendResetLink'
 export default function Settings() {
   const profileState = useSelector((state: RootState) => state.profile)
   const dispatch = useDispatch()
@@ -16,8 +16,8 @@ export default function Settings() {
   const [isLoading, setIsLoading] = useState(false)
   const [previewUrl, setPreviewUrl] = useState('')
   const [avatar, setAvatar] = useState<File | null>(null);
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState(profileState.username);
+  const [email, setEmail] = useState(profileState.email);
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [oldPassword, setOldPassword] = useState('')
@@ -100,16 +100,8 @@ export default function Settings() {
       setSuccess('Profile updated successfully!')
       setTimeout(() => setSuccess(''), 3000)
     } catch (error:any) {
-      console.log(error)
-      if (error?.status === 409)
-      {
-        message.error("Username or email already exists.");
-        setError('Username or email already exists.');
-        setTimeout(() => setError(''), 3000);
-        return;
-      }
-      setError('Failed to update profile');
-      message.error("Failed to update profile");
+      setError('Failed to update profile , please check your data');
+      message.error("Failed to update profile, please check your data");
       setTimeout(() => setError(''), 3000);
     } finally {
       setIsLoading(false)
@@ -260,6 +252,7 @@ export default function Settings() {
                     />
                   </div>
                 </div>
+                <SendResetLink email={profileState.email}/>
               </div>
 
               {/* Notifications */}
