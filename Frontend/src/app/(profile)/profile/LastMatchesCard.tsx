@@ -62,6 +62,14 @@ const LastMatchesCard = ({ userId }:LastMatchesCardProps) => {
 
     fetchMatches();
   }, [userId]);
+  const formdate = (date:any) => {
+     const d = new Date(date);
+      return d.toLocaleDateString("en-US",{
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      })
+  }
 
   if (loading) {
     return (
@@ -98,7 +106,7 @@ const LastMatchesCard = ({ userId }:LastMatchesCardProps) => {
             >
               {/* Date */}
               <div className="absolute top-1 right-4 text-gray-300 text-xs">
-                {match.date}
+                {formdate(match.date)}
               </div>
 
               {/* Match Details (Players and Scores) */}

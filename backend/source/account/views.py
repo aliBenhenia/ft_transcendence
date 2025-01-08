@@ -89,12 +89,12 @@ def update_profile(request):
         Account.save()
     if data.get('username', None):
         if Register.objects.filter(username=data.get('username')).first():
-            return Response({'error', 'username already in use.'})
+            return Response({'error', 'username already in use.'}, status=409)
         Account.username = data.get('username')
 
     if data.get('email', None):
         if Register.objects.filter(email=data.get('email')).exists():
-            return Response({'error', 'email already in use'})
+            return Response({'error', 'email already in use'}, status=409)
         Account.email = data.get('email')
 
     firstname = data.get('first_name')
