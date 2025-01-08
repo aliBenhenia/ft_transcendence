@@ -28,7 +28,8 @@ interface profileData {
   loss: number;
   total_match: number;
   last_match?: string;
-  id? : number
+  id? : number;
+  level_percentage?: number;
 }
 const ProfilePage = (props: any) => {
   const { unreadCount } = useSelector((state: RootState) => state.notifications);
@@ -36,7 +37,7 @@ const ProfilePage = (props: any) => {
   const router = useRouter();
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [profileData, setProfileData] = useState<profileData>({ username: "", full_name: "", picture: "", level: 0, win: 0, loss: 0, total_match: 0 ,id:0});
+  const [profileData, setProfileData] = useState<profileData>({ username: "", full_name: "", picture: "", level: 0, win: 0, loss: 0, total_match: 0 ,id:0,level_percentage:0});
   const [friendStatus, setFriendStatus] = useState("not_friends");
   const [blockStatus, setBlockStatus] = useState(false);
   const [listFriends, setListFriends] = useState([]);
@@ -220,19 +221,19 @@ const ProfilePage = (props: any) => {
                   <div className="relative bg-[#0d0e0f] rounded-full h-6 w-full overflow-hidden mt-2">
                     <motion.div
                       className="h-full bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 rounded-full shadow-md"
-                      style={{ width: `${profileData.level}%` }}
+                      style={{ width: `${profileData.level_percentage}%` }}
                       initial={{ width: '0%' }}
-                      animate={{ width: `${profileData.level}%` }}
+                      animate={{ width: `${profileData.level_percentage}%` }}
                       transition={{ duration: 1.5, ease: 'easeInOut' }}
                     />
                     <motion.div
                       className="absolute top-0 left-0 text-sm font-bold text-white"
-                      style={{ transform: `translateX(${profileData.level - 5}%)` }}
+                      style={{ transform: `translateX(${profileData.level_percentage - 5}%)` }}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 1.5, ease: 'easeInOut' }}
                     >
-                      {profileData.level}%
+                      {profileData.level_percentage} %
                     </motion.div>
                   </div>
                   <motion.p
@@ -241,62 +242,11 @@ const ProfilePage = (props: any) => {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1.5, duration: 0.5 }}
                   >
-                    {profileData.level}% Completed
+                    {profileData.level} level
                   </motion.p>
                 </header>
               </div>
-              <div className="mt-4 flex flex-col sm:flex-row justify-around gap-4">
-                <button
-                  onClick={() => router.push(`/chat`)}
-                  className="flex items-center justify-center py-3 px-5 bg-green-600 text-white text-lg font-semibold rounded-xl hover:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-300 ease-in-out"
-                >
-                  <FaComment className="mr-2 text-xl" />  {/* Add chat icon with margin */}
-                  Chat Now
-                </button>
-                {friendStatus === "not_friends" && (
-                  <button
-                  className="flex items-center justify-center py-3 px-5 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 ease-in-out"
-                  onClick={handleSendFriendRequest}
-                >
-                  <FaUserPlus className="mr-2 text-xl" /> {/* Icon with margin */}
-                  Send Request
-                </button>
-                )}
-                {friendStatus === "pending" && (
-                  <>
-                  <button
-            className="flex items-center justify-center py-3 px-5 bg-red-600 text-white text-lg font-semibold rounded-xl hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 ease-in-out"
-            onClick={handleCancelFriendRequest}
-          >
-            <FaTimes className="mr-2 text-xl" />
-            Cancel Request
-          </button>
-
-                  </>
-                )}
-                {friendStatus === "friends" && (
-                  <>
-                    {blockStatus ? (
-                      <button
-                      onClick={handleUnblockUser}
-                      className="flex items-center justify-center py-3 px-5 bg-yellow-600 text-white text-lg font-semibold rounded-xl hover:bg-yellow-700 active:bg-yellow-800 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform "
-                    >
-                      <TbLockOpen2 className="mr-2 text-xl" />
-                      Unblock
-                    </button>
-                    
-                    ) : (
-                          <button
-      onClick={handleBlockUser}
-      className="flex items-center justify-center py-3 px-5 bg-red-600 text-white text-lg font-semibold rounded-xl hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform "
-    >
-      <MdBlockFlipped className="mr-2 text-xl" />
-      Block
-    </button>
-                    )}
-                  </>
-                )}
-              </div>
+             
             </div>
           </motion.div>
           <div className="flex gap-3 flex-col">

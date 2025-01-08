@@ -272,7 +272,8 @@ export default function NotificationsPage() {
                       <img
                         src={friend.picture}
                         alt={friend.full_name}
-                        className="relative w-14 h-14 rounded-full object-cover"
+                        className="relative w-14 h-14 rounded-full object-cover cursor-pointer "
+                        onClick={() => router.push(`/profile/${friend.username}`)}
                       />
                       {friend.online && (
                         <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-indigo-900" />
@@ -281,15 +282,7 @@ export default function NotificationsPage() {
                     <div>
                       <h4 className="text-lg font-semibold flex items-center gap-2">
                         {friend.full_name}
-                        {hoveredUser === friend.username && (
-                          <motion.span
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="text-sm text-gray-400"
-                          >
-                            • {friend.online ? 'Online' : 'Offline'}
-                          </motion.span>
-                        )}
+                        
                       </h4>
                       <p className="text-sm text-gray-300">@{friend.username}</p>
                     </div>
