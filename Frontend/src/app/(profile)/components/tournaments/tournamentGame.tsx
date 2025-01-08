@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Scoreboard from "./Scoreboard";
 import { Ball, Paddle, checkCollisions } from "@/utils/1v1";
+import NextMatchPopup from "./NextMatchPopup";
 
 function drawDashedLine(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -36,6 +37,9 @@ export default function OneVone() {
     const [matchWins, setMatchWins] = useState<Record<string, number>>(() =>
         JSON.parse(localStorage.getItem('matchWins') || '{}')
     );
+    // const [nexrMatchWarning, setNextMatchWarning] = useState<string | null>(null);
+    const [showNextMatchPopup, setShowNextMatchPopup] = useState(false);
+    const [nextMatchInfo, setNextMatchInfo] = useState<string>("");
 
     const calculateHeadToHeadWins = (matches: any[], player1: string, player2: string) => {
         return matches.filter(
@@ -165,23 +169,44 @@ export default function OneVone() {
         };
     }, [countdown, winner, paused, player1Score, player2Score, matches, currentMatch]);
 
+    // const handleNextMatch = () => {
+        
+    //     const remainingMatches = matches.slice(1);
+    //     setMatches(remainingMatches);
+    //     localStorage.setItem('matches', JSON.stringify(remainingMatches));
+
+    //     if (remainingMatches.length) {
+    //         setCurrentMatch(remainingMatches[0]);
+    //         setPlayer1Score(0);
+    //         setPlayer2Score(0);
+    //         setWinner(null);
+    //         setCountdown(3);
+    //     } else {
+    //         calculateTournamentWinner();
+    //     }
+    // };
     const handleNextMatch = () => {
         const remainingMatches = matches.slice(1);
         setMatches(remainingMatches);
-        localStorage.setItem('matches', JSON.stringify(remainingMatches));
-        console.log("current match: ",currentMatch);
-
-        if (remainingMatches.length) {
+        localStorage.setItem("matches", JSON.stringify(remainingMatches));
+    
+        if (remainingMatches.length > 0) {
+          const nextMatchDetails = `${remainingMatches[0].player1.alias} vs ${remainingMatches[0].player2.alias}`;
+          setNextMatchInfo(nextMatchDetails);
+          setShowNextMatchPopup(true);
+    
+          setTimeout(() => {
             setCurrentMatch(remainingMatches[0]);
             setPlayer1Score(0);
             setPlayer2Score(0);
             setWinner(null);
             setCountdown(3);
+          }, 5000);
         } else {
-            calculateTournamentWinner();
+          calculateTournamentWinner();
         }
-    };
-
+      };
+    
     const endTournament = () => {
         localStorage.removeItem('registeredPlayers');
         localStorage.removeItem('matches');
@@ -202,6 +227,14 @@ export default function OneVone() {
 
     return (
         <div className='flex flex-col items-center justify-center'>
+            {showNextMatchPopup && (
+                <NextMatchPopup
+                    matchInfo={nextMatchInfo}
+                    onClose={() => {
+                        setShowNextMatchPopup(false);
+                    }}
+                />
+            )}
             {!tournamentWinner && currentMatch ? (
                 <div className="relative border-2 rounded-lg shadow-lg p-6 aspect-w-16 aspect-h-9">
                     {countdown !== null && (
@@ -252,7 +285,7 @@ export default function OneVone() {
             ) : (
                 <div className="absolute inset-0 flex flex-col justify-center items-center text-white p-4 sm:p-8">
                     <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-6 text-center">
-                        {tournamentWinner || 'Non'} Won the Tournament! 🎉
+                        {tournamentWinner ? `🏆 ${tournamentWinner} Wins the Tournament! 🏆` : 'Tournament Ended!'}
                     </h1>
                     <button
                         onClick={endTournament}

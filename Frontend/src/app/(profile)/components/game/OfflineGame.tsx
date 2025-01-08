@@ -10,9 +10,9 @@ import { RootState } from '@/store/store';
 import { updateProfile } from '@/store/slices/profileSlice';
 import FetchProfile from '@/services/FetchProfile';
 
-// const user1 = {
-//   avatar: '/me.jpeg',
-// };
+const user1 = {
+  avatar: '/me.jpeg',
+};
 
 const user2 = {
   avatar: '/bot.jpg',

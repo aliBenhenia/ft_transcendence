@@ -9,7 +9,7 @@ const user1 = {
   };
   
   const user2 = {
-    avatar: '/bot.jpg',
+    avatar: '/pic1.jpeg',
   };
   
   function drawDashedLine(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
