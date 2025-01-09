@@ -75,7 +75,8 @@ const ProfilePage = (props: any) => {
 
         if (response.data.success) {
           const { is_friends, on_request, is_blocked } = response.data.success;
-          console.log("status==>",response.data.success);
+          if (is_blocked)
+            router.push("/dashboard");
           setFriendStatus(is_friends ? "friends" : on_request ? "pending" : "not_friends");
           if (is_blocked)
             setFriendStatus("friends");
@@ -158,6 +159,7 @@ const ProfilePage = (props: any) => {
       if (response.data.success) {
         message.success("User has been blocked successfully!");
         setBlockStatus(true);
+        router.push("/dashboard");
       }
     } catch (error:any) {
       const errorMessage = error.response ? error.response.data.error : error.message;
@@ -247,6 +249,60 @@ const ProfilePage = (props: any) => {
                 </header>
               </div>
              
+              <div className="mt-4 flex flex-col sm:flex-row justify-around gap-4">
+                <button
+                  onClick={() => router.push(`/chat`)}
+                  className="flex items-center justify-center py-3 px-5 bg-green-600 text-white text-lg font-semibold rounded-xl hover:bg-green-700 active:bg-green-800 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all duration-300 ease-in-out"
+                >
+                  <FaComment className="mr-2 text-xl" />  {/* Add chat icon with margin */}
+                  Chat Now
+                </button>
+                {friendStatus === "not_friends" && (
+                  <button
+                  className="flex items-center justify-center py-3 px-5 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-blue-700 active:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-300 ease-in-out"
+                  onClick={handleSendFriendRequest}
+                >
+                  <FaUserPlus className="mr-2 text-xl" /> {/* Icon with margin */}
+                  Send Request
+                </button>
+                )}
+                {friendStatus === "pending" && (
+                  <>
+                  <button
+            className="flex items-center justify-center py-3 px-5 bg-red-600 text-white text-lg font-semibold rounded-xl hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 ease-in-out"
+            onClick={handleCancelFriendRequest}
+          >
+            <FaTimes className="mr-2 text-xl" />
+            Cancel Request
+          </button>
+
+                  </>
+                )}
+                {friendStatus === "friends" && (
+                  <>
+                    {blockStatus ? (
+                      <button
+                      onClick={handleUnblockUser}
+                      className="flex items-center justify-center py-3 px-5 bg-yellow-600 text-white text-lg font-semibold rounded-xl hover:bg-yellow-700 active:bg-yellow-800 focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform "
+                    >
+                      <TbLockOpen2 className="mr-2 text-xl" />
+                      Unblock
+                    </button>
+                    
+                    ) : (
+                          <button
+      onClick={handleBlockUser}
+      className="flex items-center justify-center py-3 px-5 bg-red-600 text-white text-lg font-semibold rounded-xl hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform "
+    >
+      <MdBlockFlipped className="mr-2 text-xl" />
+      Block
+    </button>
+                    )}
+                  </>
+                )}
+              </div>
+
+
             </div>
           </motion.div>
           <div className="flex gap-3 flex-col">

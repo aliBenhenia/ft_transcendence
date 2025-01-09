@@ -8,12 +8,14 @@ import Link from 'next/link'
 import {message} from 'antd'
 import { FaBars } from "react-icons/fa";
 import { IoSearchSharp } from "react-icons/io5";
+import { useRouter } from 'next/navigation';
 
 
 import sortLastConversations from '@/services/sortLastConversations'
 import FetchProfile from '@/services/FetchProfile'
 
 export default function ChatPage() {
+  const router = useRouter();
   const socketUrl = process.env.NEXT_PUBLIC_API_URL || 'localhost:9003';
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [users, setUsers] = useState<any>([])
@@ -92,8 +94,10 @@ export default function ChatPage() {
       } else {
         setError('No friends found.')
       }
-    } catch (err) {
+    } catch (err:any) {
       setError('Failed to load friends list. Please try again.')
+      if (err?.response?.status === 401)
+        window.location.href = '/'
     } finally {
       setLoading(false)
     }
@@ -128,8 +132,10 @@ export default function ChatPage() {
         })
         setStatus(data.online)
       }
-    } catch (err) {
+    } catch (err:any) {
       setError('Failed to load messages. Please try again.')
+      if (err?.response?.status === 401)
+        window.location.href = '/'
     } finally {
       setLoading(false)
       setIsMenuOpen(false)
@@ -174,6 +180,7 @@ export default function ChatPage() {
       }
     } catch (err) {
       setError('Failed to send message. Please try again.')
+      router.push('/dashboard')
       setMessages((prevMessages:any) => prevMessages.filter((msg:any) => msg !== newMessageEntry))
     } finally {
       setTimeout(() => {

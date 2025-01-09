@@ -1,11 +1,12 @@
 // features/notificationsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+// import axios from 'axios';
+import customAxios from '@/services/apiClient';
 
 export const fetchNotifications = createAsyncThunk(//createAsyncThunk automatically handles pending, fulfilled, and rejected states
     'notifications/fetchNotifications',
     async (accessToken:any) => {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/notification/api/view/`, {
+        const response = await customAxios.get(`${process.env.NEXT_PUBLIC_API_URL}/notification/api/view/`, {
             headers: {
                 Authorization: `Bearer ${accessToken}`,
             },
