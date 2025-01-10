@@ -9,6 +9,7 @@ import {message} from 'antd'
 import { FaBars } from "react-icons/fa";
 import { IoSearchSharp } from "react-icons/io5";
 import { useRouter } from 'next/navigation';
+import axios from 'axios'
 
 
 import sortLastConversations from '@/services/sortLastConversations'
@@ -45,18 +46,30 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (!token) return
-    fetchFriends() // call in first render and when 
-    // const socket = openSocket()// should n be here , i already have global socket in notification
-    // return () => {
-    //   console.log('closed socket:', socket)
-    //   socket.close()
-    // }
+    fetchFriends()
   }, [selectedUser])
 
   useEffect(() => {
-    if (selectedUser && online.sender === selectedUser.on_talk) {
-      setStatus(online.case === 'ONLINE')
-    }
+    const checkUserStatus = async () => {
+      if (selectedUser && online.sender === selectedUser.on_talk) {
+        try {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/friends/status/?username=${selectedUser.on_talk}`, {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` },
+          });
+          if (response.data.success) {
+            const { is_blocked } = response.data.success;
+            if (is_blocked) {
+              router.push('/dashboard');
+            } else {
+              setStatus(online.case === 'ONLINE');
+            }
+          }
+        } catch (err) {
+          router.push('/dashboard');
+        }
+      }
+    };
+    checkUserStatus();
   }, [online, selectedUser])
 
   useEffect(() => {
