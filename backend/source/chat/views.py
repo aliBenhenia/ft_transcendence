@@ -109,7 +109,7 @@ def send_message(request):
 def send_game_invite(request):
     sender = request.user
     data = request.data
-    receiver = data.get('to_invite')
+    receiver = data.get('to_invite', None)
     if not receiver:
         return Response({'error': ERROR[3]}, status=400)
     to_invite, state = AccountLookup(receiver)
@@ -145,17 +145,14 @@ def send_game_invite(request):
 @permission_classes([IsAuthenticated])
 def accept_game_invite(request):
     receiver = request.user
-    if not request.body:
-        return Response({"error": "Empty request body"}, status=400)
-    try:
-        data = json.loads(request.body)
-    except:
-        return Response({"error": "Invalid JSON format"}, status=400)
-    room_name = data.get('room_name', '')
+    data = request.data
+    room_name = data.get('room_name', None)
+    if room_name is None:
+        return Response({'error': 'Invalid game invite'}, status=400)
     try:
         game_invite = GameInvite.objects.get(room_name=room_name, invited=receiver, status='pending')
     except GameInvite.DoesNotExist:
-        return Response({'error': 'Invalid game invite'}, status=400)
+        return Response({'error': 'Invalid game invite'}, status=404)
     game_invite.status = 'accepted'
     game_invite.save()
     invited = receiver
@@ -168,17 +165,14 @@ def accept_game_invite(request):
 @permission_classes([IsAuthenticated])
 def reject_game_invite(request):
     receiver = request.user
-    if not request.body:
-        return Response({"error": "Empty request body"}, status=400)
-    try:
-        data = json.loads(request.body)
-    except:
-        return Response({"error": "Invalid JSON format"}, status=400)
-    room_name = data.get('room_name', '')
+    data = request.data
+    room_name = data.get('room_name', None)
+    if room_name is None:
+        return Response({'error': 'Invalid game invite'}, status=400)
     try:
         game_invite = GameInvite.objects.get(room_name=room_name, invited=receiver, status='pending')
     except GameInvite.DoesNotExist:
-        return Response({'error': 'Invalid game invite'}, status=400)
+        return Response({'error': 'Invalid game invite'}, status=404)
     game_invite.status = 'rejected'
     game_invite.save()
     inviter = game_invite.inviter

@@ -1,5 +1,5 @@
 import re
-from .models import BLOCKER
+from .models import BLOCKER, FRIENDS
 from django.db.models import Q
 from register.models import Register
 from .cases import ERROR_MSG, SUCCESS_MSG
@@ -19,7 +19,11 @@ def on_block(account, client):
     already = BLOCKER.objects.filter(blocker=account, blocked=client).first()
     if already:
         return already, True
+    
     block = BLOCKER.objects.create(blocker=account, blocked=client)
+    is_friends = FRIENDS.objects.filter(Q(account=account, friends=client) | Q(account=client, friends=account)).first()
+    if is_friends:
+        is_friends.delete()
     return block, False
 
 def is_blocked(account, client):

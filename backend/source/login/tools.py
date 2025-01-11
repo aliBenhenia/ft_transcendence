@@ -34,7 +34,7 @@ def make_api_call(access_token):
 def send_email(recipient, message, subject):
     subject = str(subject)
     message = str(message)
-    sender = "marwan.zaroual.1337.1@gmail.com"
+    sender = "marwan.zaroual.1337.1@gmail.com" #env
     recipient_list = []
     recipient_list.append(recipient)
     try:

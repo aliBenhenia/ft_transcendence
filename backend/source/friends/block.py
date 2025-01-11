@@ -38,10 +38,8 @@ def friend_unblock(request_id):
         return Response({'error': error}, status=404)
     if client == account:
         return Response({'error' : ERROR_MSG['18']}, status=400)
-    is_friends = FRIENDS.objects.filter(Q(account=account, friends=client) | Q(account=client, friends=account)).first()
-    if is_friends:
-        already = BLOCKER.objects.filter(blocker=account, blocked=client).first()
-        if already:
-            already.delete()
-            return Response({'success': SUCCESS_MSG['6']}, status=200)
+    already = BLOCKER.objects.filter(blocker=account, blocked=client).first()
+    if already:
+        already.delete()
+        return Response({'success': SUCCESS_MSG['6']}, status=200)
     return Response({'error' : ERROR_MSG['11']}, status=400)

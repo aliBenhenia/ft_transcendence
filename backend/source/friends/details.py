@@ -34,12 +34,12 @@ def friend_status(request_id):
     else:
         is_friends = FRIENDS.objects.filter(Q(account=account, friends=client) | Q(account=client, friends=account)).first()
         if is_friends:
-            already = BLOCKER.objects.filter(Q(blocker=account, blocked=client) | Q(blocker=client, blocked=account)).first()
-            if already:
-                information['is_blocked'] = True
-                information['blocked_by'] = account.username if already.blocker == account else client.username
-            else:
-                information['is_friends'] = True
+            information['is_friends'] = True
+    already = BLOCKER.objects.filter(Q(blocker=account, blocked=client) | Q(blocker=client, blocked=account)).first()
+    if already:
+        information['is_blocked'] = True
+        information['blocked_by'] = account.username if already.blocker == account else client.username
+
     return Response({'success': information}, status=200)
 
 @api_view(['GET'])
@@ -80,14 +80,21 @@ def query_friends(request):
             'full_name' : f"{friend.first_name} {friend.last_name}",
             'username' : friend.username,
             'picture' : friend.photo_url,
-            'is_blocked' : False,
         }
-        already = BLOCKER.objects.filter(Q(blocker=account, blocked=friend) | Q(blocker=friend, blocked=account)).first()
-        if already:
-            information['is_blocked'] = True
-            information['blocked_by'] = account.username if already.blocker == account else friend.username
-        
         data.append(information)
+    
+    list_block = BLOCKER.objects.filter(Q(blocker=account) | Q(blocked=account))
+    if list_block:
+        for users in list_block:
+            information = {
+                'full_name' : f"{users.first_name} {users.last_name}",
+                'username' : users.username,
+                'picture' : users.photo_url,
+                'is_blocked' : True,
+            }
+            information['blocked_by'] = account.username if users.blocker == account else users.username
+            data.append(information)
+
     return Response({'vide' : False, 'information' : data}, status=200)
 
 @api_view(['GET'])
