@@ -74,9 +74,13 @@ const ProfilePage = (props: any) => {
         });
 
         if (response.data.success) {
-          const { is_friends, on_request, is_blocked } = response.data.success;
+          const { is_friends, on_request, is_blocked,blocked_by } = response.data.success;
           if (is_blocked)
-            router.push("/dashboard");
+          {
+            if (blocked_by !== profileState.username)
+              router.push("/dashboard");
+          }
+            
           setFriendStatus(is_friends ? "friends" : on_request ? "pending" : "not_friends");
           if (is_blocked)
             setFriendStatus("friends");
@@ -90,7 +94,7 @@ const ProfilePage = (props: any) => {
     };
 
     getProfileData().then(() => checkFriendAndBlockStatus());
-  }, [props.params.friendId, unreadCount]);
+  }, [props.params.friendId, unreadCount,blockStatus]);
 
   const handleSendFriendRequest = async () => {
     const token = localStorage.getItem("accessToken");
@@ -159,7 +163,7 @@ const ProfilePage = (props: any) => {
       if (response.data.success) {
         message.success("User has been blocked successfully!");
         setBlockStatus(true);
-        router.push("/dashboard");
+        // router.push("/dashboard");
       }
     } catch (error:any) {
       const errorMessage = error.response ? error.response.data.error : error.message;

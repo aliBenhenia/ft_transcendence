@@ -19,8 +19,8 @@ class Notifications(AsyncWebsocketConsumer):
             user = self.scope['user']
             self.user = user
             if user:
-                await self.accept()
                 await self.set_online_status(True)  # Mark user as online in DB
+                await self.accept()
                 await self.add_user_to_online_group()  # Track online status in memory
                 
                 print(f'{green}[+] {self.user.username} connected to room: {self.user.token_notify}')

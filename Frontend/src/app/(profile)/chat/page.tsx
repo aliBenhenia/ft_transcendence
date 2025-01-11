@@ -172,13 +172,30 @@ export default function ChatPage() {
       message: newMessage,
       time: new Date().toISOString(),
     }
-
+    try{
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/friends/status/?username=${selectedUser.on_talk}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` },
+      });
+      if (res.data.success) {
+        const { is_blocked ,is_friends} = res.data.success;
+        
+        if (!is_friends || is_blocked)
+        {
+          message.error("Cannot send message");
+          return;
+        } 
+      }
+    }
+    catch(e:any){
+    }
+  
     setMessages((prevMessages:any) => [...prevMessages, newMessageEntry])
     setNewMessage('')
     setError(null)
     setIsSending(true)
 
     try {
+    
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/message/`, {
         method: 'POST',
         headers: {
@@ -196,9 +213,10 @@ export default function ChatPage() {
       router.push('/dashboard')
       setMessages((prevMessages:any) => prevMessages.filter((msg:any) => msg !== newMessageEntry))
     } finally {
-      setTimeout(() => {
-        setIsSending(false)
-      }, 2000)
+      // setTimeout(() => {
+      //   setIsSending(false)
+      // }, 500)
+      setIsSending(false)
     }
   }
 

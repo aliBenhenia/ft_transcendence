@@ -86,7 +86,7 @@ def update_profile(request):
         except:
             return Response({'error' : ERROR_MSG['20']}, status=400)
         Account.picture = photo
-        # Account.save()
+        Account.save()
         Account.photo_url = PATH_PICTURE + str(Account.picture.url)
         Account.save()
     if data.get('username', None):

@@ -79,7 +79,7 @@ export default function NotificationsPage() {
   const accessToken = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null
   const { notifications } = useSelector((state: RootState) => state.notifications)
 
-  const [activeTab, setActiveTab] = useState('friends')
+  const [activeTab, setActiveTab] = useState('invitations')
   const [invitations, setInvitations] = useState<InvitationProps[]>([])
   const [friendsList, setFriendsList] = useState<FriendList[]>([])
   const [blockedList, setBlockedList] = useState<BlockedUserProps[]>([])
@@ -379,13 +379,13 @@ export default function NotificationsPage() {
           </motion.h1>
 
           <div className="flex justify-center space-x-4 mb-8">
-            <TabButton
+            {/* <TabButton
               active={activeTab === 'friends'}
               onClick={() => setActiveTab('friends')}
               icon={FaUserFriends}
               label="Friends"
               count={friendsList.length}
-            />
+            /> */}
             <TabButton
               active={activeTab === 'invitations'}
               onClick={() => setActiveTab('invitations')}
@@ -394,13 +394,13 @@ export default function NotificationsPage() {
               
               count={invitations.length}
             />
-            <TabButton
+            {/* <TabButton
               active={activeTab === 'blocked'}
               onClick={() => setActiveTab('blocked')}
               icon={FaBan}
               label="Blocked"
               count={blockedList.length}
-            />
+            /> */}
           </div>
 
           {loading ? (
