@@ -32,8 +32,19 @@ const ProfileCard = () => {
         },
       });
       setTwoFactorEnabled(response.data.success['2FA']);
+<<<<<<< HEAD
     } catch (error) {
       console.log('Error fetching 2FA status', error);
+=======
+    } catch (error:any) {
+      if (error.response) {
+        if (error.response.status === 401) {
+          message.error('Unauthorized. Please login again.');
+          router.push('/');
+          return;
+        }
+      }
+>>>>>>> origin/main
       message.error('Failed to fetch 2FA status.');
     }
   };
@@ -62,8 +73,19 @@ const ProfileCard = () => {
         message.success(response.data.success);
         setTwoFactorEnabled(status);
       }
+<<<<<<< HEAD
     } catch (error) {
       console.log('Error toggling 2FA', error);
+=======
+    } catch (error:any) {
+      if (error.response) {
+        if (error.response.status === 401) {
+          message.error('Unauthorized. Please login again.');
+          router.push('/');
+          return;
+        }
+      }
+>>>>>>> origin/main
       message.error('Failed to toggle 2FA');
     } finally {
       setLoading(false);

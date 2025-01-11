@@ -11,6 +11,7 @@ const TwoFactorAuth = () => {
     const [loading, setLoading] = useState(false);
     const token = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null;
 
+<<<<<<< HEAD
     // const send2FACode = async () => {
     //     try {
     //         setLoading(true);
@@ -29,6 +30,8 @@ const TwoFactorAuth = () => {
     //     }
     // };
 
+=======
+>>>>>>> origin/main
     const verify2FACode = async () => {
         const user_id = localStorage.getItem(`user_id`);
         try {
@@ -36,7 +39,10 @@ const TwoFactorAuth = () => {
             const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/secure/verification/check/`, 
                 { code,user_id }, 
             );
+<<<<<<< HEAD
             message.success(response.data.success);
+=======
+>>>>>>> origin/main
             localStorage.setItem(`accessToken`,response.data.access);
             router.push("/dashboard");
         } catch (error:any) {
@@ -54,6 +60,7 @@ const TwoFactorAuth = () => {
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-[#001529]">
             <h1 className="text-3xl font-bold text-white mb-6">Two-Factor Authentication</h1>
+<<<<<<< HEAD
             {/* <button 
                 onClick={send2FACode} 
                 className="mb-4 p-3 bg-[#07325F] text-white rounded-lg shadow hover:bg-[#0d0e0f] transition duration-300"
@@ -61,6 +68,8 @@ const TwoFactorAuth = () => {
             >
                 Send 2FA Code
             </button> */}
+=======
+>>>>>>> origin/main
             <input 
                 type="text" 
                 value={code} 

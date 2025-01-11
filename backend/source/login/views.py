@@ -1,6 +1,10 @@
 import urllib.parse, json, requests
 from register.models import Register
+<<<<<<< HEAD
 from server.settings import OAUTH2_CONFIG
+=======
+# from server.settings import OAUTH2_CONFIG
+>>>>>>> origin/main
 from .cases import ERROR_MSG, SUCCESS_MSG
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
@@ -36,6 +40,7 @@ class TokenOnLoginPairView(TokenObtainPairView):
                 else:
                     return Response(token_serializer.validated_data, status=200)
         except:
+<<<<<<< HEAD
             print('excep')
             pass
         return Response({'error': ERROR_MSG[4]}, status=404)
@@ -102,3 +107,8 @@ def on_callback(request):
     except:
         return Response({'error': ERROR_MSG[5]}, status=400)
 
+=======
+            pass
+        return Response({'error': ERROR_MSG[4]}, status=404)
+
+>>>>>>> origin/main

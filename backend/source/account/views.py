@@ -77,8 +77,14 @@ def searching_view(request):
 def update_profile(request):
     Account = request.user
     data = request.data
+<<<<<<< HEAD
     photo = data.get('picture')
     print(photo)
+=======
+
+    #update picture
+    photo = data.get('picture')
+>>>>>>> origin/main
     if photo:
         try:
             Image.open(photo)
@@ -88,6 +94,7 @@ def update_profile(request):
         Account.save()
         Account.photo_url = PATH_PICTURE + str(Account.picture.url)
         Account.save()
+<<<<<<< HEAD
 
     firstname = data.get('first_name')
     lastname = data.get('last_name')
@@ -117,6 +124,54 @@ def update_profile(request):
         if password == oldpassword:
             return Response({'error': ERROR_MSG['21']}, status=400)
         Account.set_password(password)
+=======
+    if data.get('username', None):
+        if Register.objects.filter(username=data.get('username')).first():
+            return Response({'error', 'username already in use.'}, status=409)
+        Account.username = data.get('username')
+
+    #update email
+    if data.get('email', None):
+        if Register.objects.filter(email=data.get('email')).exists():
+            return Response({'error', 'email already in use'}, status=409)
+        Account.email = data.get('email')
+
+    #update first name
+    first_name = data.get('first_name')
+    if first_name:
+        validation_error = ValidateName(first_name, True)
+        if validation_error is not None:
+            return Response({'error': ERROR_MSG[validation_error]}, status=400)
+        Account.first_name = first_name
+
+    #update last name
+    last_name = data.get('last_name')
+    if last_name:
+        validation_error = ValidateName(last_name, False)
+        if validation_error is not None:
+            return Response({'error': ERROR_MSG[validation_error]}, status=400)
+        Account.last_name = last_name
+
+    #change password
+    old_password = request.data.get('old_password')
+    new_password = request.data.get('new_password')
+    re_password = request.data.get('re_password')
+    if new_password or re_password or old_password:
+        if not old_password:
+            return Response({'error': 'Old password is required to change the password.'}, status=400)
+
+        if not check_password(old_password, Account.password):
+            return Response({'error': 'Incorrect password'}, status=400)
+
+        if new_password == old_password:
+            return Response({'error': 'Try with diffrent new password'}, status=400)
+
+        validation_error = ValidatePassword(new_password, re_password, old_password)
+        if validation_error is not None:
+            return Response({'error': ERROR_MSG[validation_error]}, status=400)
+        Account.set_password(new_password)
+
+>>>>>>> origin/main
     Account.save()
     return Response({'success': SUCCESS_MSG['1']}, status=200)
 
@@ -126,8 +181,13 @@ def activate_2FA(request):
     account = request.user
     if request.method == 'GET':
         return Response({'success': {'2FA' : account.SECURE.activate}}, status=200)
+<<<<<<< HEAD
     INFO = request.data
     state = INFO.get('status')
+=======
+    data = request.data
+    state = data.get('status')
+>>>>>>> origin/main
     if not state:
         return Response({'error': ERROR_MSG['24']}, status=400)
     if state == 'true':
@@ -140,4 +200,8 @@ def activate_2FA(request):
             account.SECURE.activate_2FA(False)
             return Response({'success': SUCCESS_MSG['3']}, status=200)
         return Response({'error': ERROR_MSG['23']}, status=400)
+<<<<<<< HEAD
     return Response({'error': ERROR_MSG['24']}, status=400)
+=======
+    return Response({'error': ERROR_MSG['24']}, status=400)
+>>>>>>> origin/main

@@ -1,8 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import RegisteredPlayers from './RegisteredPlayers';
 import AllMatches from './AllMatches';
+import { useRouter } from 'next/navigation';
 import { useRouter } from 'next/navigation';
 
 interface Player {
@@ -19,6 +21,7 @@ const avatars = [
 
 const RegistrationForm: React.FC = () => {
   const router = useRouter();
+  const router = useRouter();
   const [players, setPlayers] = useState<Player[]>([
     { alias: '', avatar: avatars[0] },
     { alias: '', avatar: avatars[1] },
@@ -27,6 +30,18 @@ const RegistrationForm: React.FC = () => {
   ]);
   const [registeredPlayers, setRegisteredPlayers] = useState<Player[] | null>(null);
   const [matches, setMatches] = useState<{ player1: Player; player2: Player }[] | null>(null);
+
+// function to save the registered players and matches in the local storage
+  useEffect(() => {
+    const savedPlayers = localStorage.getItem('registeredPlayers');
+    const savedMatches = localStorage.getItem('matches');
+    if (savedPlayers) {
+      setRegisteredPlayers(JSON.parse(savedPlayers));
+    }
+    if (savedMatches) {
+      setMatches(JSON.parse(savedMatches));
+    }
+  }, []);
 
 // function to save the registered players and matches in the local storage
   useEffect(() => {

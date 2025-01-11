@@ -28,7 +28,12 @@ interface profileData {
   loss: number;
   total_match: number;
   last_match?: string;
+<<<<<<< HEAD
   id? : number
+=======
+  id? : number;
+  level_percentage?: number;
+>>>>>>> origin/main
 }
 const ProfilePage = (props: any) => {
   const { unreadCount } = useSelector((state: RootState) => state.notifications);
@@ -36,7 +41,11 @@ const ProfilePage = (props: any) => {
   const router = useRouter();
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+<<<<<<< HEAD
   const [profileData, setProfileData] = useState<profileData>({ username: "", full_name: "", picture: "", level: 0, win: 0, loss: 0, total_match: 0 ,id:0});
+=======
+  const [profileData, setProfileData] = useState<profileData>({ username: "", full_name: "", picture: "", level: 0, win: 0, loss: 0, total_match: 0 ,id:0,level_percentage:0});
+>>>>>>> origin/main
   const [friendStatus, setFriendStatus] = useState("not_friends");
   const [blockStatus, setBlockStatus] = useState(false);
   const [listFriends, setListFriends] = useState([]);
@@ -73,8 +82,18 @@ const ProfilePage = (props: any) => {
         });
 
         if (response.data.success) {
+<<<<<<< HEAD
           const { is_friends, on_request, is_blocked } = response.data.success;
           console.log("status==>",response.data.success);
+=======
+          const { is_friends, on_request, is_blocked,blocked_by } = response.data.success;
+          if (is_blocked)
+          {
+            if (blocked_by !== profileState.username)
+              router.push("/dashboard");
+          }
+            
+>>>>>>> origin/main
           setFriendStatus(is_friends ? "friends" : on_request ? "pending" : "not_friends");
           if (is_blocked)
             setFriendStatus("friends");
@@ -88,7 +107,11 @@ const ProfilePage = (props: any) => {
     };
 
     getProfileData().then(() => checkFriendAndBlockStatus());
+<<<<<<< HEAD
   }, [props.params.friendId, unreadCount]);
+=======
+  }, [props.params.friendId, unreadCount,blockStatus]);
+>>>>>>> origin/main
 
   const handleSendFriendRequest = async () => {
     const token = localStorage.getItem("accessToken");
@@ -157,6 +180,10 @@ const ProfilePage = (props: any) => {
       if (response.data.success) {
         message.success("User has been blocked successfully!");
         setBlockStatus(true);
+<<<<<<< HEAD
+=======
+        // router.push("/dashboard");
+>>>>>>> origin/main
       }
     } catch (error:any) {
       const errorMessage = error.response ? error.response.data.error : error.message;
@@ -220,19 +247,33 @@ const ProfilePage = (props: any) => {
                   <div className="relative bg-[#0d0e0f] rounded-full h-6 w-full overflow-hidden mt-2">
                     <motion.div
                       className="h-full bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 rounded-full shadow-md"
+<<<<<<< HEAD
                       style={{ width: `${profileData.level}%` }}
                       initial={{ width: '0%' }}
                       animate={{ width: `${profileData.level}%` }}
+=======
+                      style={{ width: `${profileData.level_percentage}%` }}
+                      initial={{ width: '0%' }}
+                      animate={{ width: `${profileData.level_percentage}%` }}
+>>>>>>> origin/main
                       transition={{ duration: 1.5, ease: 'easeInOut' }}
                     />
                     <motion.div
                       className="absolute top-0 left-0 text-sm font-bold text-white"
+<<<<<<< HEAD
                       style={{ transform: `translateX(${profileData.level - 5}%)` }}
+=======
+                      style={{ transform: `translateX(${profileData.level_percentage - 5}%)` }}
+>>>>>>> origin/main
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 1.5, ease: 'easeInOut' }}
                     >
+<<<<<<< HEAD
                       {profileData.level}%
+=======
+                      {profileData.level_percentage} %
+>>>>>>> origin/main
                     </motion.div>
                   </div>
                   <motion.p
@@ -241,10 +282,18 @@ const ProfilePage = (props: any) => {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1.5, duration: 0.5 }}
                   >
+<<<<<<< HEAD
                     {profileData.level}% Completed
                   </motion.p>
                 </header>
               </div>
+=======
+                    {profileData.level} level
+                  </motion.p>
+                </header>
+              </div>
+             
+>>>>>>> origin/main
               <div className="mt-4 flex flex-col sm:flex-row justify-around gap-4">
                 <button
                   onClick={() => router.push(`/chat`)}
@@ -297,6 +346,11 @@ const ProfilePage = (props: any) => {
                   </>
                 )}
               </div>
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> origin/main
             </div>
           </motion.div>
           <div className="flex gap-3 flex-col">

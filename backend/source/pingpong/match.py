@@ -362,6 +362,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
     async def connect(self):
         query_params = parse_qs(self.scope['query_string'].decode())
         room_name = query_params.get('room_name', [None])[0]
+<<<<<<< HEAD
         await self.channel_layer.group_add(
             room_name,
             self.channel_name
@@ -369,6 +370,14 @@ class LiveGameFlow(AsyncWebsocketConsumer):
         await self.accept()
         if room_name != None:
             print("from invite")
+=======
+        await self.accept()
+        if room_name != None:
+            await self.channel_layer.group_add(
+                room_name,
+                self.channel_name
+            )
+>>>>>>> origin/main
             self.user = self.scope['user']
             if room_name in self.games:
                 if room_name not in self.invites:

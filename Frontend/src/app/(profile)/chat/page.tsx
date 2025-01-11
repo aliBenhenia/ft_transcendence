@@ -8,12 +8,21 @@ import Link from 'next/link'
 import {message} from 'antd'
 import { FaBars } from "react-icons/fa";
 import { IoSearchSharp } from "react-icons/io5";
+<<<<<<< HEAD
+=======
+import { useRouter } from 'next/navigation';
+import axios from 'axios'
+>>>>>>> origin/main
 
 
 import sortLastConversations from '@/services/sortLastConversations'
 import FetchProfile from '@/services/FetchProfile'
 
 export default function ChatPage() {
+<<<<<<< HEAD
+=======
+  const router = useRouter();
+>>>>>>> origin/main
   const socketUrl = process.env.NEXT_PUBLIC_API_URL || 'localhost:9003';
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [users, setUsers] = useState<any>([])
@@ -43,18 +52,39 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (!token) return
+<<<<<<< HEAD
     fetchFriends() // call in first render and when 
     // const socket = openSocket()// should n be here , i already have global socket in notification
     // return () => {
     //   console.log('closed socket:', socket)
     //   socket.close()
     // }
+=======
+    fetchFriends()
+>>>>>>> origin/main
   }, [selectedUser])
 
   useEffect(() => {
-    if (selectedUser && online.sender === selectedUser.on_talk) {
-      setStatus(online.case === 'ONLINE')
-    }
+    const checkUserStatus = async () => {
+      if (selectedUser && online.sender === selectedUser.on_talk) {
+        try {
+          const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/friends/status/?username=${selectedUser.on_talk}`, {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` },
+          });
+          if (response.data.success) {
+            const { is_blocked } = response.data.success;
+            if (is_blocked) {
+              router.push('/dashboard');
+            } else {
+              setStatus(online.case === 'ONLINE');
+            }
+          }
+        } catch (err) {
+          router.push('/dashboard');
+        }
+      }
+    };
+    checkUserStatus();
   }, [online, selectedUser])
 
   useEffect(() => {
@@ -92,8 +122,10 @@ export default function ChatPage() {
       } else {
         setError('No friends found.')
       }
-    } catch (err) {
+    } catch (err:any) {
       setError('Failed to load friends list. Please try again.')
+      if (err?.response?.status === 401)
+        window.location.href = '/'
     } finally {
       setLoading(false)
     }
@@ -128,8 +160,10 @@ export default function ChatPage() {
         })
         setStatus(data.online)
       }
-    } catch (err) {
+    } catch (err:any) {
       setError('Failed to load messages. Please try again.')
+      if (err?.response?.status === 401)
+        window.location.href = '/'
     } finally {
       setLoading(false)
       setIsMenuOpen(false)
@@ -138,9 +172,15 @@ export default function ChatPage() {
 
   const sendMessage = async () => {
     if (!newMessage || !selectedUser?.on_talk || isSending || !token) return
+<<<<<<< HEAD
     if (newMessage.length > 700)
     {
       message.error('message must be less then 700');
+=======
+    if (newMessage.length > 4100)
+    {
+      message.error('message must be less then 4100');
+>>>>>>> origin/main
       return;
     }
     const messagePayload = {
@@ -153,13 +193,33 @@ export default function ChatPage() {
       message: newMessage,
       time: new Date().toISOString(),
     }
-
+    try{
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/friends/status/?username=${selectedUser.on_talk}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` },
+      });
+      if (res.data.success) {
+        const { is_blocked ,is_friends} = res.data.success;
+        
+        if (!is_friends || is_blocked)
+        {
+          message.error("Cannot send message");
+          return;
+        } 
+      }
+    }
+    catch(e:any){
+    }
+  
     setMessages((prevMessages:any) => [...prevMessages, newMessageEntry])
     setNewMessage('')
     setError(null)
     setIsSending(true)
 
     try {
+<<<<<<< HEAD
+=======
+    
+>>>>>>> origin/main
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/message/`, {
         method: 'POST',
         headers: {
@@ -174,17 +234,23 @@ export default function ChatPage() {
       }
     } catch (err) {
       setError('Failed to send message. Please try again.')
+      router.push('/dashboard')
       setMessages((prevMessages:any) => prevMessages.filter((msg:any) => msg !== newMessageEntry))
     } finally {
-      setTimeout(() => {
-        setIsSending(false)
-      }, 2000)
+      // setTimeout(() => {
+      //   setIsSending(false)
+      // }, 500)
+      setIsSending(false)
     }
   }
 
   const openSocket = () => { // unused function
     if (!token) return { close: () => {} }
+<<<<<<< HEAD
     const socket = new WebSocket(`ws://${socketUrl.slice(7)}/ws/connection/?token=${token}`)
+=======
+    const socket = new WebSocket(`${socketUrl}/connection/?token=${token}`)
+>>>>>>> origin/main
     console.log('Socket:sss')
     // alert('Socket:')
 
@@ -315,7 +381,7 @@ export default function ChatPage() {
         </aside>
 
         {/* Chat Area */}
-        <main className="flex-1 flex flex-col bg-gray-900 overflow-hidden">
+        <main className="flex-1 flex flex-col bg-gray-900 overflow-auto">
           {selectedUser ? (
             <>
               {/* Chat Header */}
@@ -342,7 +408,11 @@ export default function ChatPage() {
               </div>
 
               {/* Messages */}
+<<<<<<< HEAD
               <div className="flex-1 overflow-y-auto p-4 space-y-4 mb-[140px]">
+=======
+              <div className="flex-1 overflow-y-auto p-4 space-y-4 mb-[140px] overflow-x-auto">
+>>>>>>> origin/main
                 {loading ? (
                   <div className="flex justify-center items-center h-full">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
@@ -353,7 +423,7 @@ export default function ChatPage() {
                   messages.map((msg:any, index:number) => (
                     <div
                       key={index}
-                      className={`flex ${msg.sender !== selectedUser.on_talk ? 'justify-end' : 'justify-start'}`}
+                      className={`flex break-all ${msg.sender !== selectedUser.on_talk ? 'justify-end' : 'justify-start'}`}
                     >
                       <div
                         className={`max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl px-4 py-2 rounded-lg ${

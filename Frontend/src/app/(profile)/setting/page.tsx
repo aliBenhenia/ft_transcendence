@@ -5,15 +5,28 @@ import { useSelector, useDispatch } from 'react-redux'
 import { motion, AnimatePresence } from 'framer-motion'
 import { type RootState } from '@/store/store'
 import { updateProfile } from '@/store/slices/profileSlice'
+<<<<<<< HEAD
 import FetchProfile from '@/services/FetchProfile'
 
+=======
+import FetchProfile from '@/services/FetchProfile';
+import { message } from 'antd';
+import axios from 'axios';
+import SendResetLink from './SendResetLink'
+>>>>>>> origin/main
 export default function Settings() {
   const profileState = useSelector((state: RootState) => state.profile)
   const dispatch = useDispatch()
 
   const [isLoading, setIsLoading] = useState(false)
   const [previewUrl, setPreviewUrl] = useState('')
+<<<<<<< HEAD
   const [avatar, setAvatar] = useState<File | null>(null)
+=======
+  const [avatar, setAvatar] = useState<File | null>(null);
+  const [username, setUsername] = useState(profileState.username);
+  const [email, setEmail] = useState(profileState.email);
+>>>>>>> origin/main
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [oldPassword, setOldPassword] = useState('')
@@ -64,6 +77,11 @@ export default function Settings() {
 
     const formData = new FormData()
     if (avatar) formData.append('picture', avatar)
+<<<<<<< HEAD
+=======
+    if (username) formData.append('username', username)
+    if (email) formData.append('email', email)
+>>>>>>> origin/main
     if (firstName) formData.append('first_name', firstName)
     if (lastName) formData.append('last_name', lastName)
     if (oldPassword) formData.append('old_password', oldPassword)
@@ -71,6 +89,7 @@ export default function Settings() {
     if (rePassword) formData.append('re_password', rePassword)
 
     try {
+<<<<<<< HEAD
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/account/update/`, {
         method: 'POST',
         headers: {
@@ -80,6 +99,16 @@ export default function Settings() {
       })
 
       if (!response.ok) throw new Error('Failed to update profile')
+=======
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/account/update/`, formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (response.status !== 200) {
+        throw new Error('Failed to update profile')
+      }
+>>>>>>> origin/main
 
       const data = await FetchProfile(token)
       dispatch(updateProfile(data.informations))
@@ -94,9 +123,16 @@ export default function Settings() {
       
       setSuccess('Profile updated successfully!')
       setTimeout(() => setSuccess(''), 3000)
+<<<<<<< HEAD
     } catch (error) {
       setError('Failed to update profile')
       setTimeout(() => setError(''), 3000)
+=======
+    } catch (error:any) {
+      setError('Failed to update profile , please check your data');
+      message.error("Failed to update profile, please check your data");
+      setTimeout(() => setError(''), 3000);
+>>>>>>> origin/main
     } finally {
       setIsLoading(false)
     }
@@ -164,9 +200,16 @@ export default function Settings() {
                     <input
                     autoComplete = "username"
                       type="text"
+<<<<<<< HEAD
                       value={profileState.username}
                       readOnly
                       className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-not-allowed"
+=======
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      placeholder="Enter your username"
+                      className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 "
+>>>>>>> origin/main
                     />
                   </div>
                   <div className="space-y-2">
@@ -174,9 +217,16 @@ export default function Settings() {
                     <input
                     autoComplete = "email"
                       type="email"
+<<<<<<< HEAD
                       value={profileState.email}
                       readOnly
                       className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-not-allowed"
+=======
+                      value={email}
+                      placeholder="Enter your email"
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 "
+>>>>>>> origin/main
                     />
                   </div>
                   <div className="space-y-2">
@@ -244,6 +294,10 @@ export default function Settings() {
                     />
                   </div>
                 </div>
+<<<<<<< HEAD
+=======
+                <SendResetLink email={profileState.email}/>
+>>>>>>> origin/main
               </div>
 
               {/* Notifications */}

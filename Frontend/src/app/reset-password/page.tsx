@@ -21,11 +21,29 @@ const ResetPassword = () => {
   const handleSubmit = async (e:any) => {
     e.preventDefault(); // Prevent default form submission
 
+<<<<<<< HEAD
     if (password !== repassword) {
       message.error("Passwords do not match.");
       return;
     }
 
+=======
+    if (password !== repassword)
+    {
+      message.error("Passwords do not match.");
+      return ;
+    }
+    if (password.length < 8 )
+    {
+       message.error("Password must be at least 8 characters long.");
+       return ;
+    }
+    if (password.trim().length === 0)
+    {
+      message.error("Password cannot contain spaces!");
+      return ;
+    }
+>>>>>>> origin/main
     setLoading(true);
     console.log(uid)
     console.log(token)
