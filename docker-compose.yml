@@ -1,8 +1,6 @@
 version: '2.29.2'
 
 services:
-<<<<<<< HEAD
-=======
   db:
     image: postgres:latest
     container_name: postgres
@@ -12,26 +10,15 @@ services:
     networks:
       - mynetwork
 
->>>>>>> origin/main
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
     
-<<<<<<< HEAD
-    image: django
-    container_name: django
-
-    # depends_on:
-    #   - redis
-    ports:
-      - 9003:8001
-=======
     image: backend
     container_name: backend
     depends_on:
       - db
->>>>>>> origin/main
     volumes:
       - ./backend/source:/server
     networks:
@@ -39,18 +26,6 @@ services:
     restart: always
     env_file:
       - .env
-<<<<<<< HEAD
-  
-  nextjs:
-    build:
-      context: ./Frontend
-      dockerfile: Dockerfile
-    container_name: nextjs
-    # environment:
-    #   NEXT_PUBLIC_API_URL: "http://localhost:9003" # change this to your local ip or use localhost
-    ports:
-      - 9001:3000
-=======
 
   frontend:
     build:
@@ -59,20 +34,12 @@ services:
     container_name: frontend
     env_file:
       - .env
->>>>>>> origin/main
     volumes:
       - ./Frontend:/app
       - /app/node_modules
       - /app/.next
     networks:
       - mynetwork
-<<<<<<< HEAD
-    # make restart always to avoid any issues
-    restart: always
-    env_file:
-      - ./Frontend/.env
-    # command: npm run start
-=======
     restart: always
 
   nginx:
@@ -88,7 +55,6 @@ services:
     depends_on:
       - backend
       - frontend
->>>>>>> origin/main
 
   # redis:
   #   build:
@@ -99,15 +65,7 @@ services:
     
   #   networks:
   #     - mynetwork
-<<<<<<< HEAD
-    
 
 networks:
   mynetwork:
     driver: bridge
-=======
-
-networks:
-  mynetwork:
-    driver: bridge
->>>>>>> origin/main
