@@ -1,4 +1,4 @@
-export const createWebSocketConnection = (token: string | null, room_name : string | undefined): WebSocket => {
+export const createWebSocketConnection = (token: string | null, room_name : string ): WebSocket => {
     if (!token) {
       throw new Error("Invalid token: WebSocket connection cannot be created");
     }

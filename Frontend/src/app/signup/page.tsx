@@ -168,7 +168,7 @@ export default function CreateAccount() {
     // const redirectUri = encodeURIComponent(window.location.href); // current page, or a page to redirect after OAuth success
     // const oauthURL = process.env.NEXT_PUBLIC_REDIRECT_URI;
     // $1.log(process.env.NEXT_PUBLIC_REDIRECT_URI);
-    router.push(process.env.NEXT_PUBLIC_REDIRECT_URI);
+    router.push(process.env.NEXT_PUBLIC_REDIRECT_URI as string);
 
     // window.location.href = oauthURL;  // Redirect user to the 42 login page
   };

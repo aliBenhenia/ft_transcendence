@@ -75,7 +75,7 @@ const ProfilePage = (props: any) => {
 
         if (response.data.success) {
           const { is_friends, on_request, is_blocked,blocked_by } = response.data.success;
-          if (is_blocked)
+          if (is_blocked || !is_friends)
           {
             if (blocked_by !== profileState.username)
               router.push("/dashboard");
@@ -227,19 +227,19 @@ const ProfilePage = (props: any) => {
                   <div className="relative bg-[#0d0e0f] rounded-full h-6 w-full overflow-hidden mt-2">
                     <motion.div
                       className="h-full bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 rounded-full shadow-md"
-                      style={{ width: `${profileData.level_percentage}%` }}
+                      style={{ width: `${profileData?.level_percentage}%` }}
                       initial={{ width: '0%' }}
-                      animate={{ width: `${profileData.level_percentage}%` }}
+                      animate={{ width: `${profileData?.level_percentage}%` }}
                       transition={{ duration: 1.5, ease: 'easeInOut' }}
                     />
                     <motion.div
                       className="absolute top-0 left-0 text-sm font-bold text-white"
-                      style={{ transform: `translateX(${profileData.level_percentage - 5}%)` }}
+                      style={{  transform: `translateX(${(profileData?.level_percentage ?? 0) - 5}%)`}}
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ duration: 1.5, ease: 'easeInOut' }}
                     >
-                      {profileData.level_percentage} %
+                      {profileData?.level_percentage} %
                     </motion.div>
                   </div>
                   <motion.p
@@ -248,7 +248,7 @@ const ProfilePage = (props: any) => {
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1.5, duration: 0.5 }}
                   >
-                    {profileData.level} level
+                    {profileData?.level} level
                   </motion.p>
                 </header>
               </div>
@@ -311,7 +311,7 @@ const ProfilePage = (props: any) => {
           </motion.div>
           <div className="flex gap-3 flex-col">
             <GameStats
-              level={profileData.level}
+              level={profileData?.level}
               loss={profileData.loss}
               matches={profileData.total_match}
               win={profileData.win}

@@ -38,7 +38,7 @@ const GameCanvas: React.FC = () => {
   const [gameResult, setGameResult] = useState({ message: '', finalScore: [0, 0] });
   const [player1, setPlayer1] = useState<{ username: string; avatar: string }>({ username: "", avatar: "" });
   const [player2, setPlayer2] = useState({ username: "", avatar: "" });
-  const room_name = useSearchParams().get('room_name');
+  const room_name:any = useSearchParams().get('room_name');
   // $1.log("room_name", room_name);
   window.onload = function() {
       router.push("/game");

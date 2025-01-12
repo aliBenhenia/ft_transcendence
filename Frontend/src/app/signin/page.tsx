@@ -155,7 +155,7 @@ export default function SignIn() {
     const redirectUri = encodeURIComponent(window.location.href); // current page, or a page to redirect after OAuth success
     const oauthURL = process.env.NEXT_PUBLIC_REDIRECT_URI;
 
-    window.location.href = oauthURL;  // Redirect user to the 42 login page
+    window.location.href = oauthURL as string;  // Redirect user to the 42 login page
   };
   return (
     <>

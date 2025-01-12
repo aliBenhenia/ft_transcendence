@@ -146,7 +146,7 @@ function PingPongGame() {
             <h1 className="text-xl text-center text-[#041b34] font-bold">Friends</h1>
           </header>
           <div>
-            <h2 className="text-center text-gray-400 p-6">you haven't add any friends yet!</h2>
+            <h2 className="text-center text-gray-400 p-6">you havent add any friends yet!</h2>
 
           </div>
         </div>
