@@ -7,8 +7,8 @@ from .cases import ERROR_MSG, SUCCESS_MSG
 def get_user(reciver_user):
     if not reciver_user:
         return None, ERROR_MSG['3']
-    if not re.match(r'^[a-z0-9_]+$', reciver_user):
-        return None, ERROR_MSG['2']
+    # if not re.match(r'^[a-z0-9_]+$', reciver_user):
+    #     return None, ERROR_MSG['2']
     try:
         user = Register.objects.get(username=reciver_user)
         return user, None

@@ -16,8 +16,8 @@ export default function Settings() {
   const [isLoading, setIsLoading] = useState(false)
   const [previewUrl, setPreviewUrl] = useState('')
   const [avatar, setAvatar] = useState<File | null>(null);
-  const [username, setUsername] = useState(profileState.username);
-  const [email, setEmail] = useState(profileState.email);
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('')
   const [lastName, setLastName] = useState('')
   const [oldPassword, setOldPassword] = useState('')
@@ -172,7 +172,7 @@ export default function Settings() {
                       type="text"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
-                      placeholder="Enter your username"
+                      placeholder={profileState.username}
                       className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 "
                     />
                   </div>
@@ -182,7 +182,7 @@ export default function Settings() {
                     autoComplete = "email"
                       type="email"
                       value={email}
-                      placeholder="Enter your email"
+                      placeholder={profileState.email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="w-full px-4 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 "
                     />

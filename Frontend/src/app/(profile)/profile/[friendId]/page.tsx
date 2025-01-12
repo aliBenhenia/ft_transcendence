@@ -89,7 +89,7 @@ const ProfilePage = (props: any) => {
       } catch (error:any) {
         const errorMessage = error.response ? error.response.data.error : error.message;
         message.error(errorMessage);
-        router.push("/dashboard");
+        // router.push("/dashboard");
       }
     };
 

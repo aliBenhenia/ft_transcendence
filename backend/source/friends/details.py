@@ -50,8 +50,8 @@ def search_query(request):
     username = request.GET.get('username')
     if not username:
         return Response({'error': ERROR_MSG['3']}, status=400)
-    if not re.match(r'^[a-z0-9_]+$', username):
-        return Response({'error': ERROR_MSG['2']}, status=400)
+    # if not re.match(r'^[a-z0-9_]+$', username):
+    #     return Response({'error': ERROR_MSG['2']}, status=400)
     users = Register.objects.filter(username__startswith=username).exclude(id=account.id)[:10]
     if not users:
         return Response({'error': ERROR_MSG['1']}, status=404)
