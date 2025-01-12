@@ -25,6 +25,7 @@ export default function SignIn() {
     const token = localStorage.getItem("accessToken") || '';
     const checkisLogged = async () => {
       setIsLogged(false);
+      console.log("===> ",process.env.NEXT_PUBLIC_API_URL)
       try {
         const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/account/profile/`, {
             headers: {

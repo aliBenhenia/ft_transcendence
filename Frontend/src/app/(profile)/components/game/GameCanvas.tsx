@@ -71,8 +71,12 @@ const GameCanvas: React.FC = () => {
 
     websocket.onmessage = (event) => {
       const data = JSON.parse(event.data);
-
-      if (data.type === "game_start") {
+      console.log(data);
+      if (data?.type === "game_rejected" || data?.type === "timeout" )
+        router.push("/dashboard")
+      else if (data?.type === "invalid_room")
+        router.push("/dashboard")
+      else if (data.type === "game_start") {
         // $1.log("Game starting: ", data);
         setPlayer1({ username: data.player1_username, avatar: data.player1_avatar });
         setPlayer2({ username: data.player2_username, avatar: data.player2_avatar });
@@ -230,12 +234,12 @@ const GameCanvas: React.FC = () => {
                 Leave Game
               </button>
 
-              <button
+              {/* <button
                 onClick={handleRestart}
                 className="px-6 py-2 bg-[#008000] text-white font-bold rounded-lg hover:bg-[#006400] ml-4"
               >
                 Restart Game
-              </button>
+              </button> */}
             </div>
           )}
         </div>
