@@ -1,36 +1,18 @@
 "use client";
 
-<<<<<<< HEAD
-import { useState,useEffect } from 'react';
-=======
 import { useState, useEffect, useRef } from 'react';
->>>>>>> origin/main
 import axios from 'axios';
 import { Input, Dropdown, Avatar } from 'antd';
 import { FaSearch } from 'react-icons/fa';
 import { motion } from 'framer-motion';
 import { useRouter } from 'next/navigation';
 
-<<<<<<< HEAD
-
-=======
->>>>>>> origin/main
 const FriendSearch = () => {
     const router = useRouter();
     const [username, setUsername] = useState('');
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
     const [token, setToken] = useState<string>("");
-<<<<<<< HEAD
-    useEffect(()=>{
-        const newTocken = localStorage.getItem('accessToken');
-        if (!newTocken) return
-        setToken(newTocken);
-    },[])
-    
-
-    const handleSearch = async (e:any) => {
-=======
     const dropdownRef = useRef(null);
 
     useEffect(() => {
@@ -51,7 +33,6 @@ const FriendSearch = () => {
     }, []);
 
     const handleSearch = async (e: any) => {
->>>>>>> origin/main
         const value = e.target.value;
         setUsername(value);
 
@@ -67,33 +48,12 @@ const FriendSearch = () => {
             });
             setResults(response.data.success);
         } catch (error) {
-<<<<<<< HEAD
-            setResults([]); 
-=======
             setResults([]);
->>>>>>> origin/main
         } finally {
             setLoading(false);
         }
     };
 
-<<<<<<< HEAD
-    const handleMenuClick = (username:string) => {
-        console.log("Selected:", username);
-        router.push(`/profile/${username}`);
-        // rederect to profile...and fecth data again
-    };
-
-    return (
-        <div className="relative w-full ml-4 flex justify-center">
-            <div className=" flex items-center">
-                <FaSearch className="absolute left-3  text-gray-400 transition-colors duration-300 hover:text-blue-400" />
-                <motion.input
-                    type="text"
-                    placeholder="Search"
-                    className=" w-full sm:w-full md:w-full lg:w-full pl-10 pr-4 bg-[#031B3A] py-2 rounded-2xl focus:outline-none shadow-lg border border-transparent focus:border-blue-500 transition-all duration-300 ease-in-out"
-
-=======
     const handleMenuClick = (username: string) => {
         console.log("Selected:", username);
         router.push(`/profile/${username}`);
@@ -108,7 +68,6 @@ const FriendSearch = () => {
                     type="text"
                     placeholder="Search"
                     className="w-full sm:w-full md:w-full lg:w-full pl-10 pr-4 bg-[#031B3A] py-2 rounded-2xl focus:outline-none shadow-lg border border-transparent focus:border-blue-500 transition-all duration-300 ease-in-out"
->>>>>>> origin/main
                     value={username}
                     onChange={handleSearch}
                     initial={{ scale: 0.95 }}
@@ -119,19 +78,11 @@ const FriendSearch = () => {
             </div>
             {results.length > 0 && (
                 <div className="absolute left-0 right-0 z-[199] mt-10 bg-[#031B3A] rounded-2xl shadow-2xl">
-<<<<<<< HEAD
-                    {results.map((user:any) => (
-                        <div
-                            key={user.username}
-                            onClick={() => handleMenuClick(user.username)}
-                            className="flex items-center p-2  cursor-pointer"
-=======
                     {results.map((user: any) => (
                         <div
                             key={user.username}
                             onClick={() => handleMenuClick(user.username)}
                             className="flex items-center p-2 cursor-pointer"
->>>>>>> origin/main
                         >
                             <Avatar src={user.picture} alt={user.full_name} className="mr-2" />
                             <span>{user.full_name} ({user.username})</span>
@@ -146,8 +97,4 @@ const FriendSearch = () => {
     );
 };
 
-<<<<<<< HEAD
 export default FriendSearch;
-=======
-export default FriendSearch;
->>>>>>> origin/main

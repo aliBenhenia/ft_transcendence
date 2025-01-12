@@ -13,11 +13,7 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='register',
             name='photo_url',
-<<<<<<< HEAD
-            field=models.URLField(default='http://10.13.7.9:9003/media/avatars/unknown.jpeg'),
-=======
             field=models.URLField(default='http://10.13.2.18:9003/media/avatars/unknown.jpeg'),
->>>>>>> origin/main
         ),
         migrations.AlterField(
             model_name='register',

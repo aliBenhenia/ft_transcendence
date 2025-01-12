@@ -77,14 +77,9 @@ def searching_view(request):
 def update_profile(request):
     Account = request.user
     data = request.data
-<<<<<<< HEAD
-    photo = data.get('picture')
-    print(photo)
-=======
 
     #update picture
     photo = data.get('picture')
->>>>>>> origin/main
     if photo:
         try:
             Image.open(photo)
@@ -94,37 +89,6 @@ def update_profile(request):
         Account.save()
         Account.photo_url = PATH_PICTURE + str(Account.picture.url)
         Account.save()
-<<<<<<< HEAD
-
-    firstname = data.get('first_name')
-    lastname = data.get('last_name')
-    if firstname and lastname:
-        is_valid = ValidateName(firstname, True)
-        if is_valid != None:
-            return Response({'error' : ERROR_MSG[is_valid]}, status=400)
-        is_valid = ValidateName(lastname, False)
-        if is_valid != None:
-            return Response({'error' : ERROR_MSG[is_valid]}, status=400)
-        Account.first_name = firstname
-        Account.last_name = lastname
-
-    if firstname and not lastname:
-        return Response({'error' : ERROR_MSG['8']}, status=400)
-    if lastname and not firstname:
-        return Response({'error' : ERROR_MSG['5']}, status=400)
-    password = request.data.get('new_password')
-    repassword = request.data.get('re_password')
-    oldpassword = request.data.get('old_password')
-    if password or repassword or oldpassword:
-        ON_CHECK = ValidatePassword(password, repassword, oldpassword)
-        if ON_CHECK != None:
-            return Response({'error': ERROR_MSG[ON_CHECK]}, status=400)
-        if not check_password(oldpassword, Account.password):
-            return Response({'error': ERROR_MSG['19']}, status=400)
-        if password == oldpassword:
-            return Response({'error': ERROR_MSG['21']}, status=400)
-        Account.set_password(password)
-=======
     if data.get('username', None):
         if Register.objects.filter(username=data.get('username')).first():
             return Response({'error', 'username already in use.'}, status=409)
@@ -171,7 +135,6 @@ def update_profile(request):
             return Response({'error': ERROR_MSG[validation_error]}, status=400)
         Account.set_password(new_password)
 
->>>>>>> origin/main
     Account.save()
     return Response({'success': SUCCESS_MSG['1']}, status=200)
 
@@ -181,13 +144,8 @@ def activate_2FA(request):
     account = request.user
     if request.method == 'GET':
         return Response({'success': {'2FA' : account.SECURE.activate}}, status=200)
-<<<<<<< HEAD
-    INFO = request.data
-    state = INFO.get('status')
-=======
     data = request.data
     state = data.get('status')
->>>>>>> origin/main
     if not state:
         return Response({'error': ERROR_MSG['24']}, status=400)
     if state == 'true':
@@ -200,8 +158,4 @@ def activate_2FA(request):
             account.SECURE.activate_2FA(False)
             return Response({'success': SUCCESS_MSG['3']}, status=200)
         return Response({'error': ERROR_MSG['23']}, status=400)
-<<<<<<< HEAD
     return Response({'error': ERROR_MSG['24']}, status=400)
-=======
-    return Response({'error': ERROR_MSG['24']}, status=400)
->>>>>>> origin/main

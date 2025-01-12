@@ -11,7 +11,6 @@ function drawDashedLine(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement
     ctx.lineWidth = 2;
     const centerX = canvas.width / 2;
     ctx.setLineDash([10, 15]);
-    ctx.setLineDash([10, 15]);
     ctx.beginPath();
     ctx.moveTo(centerX, 0);
     ctx.lineTo(centerX, canvas.height);
@@ -100,15 +99,10 @@ export default function OneVone() {
             if (e.key === ' ') {
                 if (countdown !== null || winner) return;
                 setPaused((prev) => !prev);
-                if (countdown !== null || winner) return;
-                setPaused((prev) => !prev);
             }
             keysPressed[e.key] = true;
         };
 
-        const handleKeyUp = (e: KeyboardEvent) => {
-            keysPressed[e.key] = false;
-        };
         const handleKeyUp = (e: KeyboardEvent) => {
             keysPressed[e.key] = false;
         };
@@ -159,17 +153,13 @@ export default function OneVone() {
 
         if (countdown !== null) {
             const interval = setInterval(() => {
-            const interval = setInterval(() => {
                 setCountdown((prev) => (prev! > 1 ? prev! - 1 : null));
             }, 1000);
-            return () => clearInterval(interval);
             return () => clearInterval(interval);
         } else {
             startGame();
         }
 
-        window.addEventListener('keydown', handleKeyDown);
-        window.addEventListener('keyup', handleKeyUp);
         window.addEventListener('keydown', handleKeyDown);
         window.addEventListener('keyup', handleKeyUp);
         return () => {
@@ -311,11 +301,8 @@ export default function OneVone() {
                     className="  px-4 py-2 bg-red-500 text-white font-bold rounded-lg hover:bg-red-700"
                 >
                     leave Tournament
-                    leave Tournament
                 </button>
             </div>
         </div>
     );
-}
-
 }

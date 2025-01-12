@@ -8,11 +8,8 @@ import requests
 from server import settings
 from rest_framework_simplejwt.tokens import RefreshToken
 import uuid
-<<<<<<< HEAD
-=======
 from datetime import timedelta
 import random
->>>>>>> origin/main
 
 class RegisterAccount(APIView):
     
@@ -41,11 +38,7 @@ def intra_register(request):
     data = {
         'grant_type': 'authorization_code',
         'code': code,
-<<<<<<< HEAD
-        'redirect_uri': 'http://localhost:9001/oauth',
-=======
         'redirect_uri': settings.OAUTH_REDIRECT_URI,
->>>>>>> origin/main
         'client_id': settings.OAUTH_CLIENT_ID, 
         'client_secret': settings.OAUTH_CLIENT_SECRET,
     }
@@ -58,20 +51,10 @@ def intra_register(request):
             user_data = response.json()
             user = Register.objects.filter(provider_id=user_data['id']).first()
             if user :
-<<<<<<< HEAD
-                print(user_data['image']['link'])
-=======
->>>>>>> origin/main
                 refresh = RefreshToken.for_user(user)
                 access_token = str(refresh.access_token)
                 return Response({'access': access_token, 'refresh': str(refresh),}, status=200)
             else:
-<<<<<<< HEAD
-                password = uuid.uuid4().hex
-                data_to_save = {
-                    'provider_id' : int(user_data.get('id')),
-                    'username' :user_data.get('login'),
-=======
                 if Register.objects.filter(email=user_data['email']).first():
                     return Response({'error', 'Email already associated with an account.'})
                 password = uuid.uuid4().hex
@@ -80,7 +63,6 @@ def intra_register(request):
                 data_to_save = {
                     'provider_id' : int(user_data.get('id')),
                     'username' : generated_username,
->>>>>>> origin/main
                     'first_name': user_data.get('first_name'),
                     'last_name': user_data.get('last_name'),
                     'email': user_data.get('email'),
@@ -88,18 +70,9 @@ def intra_register(request):
                     'password' : password,
                     'repassword' : password,
                 }
-<<<<<<< HEAD
-                
-=======
->>>>>>> origin/main
                 #
                 new_user = Register.objects.create_user(data_to_save)
                 refresh = RefreshToken.for_user(new_user)
                 access_token = str(refresh.access_token)
                 return Response({'access': access_token, 'refresh': str(refresh),}, status=200)
-<<<<<<< HEAD
-                
-=======
-
->>>>>>> origin/main
     return Response({'error' : ''}, status=404)

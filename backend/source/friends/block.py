@@ -8,23 +8,6 @@ from rest_framework.decorators import api_view, permission_classes
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-<<<<<<< HEAD
-def friend_block(request_id):
-    account = request_id.user
-
-    INFO = request_id.data
-    reciver_user = INFO.get('username')
-    client, error = get_user(reciver_user)
-    if error:
-        return Response({'error': error}, status=404)
-    if client == account:
-        return Response({'error' : ERROR_MSG['17']}, status=400)
-    is_friends = FRIENDS.objects.filter(Q(account=account, friends=client) | Q(account=client, friends=account)).first()
-    if is_friends:
-        useless, state = on_block(account, client)
-        if state:
-            return Response({'error' : ERROR_MSG['16']}, status=400)
-=======
 def friend_block(request):
     account = request.user
     data = request.data
@@ -41,25 +24,16 @@ def friend_block(request):
         if state:
             return Response({'error' : ERROR_MSG['16']}, status=400)
         # is_friends.delete()
->>>>>>> origin/main
         return Response({'success': SUCCESS_MSG['5']}, status=200)
     return Response({'error' : ERROR_MSG['11']}, status=400)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-<<<<<<< HEAD
-def friend_unblock(request_id):
-    account = request_id.user
-    
-    INFO = request_id.data
-    reciver_user = INFO.get('username')
-=======
 def friend_unblock(request):
     account = request.user
     
     data = request.data
     reciver_user = data.get('username')
->>>>>>> origin/main
     client, error = get_user(reciver_user)
     if error:
         return Response({'error': error}, status=404)
@@ -67,17 +41,9 @@ def friend_unblock(request):
         return Response({'error' : ERROR_MSG['18']}, status=400)
     is_friends = FRIENDS.objects.filter(Q(account=account, friends=client) | Q(account=client, friends=account)).first()
     if is_friends:
-<<<<<<< HEAD
-        already = BLOCKER.objects.filter(blocker=account, blocked=client).first()
-        if already:
-            already.delete()
-            return Response({'success': SUCCESS_MSG['6']}, status=200)
-    return Response({'error' : ERROR_MSG['11']}, status=400)
-=======
         blocked = BLOCKER.objects.filter(blocker=account, blocked=client).first()
         if blocked:
             blocked.delete()
             is_friends.delete()
             return Response({'success': SUCCESS_MSG['6']}, status=200)
     return Response({'error' : ERROR_MSG['11']}, status=400)
->>>>>>> origin/main

@@ -119,11 +119,7 @@ export default function SignIn() {
     }
 
     try {
-<<<<<<< HEAD
-      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/login/api/token/`, {
-=======
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/login/token/`, {
->>>>>>> origin/main
         email: data.email,
         password: data.password,
       });
@@ -157,11 +153,7 @@ export default function SignIn() {
   // OAuth login
   const handleLogin = () => {
     const redirectUri = encodeURIComponent(window.location.href); // current page, or a page to redirect after OAuth success
-<<<<<<< HEAD
-    const oauthURL = `https://api.intra.42.fr/oauth/authorize?client_id=u-s4t2ud-91a40abe8c1949a76f93a4f72d02422dbd3b71245c8a07fbeb3221cddfae08e3&redirect_uri=http%3A%2F%2Flocalhost%3A9001%2Foauth&response_type=code`;
-=======
     const oauthURL = process.env.NEXT_PUBLIC_REDIRECT_URI;
->>>>>>> origin/main
 
     window.location.href = oauthURL;  // Redirect user to the 42 login page
   };

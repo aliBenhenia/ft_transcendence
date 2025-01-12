@@ -79,11 +79,7 @@ export default function NotificationsPage() {
   const accessToken = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : null
   const { notifications } = useSelector((state: RootState) => state.notifications)
 
-<<<<<<< HEAD
-  const [activeTab, setActiveTab] = useState('friends')
-=======
   const [activeTab, setActiveTab] = useState('invitations')
->>>>>>> origin/main
   const [invitations, setInvitations] = useState<InvitationProps[]>([])
   const [friendsList, setFriendsList] = useState<FriendList[]>([])
   const [blockedList, setBlockedList] = useState<BlockedUserProps[]>([])
@@ -276,12 +272,8 @@ export default function NotificationsPage() {
                       <img
                         src={friend.picture}
                         alt={friend.full_name}
-<<<<<<< HEAD
-                        className="relative w-14 h-14 rounded-full object-cover"
-=======
                         className="relative w-14 h-14 rounded-full object-cover cursor-pointer "
                         onClick={() => router.push(`/profile/${friend.username}`)}
->>>>>>> origin/main
                       />
                       {friend.online && (
                         <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 rounded-full border-2 border-indigo-900" />
@@ -290,19 +282,7 @@ export default function NotificationsPage() {
                     <div>
                       <h4 className="text-lg font-semibold flex items-center gap-2">
                         {friend.full_name}
-<<<<<<< HEAD
-                        {hoveredUser === friend.username && (
-                          <motion.span
-                            initial={{ opacity: 0, x: -10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            className="text-sm text-gray-400"
-                          >
-                            • {friend.online ? 'Online' : 'Offline'}
-                          </motion.span>
-                        )}
-=======
                         
->>>>>>> origin/main
                       </h4>
                       <p className="text-sm text-gray-300">@{friend.username}</p>
                     </div>
@@ -399,21 +379,13 @@ export default function NotificationsPage() {
           </motion.h1>
 
           <div className="flex justify-center space-x-4 mb-8">
-<<<<<<< HEAD
-            <TabButton
-=======
             {/* <TabButton
->>>>>>> origin/main
               active={activeTab === 'friends'}
               onClick={() => setActiveTab('friends')}
               icon={FaUserFriends}
               label="Friends"
               count={friendsList.length}
-<<<<<<< HEAD
-            />
-=======
             /> */}
->>>>>>> origin/main
             <TabButton
               active={activeTab === 'invitations'}
               onClick={() => setActiveTab('invitations')}
@@ -422,21 +394,13 @@ export default function NotificationsPage() {
               
               count={invitations.length}
             />
-<<<<<<< HEAD
-            <TabButton
-=======
             {/* <TabButton
->>>>>>> origin/main
               active={activeTab === 'blocked'}
               onClick={() => setActiveTab('blocked')}
               icon={FaBan}
               label="Blocked"
               count={blockedList.length}
-<<<<<<< HEAD
-            />
-=======
             /> */}
->>>>>>> origin/main
           </div>
 
           {loading ? (

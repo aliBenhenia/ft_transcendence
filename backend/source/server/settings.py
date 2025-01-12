@@ -18,13 +18,8 @@ MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 
 # PICTURE FULL URL
 
-<<<<<<< HEAD
-FULL_PICTURE = f'http://{HOST_IP}:9003/media/avatars/unknown.jpeg'
-PATH_PICTURE = f'http://{HOST_IP}:9003'
-=======
 FULL_PICTURE = f'https://{HOST_IP}:8443/media/avatars/unknown.jpeg'
 PATH_PICTURE = f'https://{HOST_IP}:8443'
->>>>>>> origin/main
 
 DEBUG = True
 
@@ -36,17 +31,12 @@ WSGI_APPLICATION = 'server.wsgi.application'
 
 DATABASES = {
     'default': {
-<<<<<<< HEAD
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-=======
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': env('POSTGRES_DB'),
         'USER': env('POSTGRES_USER'),
         'PASSWORD': env('POSTGRES_PASSWORD'),
         'HOST': 'postgres',
         'PORT': '5432',
->>>>>>> origin/main
     }
 }
 
@@ -133,14 +123,11 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-<<<<<<< HEAD
-=======
     'corsheaders.middleware.CorsMiddleware',
 ]
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:9001",
->>>>>>> origin/main
 ]
 
 # CROSS-ORIGIN RESOURCE SHARING (CORS)
@@ -171,29 +158,6 @@ CHANNEL_LAYERS = {
 #  42 CONFIGURATIONS
 OAUTH_CLIENT_ID=env('UID')
 OAUTH_CLIENT_SECRET=env('SECRET')
-<<<<<<< HEAD
-
-OAUTH2_CONFIG = {
-    'client_id': 'u-s4t2ud-18a834e3d07630161d8cf7e12c386f1e2bec5b1365e140159b685cd060b8f5bf',
-    'client_secret': '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',
-    'authorize_url': 'https://api.intra.42.fr/oauth/authorize',
-    'token_url': 'https://api.intra.42.fr/oauth/token',
-    'redirect_uri': 'http://localhost:9001',
-    'scope': 'public',
-}
-
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Default backend
-
-#
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.sendgrid.net'
-EMAIL_PORT = 587
-EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'apikey'  # Replace with your email
-EMAIL_HOST_PASSWORD = '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'    # Replace with your email's app password
-DEFAULT_FROM_EMAIL = 'marwan.zaroual.1337.1@gmail.com'
-=======
 OAUTH_REDIRECT_URI=env('REDIRECT_URI')
 
 
@@ -211,4 +175,3 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 CSRF_COOKIE_SECURE = False
 
 FRONT_END_URL= env('FRONT_END_URL')
->>>>>>> origin/main

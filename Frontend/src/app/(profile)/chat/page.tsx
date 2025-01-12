@@ -8,21 +8,15 @@ import Link from 'next/link'
 import {message} from 'antd'
 import { FaBars } from "react-icons/fa";
 import { IoSearchSharp } from "react-icons/io5";
-<<<<<<< HEAD
-=======
 import { useRouter } from 'next/navigation';
 import axios from 'axios'
->>>>>>> origin/main
 
 
 import sortLastConversations from '@/services/sortLastConversations'
 import FetchProfile from '@/services/FetchProfile'
 
 export default function ChatPage() {
-<<<<<<< HEAD
-=======
   const router = useRouter();
->>>>>>> origin/main
   const socketUrl = process.env.NEXT_PUBLIC_API_URL || 'localhost:9003';
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const [users, setUsers] = useState<any>([])
@@ -52,16 +46,7 @@ export default function ChatPage() {
 
   useEffect(() => {
     if (!token) return
-<<<<<<< HEAD
-    fetchFriends() // call in first render and when 
-    // const socket = openSocket()// should n be here , i already have global socket in notification
-    // return () => {
-    //   console.log('closed socket:', socket)
-    //   socket.close()
-    // }
-=======
     fetchFriends()
->>>>>>> origin/main
   }, [selectedUser])
 
   useEffect(() => {
@@ -172,15 +157,9 @@ export default function ChatPage() {
 
   const sendMessage = async () => {
     if (!newMessage || !selectedUser?.on_talk || isSending || !token) return
-<<<<<<< HEAD
-    if (newMessage.length > 700)
-    {
-      message.error('message must be less then 700');
-=======
     if (newMessage.length > 4100)
     {
       message.error('message must be less then 4100');
->>>>>>> origin/main
       return;
     }
     const messagePayload = {
@@ -216,10 +195,7 @@ export default function ChatPage() {
     setIsSending(true)
 
     try {
-<<<<<<< HEAD
-=======
     
->>>>>>> origin/main
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/chat/message/`, {
         method: 'POST',
         headers: {
@@ -246,11 +222,7 @@ export default function ChatPage() {
 
   const openSocket = () => { // unused function
     if (!token) return { close: () => {} }
-<<<<<<< HEAD
-    const socket = new WebSocket(`ws://${socketUrl.slice(7)}/ws/connection/?token=${token}`)
-=======
     const socket = new WebSocket(`${socketUrl}/connection/?token=${token}`)
->>>>>>> origin/main
     console.log('Socket:sss')
     // alert('Socket:')
 
@@ -408,11 +380,7 @@ export default function ChatPage() {
               </div>
 
               {/* Messages */}
-<<<<<<< HEAD
-              <div className="flex-1 overflow-y-auto p-4 space-y-4 mb-[140px]">
-=======
               <div className="flex-1 overflow-y-auto p-4 space-y-4 mb-[140px] overflow-x-auto">
->>>>>>> origin/main
                 {loading ? (
                   <div className="flex justify-center items-center h-full">
                     <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>

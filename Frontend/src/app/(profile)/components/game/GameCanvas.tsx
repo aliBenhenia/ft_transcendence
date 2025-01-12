@@ -42,6 +42,10 @@ const GameCanvas: React.FC = () => {
   console.log("room_name", room_name);
   window.onload = function() {
       router.push("/game");
+      //close the socket connection
+      if (ws) {
+        ws.close();
+      }
   }
 
   //
@@ -119,7 +123,7 @@ const GameCanvas: React.FC = () => {
         websocket.close();
       }
     };
-  }, []);
+  }, [room_name]);
 
   useEffect(() => {
     if (gameState && canvasRef.current) {

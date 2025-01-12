@@ -9,10 +9,7 @@ import { fetchNotifications } from "@/store/slices/notificationsSlice";
 import Link from 'next/link'
 import getFriendListUser from '@/services/getFriendsList';
 import { RootState } from '@/store/store';
-<<<<<<< HEAD
-=======
 import { useRouter } from 'next/navigation';
->>>>>>> origin/main
 
 const achievements = [
   { title: "First Win", description: "Completed 10 Wins", icon: <FaTrophy />, completed: true },
@@ -29,10 +26,7 @@ interface Friend {
   picture: string;
 }
 function FriendCard({ friend }: { friend: Friend }) {
-<<<<<<< HEAD
-=======
   const router = useRouter();
->>>>>>> origin/main
   return (
     <div
       className="mt-5 bg-[#07325F] rounded-l-2xl rounded-r-md shadow-md hover:scale-105  transition-transform duration-300 cursor-pointer flex flex-col items-center rounded-br-2xl "    >
@@ -103,12 +97,9 @@ const GameStats = ({ level, loss, matches, win,isUser ,last_match="win"}:GameSta
         } catch (err:any) {
           console.log(err.message)
             setError(err.message); // Capture any error
-<<<<<<< HEAD
-=======
             if (err.response.status === 401) {
                 window.location.href = "/"; 
             }
->>>>>>> origin/main
         }
     };
 

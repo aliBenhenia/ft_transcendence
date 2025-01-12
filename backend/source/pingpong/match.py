@@ -103,7 +103,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             wait_time = time.time() - current_time
             if wait_time >= self.MAX_WAIT_TIME:
                 await self.send(text_data=json.dumps({
-                    'type' : 'Searching expanded'
+                    'type' : 'searching_expanded'
                 }))
                 level_range += self.LEVEL_RANGE_INCREMENT
                 current_time = time.time()
@@ -362,23 +362,14 @@ class LiveGameFlow(AsyncWebsocketConsumer):
     async def connect(self):
         query_params = parse_qs(self.scope['query_string'].decode())
         room_name = query_params.get('room_name', [None])[0]
-<<<<<<< HEAD
-        await self.channel_layer.group_add(
-            room_name,
-            self.channel_name
-        )
-        await self.accept()
-        if room_name != None:
-            print("from invite")
-=======
         await self.accept()
         if room_name != None:
             await self.channel_layer.group_add(
                 room_name,
                 self.channel_name
             )
->>>>>>> origin/main
             self.user = self.scope['user']
+            self.room_name = room_name
             if room_name in self.games:
                 if room_name not in self.invites:
                     self.invites[room_name] = []
@@ -394,7 +385,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                     }))
                     asyncio.create_task(self.check_for_second_player(room_name, timeout=15))
             else:
-                await self.send(text_data=json.dumps({"error": "Invalid room or game not found."}))
+                await self.send(text_data=json.dumps({"type" : "invalid_room" , "message": "Invalid room or game not found."}))
                 await self.close()
         ##
         else:
@@ -456,6 +447,10 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                     del self.games[self.room_name]
                     self.in_game.clear()
                     print(f"games after : {len(self.games)}")
+        if self.room_name in self.invites and len(self.invites[self.room_name]) < 2:
+            game_invite = await GameInvite.objects.aget(room_name=self.room_name)
+            game_invite.status = 'disconnected'
+            await sync_to_async(game_invite.save)()
 
     async def receive(self, text_data):
         try:

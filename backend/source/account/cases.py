@@ -49,8 +49,5 @@ ERROR_MSG = {
     "20" : "Invalid image file. Please upload a valid image.",
 
     "24" : "This Action is Not Allowed !",
-<<<<<<< HEAD
-=======
     "25" : "email already in use!",
->>>>>>> origin/main
 }

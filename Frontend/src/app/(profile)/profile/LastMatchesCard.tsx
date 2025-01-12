@@ -2,10 +2,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { FaTrophy, FaTimesCircle } from "react-icons/fa";
-<<<<<<< HEAD
-=======
 // import moment from 'moment';
->>>>>>> origin/main
 import axios from "axios";
 
 interface LastMatchesCardProps {
@@ -24,11 +21,7 @@ const LastMatchesCard = ({ userId }:LastMatchesCardProps) => {
 
       try {
         const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/pingpong/match_history/?user_id=${userId}`);
-<<<<<<< HEAD
-        
-=======
         // let date = new Date()
->>>>>>> origin/main
         if (response.status !== 200) {
             return;
         }
@@ -53,13 +46,8 @@ const LastMatchesCard = ({ userId }:LastMatchesCardProps) => {
               avatar: match.loser.photo_url,
               score: match.loser_score,
             },
-<<<<<<< HEAD
-            // date: new Date(match.end_time).toLocaleDateString(),
-            date: match.time_ago,
-=======
             date: new Date(match.end_time).toString(), // to modify
             // date: new Date().getDate(),// match.time_ago,
->>>>>>> origin/main
             result: match.winner.id === userId ? "Win" : "Loss",
           };
         }).filter(Boolean);
@@ -74,8 +62,6 @@ const LastMatchesCard = ({ userId }:LastMatchesCardProps) => {
 
     fetchMatches();
   }, [userId]);
-<<<<<<< HEAD
-=======
   const formdate = (date:any) => {
      const d = new Date(date);
       return d.toLocaleDateString("en-US",{
@@ -84,7 +70,6 @@ const LastMatchesCard = ({ userId }:LastMatchesCardProps) => {
         day: '2-digit',
       })
   }
->>>>>>> origin/main
 
   if (loading) {
     return (
@@ -121,11 +106,7 @@ const LastMatchesCard = ({ userId }:LastMatchesCardProps) => {
             >
               {/* Date */}
               <div className="absolute top-1 right-4 text-gray-300 text-xs">
-<<<<<<< HEAD
-                {match.date}
-=======
                 {formdate(match.date)}
->>>>>>> origin/main
               </div>
 
               {/* Match Details (Players and Scores) */}

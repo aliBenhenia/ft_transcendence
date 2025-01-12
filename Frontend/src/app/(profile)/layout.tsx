@@ -19,13 +19,8 @@ interface LayoutProps {
 }
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const dispatch = useDispatch();
-<<<<<<< HEAD
-  const urlSocket = process.env.NEXT_PUBLIC_API_URL || "localhost:9003";
-  useWebSocket(`ws://${urlSocket.slice(7)}/ws/connection/?token=`);
-=======
   const urlSocket = process.env.NEXT_PUBLIC_WS_URL || "localhost:9003";
   useWebSocket(`${urlSocket}/connection/?token=`);
->>>>>>> origin/main
   useEffect(() => {
     const token = localStorage.getItem("accessToken") || '';
     const getProfileData = async () => {
