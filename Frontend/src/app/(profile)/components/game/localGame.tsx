@@ -41,8 +41,8 @@ function OneVone() {
       cleanedBotLevel === 'medium' ? 3 : 
       cleanedBotLevel === 'hard' ? 5 : 2;
     
-    console.log("Cleaned BotLevel:", cleanedBotLevel);
-    console.log("Level:", level);
+    // $1.log("Cleaned BotLevel:", cleanedBotLevel);
+    // $1.log("Level:", level);
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const [player1Score, setPlayer1Score] = useState(0);
     const [player2Score, setPlayer2Score] = useState(0);

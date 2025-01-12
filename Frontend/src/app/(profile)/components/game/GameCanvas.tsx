@@ -39,7 +39,7 @@ const GameCanvas: React.FC = () => {
   const [player1, setPlayer1] = useState<{ username: string; avatar: string }>({ username: "", avatar: "" });
   const [player2, setPlayer2] = useState({ username: "", avatar: "" });
   const room_name = useSearchParams().get('room_name');
-  console.log("room_name", room_name);
+  // $1.log("room_name", room_name);
   window.onload = function() {
       router.push("/game");
       //close the socket connection
@@ -62,7 +62,7 @@ const GameCanvas: React.FC = () => {
     
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
-      console.error("No access token found in localStorage");
+      // $1.error("No access token found in localStorage");
       return;
     }
 
@@ -73,12 +73,12 @@ const GameCanvas: React.FC = () => {
       const data = JSON.parse(event.data);
 
       if (data.type === "game_start") {
-        console.log("Game starting: ", data);
+        // $1.log("Game starting: ", data);
         setPlayer1({ username: data.player1_username, avatar: data.player1_avatar });
         setPlayer2({ username: data.player2_username, avatar: data.player2_avatar });
         setGameState(data.game_state);
       } else if (data.type === "game_state") {
-        console.log("Game state: ", data.game_state);
+        // $1.log("Game state: ", data.game_state);
         setGameState(data.game_state);
         setIsWaiting(false);
       } else if (data.type === "searching") {
@@ -115,7 +115,7 @@ const GameCanvas: React.FC = () => {
     };
 
     websocket.onerror = (error) => {
-      console.error("WebSocket error:", error);
+      // $1.error("WebSocket error:", error);
     };
 
     return () => {
@@ -163,7 +163,7 @@ const GameCanvas: React.FC = () => {
   const leaveGame = () => {
     if (ws) {
       ws.close();
-      console.log("Left the game.");
+      // $1.log("Left the game.");
     }
     setGameOver(true);
     setIsWaiting(false);
@@ -178,7 +178,7 @@ const GameCanvas: React.FC = () => {
   const leaveGame2 = () => {
     if (ws) {
       ws.close();
-      console.log("Left the game.");
+      // $1.log("Left the game.");
     }
 
     setGameOver(true);

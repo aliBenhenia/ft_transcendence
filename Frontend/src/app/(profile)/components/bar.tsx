@@ -101,7 +101,7 @@ const Nav = () => {
         <Menu theme="dark" mode="inline" items={menuItems} className="text-lg " />
         <div className="absolute bottom-4 left-0 w-full">
           <button
-            className="text-white bg-red-500 hover:text-red-400 p-5 w-full flex justify-center items-center"
+            className="text-white hover:text-red-400 p-5 w-full flex justify-center items-center"
             onClick={handleLogout}
           >
             <FaSignOutAlt className="text-xl hover:text-blue-400 transform hover:scale-125 transition-transform duration-300 ease-in-out" />

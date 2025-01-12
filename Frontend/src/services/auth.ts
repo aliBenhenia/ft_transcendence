@@ -11,7 +11,7 @@ export const register = async (username: string, email: string, password: string
         return response.data;
     }
     catch (error: any) {
-        console.log(error.response.data);
+        // $1.log(error.response.data);
         return error.response.data;
     }
 };
@@ -22,11 +22,11 @@ export const login = async (email: string, password: string) => {
             email,
             password,
         });
-        console.log(response.data.token);
+        // $1.log(response.data.token);
         return response.data;
     }
     catch (error: any) {
-        console.log(error.response.data);
+        // $1.log(error.response.data);
         return error.response.data;
     }
 };

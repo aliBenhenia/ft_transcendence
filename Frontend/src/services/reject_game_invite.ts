@@ -7,7 +7,7 @@ const rejectGameInvite = async (roomName:any)  => {
     
     if (!token) {
         message.error('No authentication token found');
-        console.error('No auth token found');
+        // $1.error('No auth token found');
         return;
     }
 
@@ -25,16 +25,16 @@ const rejectGameInvite = async (roomName:any)  => {
         );
         
         // Handle success
-        console.log('Game invite rejected:', response.data);
+        // $1.log('Game invite rejected:', response.data);
         
         return response.data;  
     } catch (error:any) {
         
         if (error.response) {
-            console.error('Error rejecting invite:', error.response.data);
+            // $1.error('Error rejecting invite:', error.response.data);
             message.error(`Error rejecting game invite: ${error.response.data.error || 'Unknown error'}`);
         } else {
-            console.error('Network error:', error.message);
+            // $1.error('Network error:', error.message);
             message.error(`Network error: ${error.message}`);
         }
     }

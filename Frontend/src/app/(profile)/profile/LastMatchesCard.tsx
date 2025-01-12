@@ -54,7 +54,7 @@ const LastMatchesCard = ({ userId }:LastMatchesCardProps) => {
 
         setMatches(formattedMatches);
       } catch (error) {
-        console.error("Error fetching match history:", error);
+        // $1.error("Error fetching match history:", error);
       } finally {
         setLoading(false);
       }

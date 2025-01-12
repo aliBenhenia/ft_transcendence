@@ -4,7 +4,7 @@ async function sendFriendRequest(username: string) {
     const token = localStorage.getItem('accessToken'); // Fetch token from localStorage
 
     if (!token) {
-        console.log('No token found');
+        // $1.log('No token found');
         return;
     }
 
@@ -19,7 +19,7 @@ async function sendFriendRequest(username: string) {
         const response = await axios.post(url, {}, { headers });
         return response.data; // Return the response data if needed
     } catch (err) {
-        console.log('Error:', err);
+        // $1.log('Error:', err);
     }
 }
 export default sendFriendRequest;

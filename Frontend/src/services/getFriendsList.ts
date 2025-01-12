@@ -12,10 +12,10 @@ const getFriendListUser = async (token:any, username:any) => {
         const response = await axios.get(url, { headers });
         return response.data.details?.friends;
     } catch (error:any) {
-        console.log("err++>",error);
+        // $1.log("err++>",error);
         if (error.response) {
             if (error.response.status === 400 || error.response.status === 404) {
-                console.log("=====>",error.response)
+                // $1.log("=====>",error.response)
             }
         }
     

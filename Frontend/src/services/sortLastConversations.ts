@@ -50,7 +50,7 @@ const sortLastConversations = async (users: User[]): Promise<User[] | undefined>
     });
     return sortedUsers;
   } catch (err) {
-    console.log("Error fetching conversations:", err);
+    // $1.log("Error fetching conversations:", err);
     return undefined;
   }
 };

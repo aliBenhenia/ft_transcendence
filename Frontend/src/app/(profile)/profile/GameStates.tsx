@@ -86,16 +86,16 @@ const GameStats = ({ level, loss, matches, win,isUser ,last_match="win"}:GameSta
             });
            
             const data = response.data;
-            console.log("======>",data);
+            // $1.log("======>",data);
 
             if (data.vide) {
                 setFriends([]); // No friends found
             } else {
-              console.log("-->",data.information);// is_blocked in each object item
+              // $1.log("-->",data.information);// is_blocked in each object item
                 setFriends(data.information.filter((item:any)=> item.is_blocked !== true)); // Set friends list
             }
         } catch (err:any) {
-          console.log(err.message)
+          // $1.log(err.message)
             setError(err.message); // Capture any error
             if (err.response.status === 401) {
                 window.location.href = "/"; 

@@ -55,7 +55,7 @@ const Notification: React.FC = () => {
                 }
             }
         } catch (err) {
-            console.log("Error marking all as read:", err);
+            // $1.log("Error marking all as read:", err);
         }
     };
 
@@ -71,7 +71,7 @@ const Notification: React.FC = () => {
                 dispatch(fetchNotifications(accessToken || '') as any);
             }
         } catch (err: any) {
-            console.log("Error deleting notifications:", err.response?.data);
+            // $1.log("Error deleting notifications:", err.response?.data);
         }
     };
 

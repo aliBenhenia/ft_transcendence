@@ -11,9 +11,9 @@ async function acceptRequest(username:any) {
                 'Authorization': `Bearer ${token}`
             }
         });
-        console.log('Request accepted:', response.data);
+        // $1.log('Request accepted:', response.data);
     } catch (err) {
-        console.log('Error accepting request:', err);
+        // $1.log('Error accepting request:', err);
     }
 }
 export default acceptRequest;

@@ -74,13 +74,13 @@ export default function OneVone() {
 
         const canvas = canvasRef.current;
         if (!canvas) {
-            console.error("Canvas element is not available.");
+            // $1.error("Canvas element is not available.");
             return;
         }
 
         const ctx = canvas.getContext('2d');
         if (!ctx) {
-            console.error("Failed to get canvas context.");
+            // $1.error("Failed to get canvas context.");
             return;
         }
         canvas.width = Math.min(window.innerWidth * 0.8, 800);

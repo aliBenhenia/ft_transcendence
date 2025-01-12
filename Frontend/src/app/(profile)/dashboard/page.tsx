@@ -15,7 +15,7 @@ const Dashboard = (): JSX.Element => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("Environment Mode:", process.env.NODE_ENV);
+    // $1.log("Environment Mode:", process.env.NODE_ENV);
 
     const token: string | null = localStorage.getItem("accessToken");
 
@@ -26,13 +26,13 @@ const Dashboard = (): JSX.Element => {
           if (data?.informations) {
             dispatch(updateProfile(data.informations));
           } else {
-            console.error("No profile data returned");
+            // $1.error("No profile data returned");
           }
         } catch (error) {
-          console.error("Error fetching profile data:", error);
+          // $1.error("Error fetching profile data:", error);
         }
       } else {
-        console.warn("No access token found in localStorage");
+        // $1.warn("No access token found in localStorage");
       }
     };
 

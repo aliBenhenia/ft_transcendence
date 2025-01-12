@@ -28,7 +28,7 @@ const Profile: React.FC = () => {
         const data = await FetchProfile(token);
         handleUpdateProfile(data.informations);
       } catch (err) {
-        console.log("Failed to fetch profile data:", err);
+        // $1.log("Failed to fetch profile data:", err);
       }
     };
 

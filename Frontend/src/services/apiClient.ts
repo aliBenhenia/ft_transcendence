@@ -18,14 +18,14 @@ customAxios.interceptors.response.use(
             window.location.href = '/';  
           break;
         case 400:
-          console.log('Bad request:', error.response.data);
+          // $1.log('Bad request:', error.response.data);
           break;
         default:
-          console.log('An error occurred:', error.response.data);
+          // $1.log('An error occurred:', error.response.data);
           break;
       }
     } else {
-      console.log('Error connecting to the server:', error.message);
+      // $1.log('Error connecting to the server:', error.message);
     }
 
   

@@ -22,8 +22,8 @@ const ResetPassword = () => {
   const [user, setUser] = useState({ email: "", fullName: "", picture: "" });
 
   useEffect(() => {
-    // console.log("Reset Password page loaded", process.env.NODE_ENV);
-    // console.log("Reset Password page loaded===>", process.env.NEXT_PUBLIC_API_URL);
+    // // $1.log("Reset Password page loaded", process.env.NODE_ENV);
+    // // $1.log("Reset Password page loaded===>", process.env.NEXT_PUBLIC_API_URL);
   }, []);
 
   // Step 1: Locate Account

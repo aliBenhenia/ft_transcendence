@@ -12,18 +12,18 @@ const OAuthCallback = () => {
 
   useEffect(() => {
     const code = searchParams.get('code'); 
-    console.log(code)
+    // $1.log(code)
 
     if (code) {
       axios
         .post(`${process.env.NEXT_PUBLIC_API_URL}/register/intra-42/`, { code }) 
         .then((response) => {
-          console.log('OAuth successful:', response.data);
+          // $1.log('OAuth successful:', response.data);
           window.localStorage.setItem('accessToken', response.data.access);
           router.push("/dashboard");
         })
         .catch((error) => {
-          console.error('OAuth error:', error);
+          // $1.error('OAuth error:', error);
          
         })
         .finally(() => {
@@ -31,7 +31,7 @@ const OAuthCallback = () => {
         });
     } else {
    
-      console.error('OAuth code is missing or invalid');
+      // $1.error('OAuth code is missing or invalid');
       setLoading(false); 
     }
   }, [searchParams]); 

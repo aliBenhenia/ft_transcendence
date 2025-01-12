@@ -36,7 +36,7 @@ export default function SignIn() {
           router.push("/dashboard");
         }
     } catch (err: any) {
-      console.log(err.status);
+      // $1.log(err.status);
         if (err.status === 401) {
           setIsLogged(true);
         }
@@ -143,7 +143,7 @@ export default function SignIn() {
         setError((prev) => ({ ...prev, general: "Login failed" }));
       }
     } catch (error: any) {
-      console.log(error);
+      // $1.log(error);
       message.error(error.response.data.error || "Login failed");
     } finally {
       

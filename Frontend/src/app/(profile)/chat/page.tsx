@@ -39,7 +39,7 @@ export default function ChatPage() {
            
            if (selectedUser && lastMessage.sender === selectedUser.on_talk) {
              addMessage(lastMessage.sender)
-             console.log('new message:', lastMessage)
+             // $1.log('new message:', lastMessage)
            }
         }
     }, [newMessageNotification])
@@ -223,7 +223,7 @@ export default function ChatPage() {
   const openSocket = () => { // unused function
     if (!token) return { close: () => {} }
     const socket = new WebSocket(`${socketUrl}/connection/?token=${token}`)
-    console.log('Socket:sss')
+    // $1.log('Socket:sss')
     // alert('Socket:')
 
     socket.onmessage = (event) => {
@@ -254,7 +254,7 @@ export default function ChatPage() {
         setMessages(data.data || [])
       }
     } catch (err) {
-      console.log('Error fetching new messages:', err)
+      // $1.log('Error fetching new messages:', err)
     }
   }
 

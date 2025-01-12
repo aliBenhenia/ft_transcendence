@@ -55,7 +55,7 @@ const FriendSearch = () => {
     };
 
     const handleMenuClick = (username: string) => {
-        console.log("Selected:", username);
+        // $1.log("Selected:", username);
         router.push(`/profile/${username}`);
         // Redirect to profile and fetch data again
     };

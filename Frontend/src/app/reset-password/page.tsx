@@ -37,8 +37,8 @@ const ResetPassword = () => {
       return ;
     }
     setLoading(true);
-    console.log(uid)
-    console.log(token)
+    // $1.log(uid)
+    // $1.log(token)
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/secure/reset-password/`, // Make sure this URL is correct for your backend

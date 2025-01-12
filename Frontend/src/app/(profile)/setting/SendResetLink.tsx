@@ -24,7 +24,7 @@ export default function SendResetLink({ email }: SendResetLinkProps) {
      message.success(response?.data?.message);
     } catch (error) {
      
-      console.error('Error sending reset link:', error)
+      // $1.error('Error sending reset link:', error)
     } finally {
       setLoading(false)
     }

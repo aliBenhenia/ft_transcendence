@@ -20,7 +20,7 @@ export default function Home() {
   const [scope, animate] = useAnimate();
 
   useEffect(() => {
-  console.log("Home page loaded", process.env.NODE_ENV);
+  // $1.log("Home page loaded", process.env.NODE_ENV);
     wordsArray.forEach((_, index) => {
       animate(
         `span:nth-child(${index + 1})`,

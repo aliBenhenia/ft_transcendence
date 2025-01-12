@@ -32,7 +32,7 @@ const useWebSocket = (url: string) => {
         icon,
         duration,
         onClick: () => {
-          console.log(`${message} Clicked!`);
+          // $1.log(`${message} Clicked!`);
         },
       });
     };
@@ -52,11 +52,11 @@ const useWebSocket = (url: string) => {
     };
 
     socket.onopen = () => {
-      console.log("WebSocket connection established.");
+      // $1.log("WebSocket connection established.");
     };
 
     socket.onmessage = (event: MessageEvent) => {
-      console.log("WebSocket message received:===>", event.data);
+      // $1.log("WebSocket message received:===>", event.data);
       const serverMessage = JSON.parse(event.data);
       const { case: messageCase, sender, picture } = serverMessage;
 
@@ -107,16 +107,16 @@ const useWebSocket = (url: string) => {
             
             break;
         default:
-          console.warn("Unhandled message case:", messageCase);
+          // $1.warn("Unhandled message case:", messageCase);
       }
     };
 
     socket.onerror = (error) => {
-      console.log("WebSocket error:", error);
+      // $1.log("WebSocket error:", error);
     };
 
     socket.onclose = () => {
-      console.log("WebSocket connection closed.");
+      // $1.log("WebSocket connection closed.");
     };
 
     return () => {

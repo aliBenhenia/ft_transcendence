@@ -133,20 +133,20 @@ export default function CreateAccount() {
      
       if (response.status == 201)
       {
-            console.log(response)
+            // $1.log(response)
             message.success('Registration successful! Please check your email to confirm your account.');
             router.push("/signin")
       }
       else if (response.status == 409)
       {
-        console.log(response)
+        // $1.log(response)
         message.error('Email already exists, or username ');
       }
       else
       {
         
-        console.log(response.status)
-        console.log(response)
+        // $1.log(response.status)
+        // $1.log(response)
         message.error('Registration failed. Please check your details');
       }
     } catch (error: any) {
@@ -167,7 +167,7 @@ export default function CreateAccount() {
   const handleLogin = () => {
     // const redirectUri = encodeURIComponent(window.location.href); // current page, or a page to redirect after OAuth success
     // const oauthURL = process.env.NEXT_PUBLIC_REDIRECT_URI;
-    console.log(process.env.NEXT_PUBLIC_REDIRECT_URI);
+    // $1.log(process.env.NEXT_PUBLIC_REDIRECT_URI);
     router.push(process.env.NEXT_PUBLIC_REDIRECT_URI);
 
     // window.location.href = oauthURL;  // Redirect user to the 42 login page

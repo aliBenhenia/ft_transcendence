@@ -61,7 +61,7 @@ const ProfilePage = (props: any) => {
         setError(false);
       } catch (err) {
         setError(true);
-        // console.log("Error fetching profile data:", err);
+        // // $1.log("Error fetching profile data:", err);
       } finally {
         setLoading(false);
       }
@@ -117,7 +117,7 @@ const ProfilePage = (props: any) => {
     } catch (error:any) {
       const errorMessage = error.response ? error.response.data.error : error.message;
       message.error(errorMessage);
-      // console.log("Error sending friend request:", errorMessage);
+      // // $1.log("Error sending friend request:", errorMessage);
     }
   };
 
@@ -142,7 +142,7 @@ const ProfilePage = (props: any) => {
     } catch (error:any) {
       const errorMessage = error.response ? error.response.data.error : error.message;
       message.error(errorMessage);
-      // console.log("Error canceling friend request:", errorMessage);
+      // // $1.log("Error canceling friend request:", errorMessage);
     }
   };
 
@@ -168,7 +168,7 @@ const ProfilePage = (props: any) => {
     } catch (error:any) {
       const errorMessage = error.response ? error.response.data.error : error.message;
       message.error(errorMessage);
-      // console.log("Error blocking user:", errorMessage);
+      // // $1.log("Error blocking user:", errorMessage);
     }
   };
 
@@ -193,7 +193,7 @@ const ProfilePage = (props: any) => {
     } catch (error:any) {
       const errorMessage = error.response ? error.response.data.error : error.message;
       message.error(errorMessage);
-      // console.log("Error unblocking user:", errorMessage);
+      // // $1.log("Error unblocking user:", errorMessage);
     }
   };
 

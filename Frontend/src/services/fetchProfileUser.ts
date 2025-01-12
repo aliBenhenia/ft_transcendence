@@ -13,7 +13,7 @@ const FetchProfileUser = async (token:any, username:any) => {
         return response.data;
     } catch (error:any) {
         if (error.response) {
-                console.log("=====>",error.response)
+                // $1.log("=====>",error.response)
         }
 
     }

@@ -32,7 +32,7 @@ export default function ConfirmEmail() {
         );
       }
     } catch (error: any) {
-      console.error("Error sending 2FA code", error);
+      // $1.error("Error sending 2FA code", error);
       if (error.response?.status === 401) {
         message.error("Invalid or expired token. Please log in again.");
       } else if (error.response?.status === 429) {
@@ -84,7 +84,7 @@ export default function ConfirmEmail() {
         }, 2000);
       }
     } catch (error: any) {
-      console.error("Error verifying 2FA code", error);
+      // $1.error("Error verifying 2FA code", error);
       if (error.response?.status === 401) {
         message.error("Invalid or expired token. Please log in again.");
       } else if (error.response?.status === 404) {

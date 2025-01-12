@@ -15,7 +15,7 @@ async function search(queryKey:any, token:any) {
         let usersArray = response.data.message.users;
         return usersArray;
     } catch (err) {
-        console.log('Error:', err);
+        // $1.log('Error:', err);
         return [];  // return empty array in case of error
     }
 }

@@ -11,9 +11,9 @@ async function cancel(username:any) {
                 'Authorization': `Bearer ${token}`
             }
         });
-        console.log('Cancellation successful:', response.data);
+        // $1.log('Cancellation successful:', response.data);
     } catch (err) {
-        console.log('Error canceling request:', err);
+        // $1.log('Error canceling request:', err);
     }
 }
 export default cancel;

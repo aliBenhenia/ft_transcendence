@@ -123,7 +123,7 @@ export default function NotificationsPage() {
           )
         }
       } catch (err) {
-        console.log('Failed to fetch data:', err)
+        // $1.log('Failed to fetch data:', err)
       } finally {
         setLoading(false)
       }
@@ -152,7 +152,7 @@ export default function NotificationsPage() {
     } catch (error:any) {
       const errorMessage = error.response ? error.response.data.error : error.message;
       message.error(errorMessage);
-      // console.log("Error blocking user:", errorMessage);
+      // // $1.log("Error blocking user:", errorMessage);
     }
   };
 
@@ -188,7 +188,7 @@ export default function NotificationsPage() {
       }
     } catch (error) {
       // Show error message here (replace with your toast/message system)
-      console.log('Action failed:', error)
+      // $1.log('Action failed:', error)
     }
   }
 
