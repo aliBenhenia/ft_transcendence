@@ -75,7 +75,7 @@ const ProfilePage = (props: any) => {
 
         if (response.data.success) {
           const { is_friends, on_request, is_blocked,blocked_by } = response.data.success;
-          if (is_blocked || !is_friends)
+          if (is_blocked)
           {
             if (blocked_by !== profileState.username)
               router.push("/dashboard");

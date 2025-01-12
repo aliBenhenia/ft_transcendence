@@ -14,6 +14,7 @@ from .tools import create_message, account_status, is_blocked, chat_structure, n
 import json
 from .models import GameInvite
 from pingpong.match import LiveGameFlow 
+from django.utils import timezone
 
 @api_view(['GET'])
 def fix_online(request):
@@ -123,8 +124,16 @@ def send_game_invite(request):
     #
     if to_invite.username in LiveGameFlow.in_game:
         return Response({'error', 'Currently in game'}, status=400)
-    if GameInvite.objects.filter(inviter=sender, invited=to_invite, status='pending').exists():
-        return Response({'error', 'A game invite is already pending.'}, status=400)
+
+    game_invite = GameInvite.objects.filter(inviter=sender, invited=to_invite, status='pending').first()
+    if game_invite:
+        current_time = timezone.now()
+        time_diff = current_time - game_invite.created_at
+        if time_diff.total_seconds() <= 15:
+            return Response({'error', 'A game invite is already pending.'}, status=400)
+        game_invite.status = 'timeout'
+        game_invite.save()
+
     room_name = LiveGameFlow.generate_room_id()
     GameInvite.objects.create(room_name=room_name, inviter=sender, invited=to_invite, status='pending')
     LiveGameFlow.games[room_name] = {}

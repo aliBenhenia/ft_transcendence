@@ -1,5 +1,6 @@
 from django.db import models
 from register.models import Register
+from django.utils import timezone
 
 class MESSAGES(models.Model):
 
@@ -14,3 +15,4 @@ class GameInvite(models.Model):
     inviter = models.ForeignKey(Register, on_delete=models.CASCADE, related_name='sent_invites')
     invited = models.ForeignKey(Register, on_delete=models.CASCADE, related_name='received_invites')
     status = models.CharField(max_length=10, default='null')
+    created_at = models.DateTimeField(default=timezone.now)
