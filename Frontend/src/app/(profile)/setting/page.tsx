@@ -100,6 +100,16 @@ export default function Settings() {
       setSuccess('Profile updated successfully!')
       setTimeout(() => setSuccess(''), 3000)
     } catch (error:any) {
+      if (error?.response?.status == 400)
+      {
+        message.error(error?.response?.data?.error);
+        return  ;
+      }
+      if (error?.response?.status == 409)
+      {
+        message.error(error?.response?.data[0] || "Failed to update profile, please check your data");
+        return  ;
+      }
       setError('Failed to update profile , please check your data');
       message.error("Failed to update profile, please check your data");
       setTimeout(() => setError(''), 3000);
