@@ -3,13 +3,18 @@ import { useSearchParams} from "next/navigation";
 import { useRouter } from "next/navigation";
 import Scoreboard from "./Scoreboard";
 import { Ball, Paddle, checkCollisions } from "@/utils/1v1";
+import Scoreboards from "../tournaments/Scoreboard";
+import {useSelector, useDispatch} from 'react-redux';
+import { RootState } from '@/store/store';
 
 const user1 = {
     avatar: '/me.jpeg',
+    username: 'Player 1',
   };
   
   const user2 = {
     avatar: '/pic1.jpeg',
+    username: 'Player 2',
   };
   
   function drawDashedLine(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement) {
@@ -26,6 +31,7 @@ const user1 = {
     ctx.stroke();
   }
 function OneVone() {
+  const profileState = useSelector((state: RootState) => state.profile);
     const router = useRouter();
     const searchParams = useSearchParams();
   
@@ -113,7 +119,7 @@ function OneVone() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             drawDashedLine(ctx, canvas);
     
-            // Update AI and Player movements
+            // Update game elements
             player1.update1(keysPressed, canvas.height, player1Score);
             player2.update2(keysPressed, canvas.height, player2Score);
             ball.update(canvas.width, canvas.height);
@@ -212,14 +218,17 @@ function OneVone() {
               </button>
             </div>
           )}
-  
-          {/* Scoreboard */}
-          <Scoreboard
-            player1Score={player1Score}
-            player2Score={player2Score}
-            player1Avator={user1.avatar}
-            player2Avator={user2.avatar}
-            scoreToWin={parseInt(scoreToWin)}
+         <Scoreboards
+            player1={{
+              alias: profileState.username || "Playerrr 1",
+              avatar: profileState.picture || "/board1.jpeg",
+            }}
+            player2={{
+              alias:user2.username || "Player 2",
+              avatar: user2.avatar || "/board1.jpeg",
+            }}
+            player1Score={player1Score || 0}
+            player2Score={player2Score || 0}
           />
   
           {/* Canvas */}
