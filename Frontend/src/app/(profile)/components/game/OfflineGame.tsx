@@ -7,15 +7,17 @@ import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
 import {useSelector, useDispatch} from 'react-redux';
 import { RootState } from '@/store/store';
-import { updateProfile } from '@/store/slices/profileSlice';
-import FetchProfile from '@/services/FetchProfile';
+import Scoreboards from '../tournaments/Scoreboard';
+
 
 const user1 = {
   avatar: '/me.jpeg',
+  username: 'Player 1',
 };
 
 const user2 = {
   avatar: '/bot.jpg',
+  username: 'Bot',
 };
 
 // Function to draw a dashed line on the canvas
@@ -32,6 +34,7 @@ function drawDashedLine(ctx: CanvasRenderingContext2D, canvas: HTMLCanvasElement
 }
 
 const Ai = () => {
+  const profileState = useSelector((state: RootState) => state.profile);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -195,13 +198,18 @@ const Ai = () => {
             </button>
           </div>
         )}
-        <Scoreboard
-          player1Score={player1Score}
-          player2Score={player2Score}
-          player1Avator={user1.avatar}
-          player2Avator={user2.avatar}
-          scoreToWin={parseInt(scoreToWin)}
-        />
+        <Scoreboards
+            player1={{
+              alias: profileState.username || "Player 1",
+              avatar:profileState.picture || "/board1.jpeg",
+            }}
+            player2={{
+              alias:user2.username || "AI-Bot",
+              avatar: user2.avatar || "/board1.jpeg",
+            }}
+            player1Score={player1Score || 0}
+            player2Score={player2Score || 0}
+          />
         <div className="w-full sm:max-w-2xl md:max-w-3xl lg:max-w-5xl aspect-w-16 aspect-h-9">
           <canvas
             ref={canvasRef}
