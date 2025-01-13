@@ -134,7 +134,7 @@ export default function CreateAccount() {
       if (response.status == 201)
       {
             // $1.log(response)
-            message.success('Registration successful! Please check your email to confirm your account.');
+            message.success('Registration successful! ');
             router.push("/signin")
       }
       else if (response.status == 409)
@@ -150,6 +150,11 @@ export default function CreateAccount() {
         message.error('Registration failed. Please check your details');
       }
     } catch (error: any) {
+      if (error?.response?.status == 400)
+      {
+        message.error(error?.response?.data?.error);
+        return  ;
+      }
       if (error.response) {
         const errorMsg = error.response.data?.detail || 'Registration failed. Please check your details.';
         message.error(errorMsg);
@@ -164,13 +169,14 @@ export default function CreateAccount() {
     
     }
   };
-  const handleLogin = () => {
-    // const redirectUri = encodeURIComponent(window.location.href); // current page, or a page to redirect after OAuth success
-    // const oauthURL = process.env.NEXT_PUBLIC_REDIRECT_URI;
-    // $1.log(process.env.NEXT_PUBLIC_REDIRECT_URI);
-    router.push(process.env.NEXT_PUBLIC_REDIRECT_URI as string);
-
-    // window.location.href = oauthURL;  // Redirect user to the 42 login page
+  const handleRegisterRemote = () => {
+    const redirectUri:string | undefined = process.env.NEXT_PUBLIC_REDIRECT_URI;
+    if (!redirectUri)
+    {
+      message.error('Redirect URI is not set');
+      return;
+    }
+    router.push(redirectUri);
   };
   return (
     <div className={`${styles.singup} min-h-screen flex items-center justify-center w-full`}>
@@ -179,7 +185,7 @@ export default function CreateAccount() {
           <h2 className="text-2xl font-semibold text-white text-center mb-6">Create Account </h2>
           <div className="flex flex-col space-y-4 mb-6">
                 <button 
-                onClick={handleLogin}
+                onClick={handleRegisterRemote}
                 className="w-full bg-[#3E3C49] text-white p-4 rounded-lg shadow-lg flex items-center justify-center space-x-3 hover:bg-[#5A575F] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#3E3C49] transition duration-300 ease-in-out">
                   <Image src={logoOAuth} alt="42 logo" width={24} height={24} />
                   <span className="text-lg font-semibold">Sign up with 42</span>
