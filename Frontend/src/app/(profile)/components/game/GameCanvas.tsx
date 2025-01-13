@@ -229,6 +229,8 @@ import { createWebSocketConnection } from "@/utils/websocket";
 import { GameState, Direction } from "@/utils/typess";
 import { useRouter, useSearchParams } from "next/navigation";
 import Scoreboards from "../tournaments/Scoreboard";
+import { message } from "antd"; 
+
 
 const WINNING_SCORE = 5;
 
@@ -263,6 +265,8 @@ const GameCanvas: React.FC = () => {
     player2: { username: "", avatar: "" },
   });
   const [timeoutReached, setTimeoutReached] = useState(false);
+  const [waiting, setWaiting] = useState(false);
+
 
   const mapBackgroundImage: Record<string, string> = {
     "Board 1": "/board 1.jpeg",
@@ -286,7 +290,32 @@ const GameCanvas: React.FC = () => {
     const handleWebSocketMessage = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
 
+      console.log("backend message :", data?.message);
+
       switch (data.type) {
+        case "timeout":
+          console.log("timeout reached")
+          // setTimeoutReached(true);
+          message.error(data?.message);
+          router.push('/chat');
+          // setTimeout(() => router.push('/chat'), 1000);
+          break ;
+        case "game_rejected":
+          message.error(data?.message);
+          router.push('/chat');
+          break ;
+
+        case 'close':
+          // console.log('')
+          message.error(data?.message);
+          websocket.close();
+          router.push('/game');
+          break ;
+        case "invalid_room":
+          message.error(data?.message);
+          router.push('/game');
+          break ;
+
         case "game_start":
           setPlayers({
             player1: { username: data.player1_username, avatar: data.player1_avatar },
@@ -296,12 +325,14 @@ const GameCanvas: React.FC = () => {
           setIsSearching(false);
           setGameOver(false);
           setTimeoutReached(false);
+          setWaiting(false);
           break;
 
         case "game_state":
           setGameState(data.game_state);
           setTimeoutReached(false);
           setIsSearching(false);
+          setWaiting(false);
           break;
 
         case "game_ends":
@@ -311,7 +342,11 @@ const GameCanvas: React.FC = () => {
             finalScore: data.final_score || [0, 0],
           });
           break;
-
+        case "waiting":
+          setWaiting(true);
+          setIsSearching(false);
+          break ;
+          
         case "searching":
           setIsSearching(true);
           console.log("Searching for an opponent...");
@@ -321,7 +356,7 @@ const GameCanvas: React.FC = () => {
           console.log("Searching expanded");
           break;
 
-        case "No_opponent":
+        case "no_opponent":
           setTimeoutReached(true);
           console.log("No opponent found.");
           break;
@@ -375,7 +410,8 @@ const GameCanvas: React.FC = () => {
 
   const leaveGame = () => {
     ws?.close();
-    router.push("/game");
+    const path = room_name ? "/chat" : "/game";
+    router.push(path);
   };
 
   return (
@@ -390,8 +426,8 @@ const GameCanvas: React.FC = () => {
             Leave Game
           </button>
         </div>
-      ) : isSearching ? (
-        <SearchingIndicator />
+      ) : (isSearching || waiting) ? (
+         isSearching ? <SearchingIndicator /> : <WaitingIndicator />
       ) : (
         <div className="relative border-2 rounded-lg shadow-lg p-6 aspect-w-16 aspect-h-9">
           <Scoreboards
@@ -406,7 +442,7 @@ const GameCanvas: React.FC = () => {
             player1Score={gameState?.score[0] || 0}
             player2Score={gameState?.score[1] || 0}
           />
-          <canvas
+          {!gameOver && <canvas
             ref={canvasRef}
             width={800}
             height={400}
@@ -415,7 +451,7 @@ const GameCanvas: React.FC = () => {
               backgroundImage: `url('${backgroundImage}')`,
               backgroundColor: "#07325F",
             }}
-          ></canvas>
+          ></canvas>}
           {gameOver && gameResult && (
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
               <p className="text-4xl font-bold text-white mb-4">{gameResult.message}</p>

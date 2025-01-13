@@ -136,14 +136,15 @@ def send_game_invite(request):
 
     room_name = LiveGameFlow.generate_room_id()
     GameInvite.objects.create(room_name=room_name, inviter=sender, invited=to_invite, status='pending')
-    LiveGameFlow.games[room_name] = {}
+    LiveGameFlow.invites[room_name] = {'players' : [sender.id, to_invite.id],'connections': []}
     notification_data =  {
         'type': 'game_invite',
         'room_name' : room_name,
         'sender' : sender.username,
         'picture' : str(sender.photo_url),
         'full-name' : f"{sender.first_name} {sender.last_name}",
-    }    
+    }   
+ 
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(to_invite.token_notify, notification_data)
     async_to_sync(channel_layer.group_send)(sender.token_notify, {'type' : 'join_room', 'room_name' : room_name})

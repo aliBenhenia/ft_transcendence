@@ -34,6 +34,8 @@ class LiveGameFlow(AsyncWebsocketConsumer):
     LEVEL_RANGE_INCREMENT = 1
     MAX_WAIT_TIME = 30
     invites = {}
+    # connected_players = {}
+
 
     @staticmethod
     def generate_room_id():
@@ -109,7 +111,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 current_time = time.time()
             await asyncio.sleep(1)
         await self.send(text_data=json.dumps({
-            'type' : 'No_opponent'
+            'type' : 'no_opponent'
         }))
 
     def initialize_game_state(self):
@@ -327,8 +329,8 @@ class LiveGameFlow(AsyncWebsocketConsumer):
     async def check_for_second_player(self, room_name, timeout):
         try:
             await asyncio.sleep(timeout)
-            if room_name in self.invites and len(self.invites[room_name]) < 2:
-                player = self.invites[room_name][0]
+            if room_name in self.invites and len(self.invites[room_name]['connections']) < 2:
+                player = self.invites[room_name]['connections'][0]
                 await player.send(text_data=json.dumps({"type": "timeout" , "message" : "No second player joined."}))
                 print("SECOND PLAYER DIDNT JOIN")
                 try:
@@ -345,7 +347,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
     async def game_rejected(self, event):
         room_name = event['room_name']
         if room_name in self.invites:
-            await self.send(text_data=json.dumps({"type": "game_rejected"}))
+            await self.send(text_data=json.dumps({"type": "game_rejected",  "message":"game rejected"}))
             await self.channel_layer.group_send(
             self.user.token_notify,
             {
@@ -360,24 +362,31 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             print("GAME REJECTED")
 
     async def connect(self):
+        self.user = self.scope['user']
+        if self.user is None:
+            await self.close()
+
+
         query_params = parse_qs(self.scope['query_string'].decode())
         room_name = query_params.get('room_name', [None])[0]
+        self.room_name = room_name
         await self.accept()
         if room_name != None:
             await self.channel_layer.group_add(
                 room_name,
                 self.channel_name
             )
-            self.user = self.scope['user']
-            self.room_name = room_name
-            if room_name in self.games:
-                if room_name not in self.invites:
-                    self.invites[room_name] = []
-                self.invites[room_name].append(self)
-                if (len(self.invites[room_name])) == 2:
-                    await self.start_game_with_opponent(self.invites[room_name][0], room_name)
+            if room_name in self.invites and self.user.id in self.invites[room_name]['players']:
+                for connection in self.invites[room_name]['connections']:
+                    if connection.user.id == self.user.id:
+                        await self.send(json.dumps({'type' : 'close', 'message' : 'You are already in room'}))
+                        self.user = None
+                        return await self.close()
+                self.invites[room_name]['connections'].append(self)
+                if (len(self.invites[room_name]['connections'])) == 2:
+                    await self.start_game_with_opponent(self.invites[room_name]['connections'][0], room_name)
                     del self.invites[room_name]
-                elif (len(self.invites[room_name])) == 1:
+                elif (len(self.invites[room_name]['connections'])) == 1:
                     await self.send(text_data=json.dumps(
                     {
                         "type": "waiting",
@@ -389,68 +398,75 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 await self.close()
         ##
         else:
-            user = self.scope['user']
-            if user:
-                self.user = user
                 # if player is already in a queue
                 user_level = await sync_to_async(lambda: self.user.DETAILS.level)()
                 if user_level in self.game_queues:
                     queue = self.game_queues[user_level]
                     for p in queue:
-                        if p['player'].scope['user'] == self.user:
+                        if p['player'].scope['user'].id == self.user.id:
+                            # print(f"user ")
                             await self.send(text_data=json.dumps(
                             {
-                                'type' : 'Already in queue'
+                                'type' : 'close',
+                                'message':'Already in queue!' 
                             }))
-                            self.close()
+                            await self.close()
                             return
                 # if player is in game
-                if user.username in self.in_game:
+                if self.user.username in self.in_game:
                     await self.send(text_data=json.dumps(
                     {
-                        'type' : 'Already in game'
+                        'type' : 'close',
+                        'message' : 'Already in game'
                     }))
-                    self.close()
+                    await self.close()
                     return
                 await self.add_to_waiting_queue()
-            else:
-                await self.close()
 
     async def disconnect(self, close_code):
-        print(f"Player {self.scope['user'].username} disconnected")
-        # Remove player from queue if present
-        player_level = await sync_to_async(lambda: self.scope['user'].DETAILS.level)()
-        if player_level in self.game_queues:
-            self.game_queues[player_level] = [
-                p for p in self.game_queues[player_level]
-                if p['player'] != self
-            ]
-            if not self.game_queues[player_level]:
-                del self.game_queues[player_level]
-        if hasattr(self, 'room_name') and self.room_name in self.games:
-                game = self.games[self.room_name]
-                game['players'].remove(self)
-                await self.send(text_data=json.dumps(
-                {
-                    'type' : 'game_ends',
-                    'message' : 'You disconnected'
-                }))
-                if game['players']:
-                    remaining_player = game['players'][0]
-                    print(f"remaining one : {remaining_player.user.username}")
-                    await remaining_player.send(text_data=json.dumps(
+        if self.user is None:
+            return
+        try:
+            print(f"Player {self.scope['user'].username} disconnected")
+            # Remove player from queue if present
+            player_level = await sync_to_async(lambda: self.scope['user'].DETAILS.level)()
+            if player_level in self.game_queues:
+                print("hna!")
+                self.game_queues[player_level] = [
+                    p for p in self.game_queues[player_level]
+                    if p['player'].scope['user'].id == self.user.id
+                ]
+                if not self.game_queues[player_level]:
+                    del self.game_queues[player_level]
+            if self.room_name in self.invites:
+                if self in self.invites[self.room_name]['connections']:
+                    self.invites[self.room_name]['connections'].remove(self)
+                # game_invite = await GameInvite.objects.aget(room_name=self.room_name)
+                # game_invite.status = 'disconnected'
+                # await sync_to_async(game_invite.save)()
+            if hasattr(self, 'room_name') and self.room_name in self.games:
+                    game = self.games[self.room_name]
+                    if self in  game.get('players', None):
+                        game['players'].remove(self)
+                    await self.send(text_data=json.dumps(
                     {
                         'type' : 'game_ends',
-                        'message' : 'You win! Opponent disconnected'
+                        'message' : 'You disconnected'
                     }))
-                    game['players'].remove(remaining_player)
-                    del self.games[self.room_name]
-                    self.in_game.clear()
-                    print(f"games after : {len(self.games)}")
-        if self.room_name in self.invites and len(self.invites[self.room_name]) < 2:
-            game_invite = await GameInvite.objects.aget(room_name=self.room_name)
-            game_invite.status = 'disconnected'
-            await sync_to_async(game_invite.save)()
+                    if game['players']:
+                        remaining_player = game['players'][0]
+                        await remaining_player.send(text_data=json.dumps(
+                        {
+                            'type' : 'game_ends',
+                            'message' : 'You win! Opponent disconnected'
+                        }))
+                        game['players'].remove(remaining_player)
+                        del self.games[self.room_name]
+                        self.in_game.clear()
+
+            
+        except Exception as e:
+            print("error in disconnected : ", str(e))
 
     async def receive(self, text_data):
         try:
