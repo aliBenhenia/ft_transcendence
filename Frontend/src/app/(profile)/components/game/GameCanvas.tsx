@@ -1,214 +1,411 @@
+// "use client";
+
+// import React, { useEffect, useRef, useState } from "react";
+// import { createWebSocketConnection } from "@/utils/websocket";
+// import { GameState, Direction } from "@/utils/typess";
+// import { useRouter, useSearchParams } from "next/navigation";
+// import Scoreboards from "../tournaments/Scoreboard";
+
+// const WINNING_SCORE = 5;
+
+// const WaitingIndicator: React.FC = () => (
+//   <div className="flex flex-col items-center justify-center h-full">
+//     <div className="loader mb-4"></div>
+//     <p className="text-xl font-bold text-white">Waiting for another player...</p>
+//   </div>
+// );
+// const SearchingIndicator: React.FC = () => (
+//   <div className="flex flex-col items-center justify-center h-full">
+//     <div className="loader mb-4"></div>
+//     <p className="text-xl font-bold text-white">Searching for an opponent...</p>
+//   </div>
+// );
+
+// const GameCanvas: React.FC = () => {
+//   const router = useRouter();
+//   const searchParams = useSearchParams();
+//   const selectedMap = searchParams.get("selectedMap") || "Board 1";
+//   const room_name: any = useSearchParams().get('room_name');
+
+//   const canvasRef = useRef<HTMLCanvasElement>(null);
+//   const [gameState, setGameState] = useState<GameState | null>(null);
+//   const [ws, setWs] = useState<WebSocket | null>(null);
+//   const [isSearching, setIsSearching] = useState(true);
+//   const [gameOver, setGameOver] = useState(false);
+//   const [gameResult, setGameResult] = useState({ message: "", finalScore: [0, 0] });
+//   const [players, setPlayers] = useState({
+//     player1: { username: "", avatar: "" },
+//     player2: { username: "", avatar: "" },
+//   });
+//   const [timeoutReached, setTimeoutReached] = useState(false);
+
+//   // Map a selectedMap value to image URLS
+//   const mapBackgroundImage: Record<string, string> = {
+//     'Board 1': '/board 1.jpeg',
+//     'Board 2': '/board 2.jpeg',
+//     'Board 3': '/board 3.avif',
+//   };
+//   const backgroundImage = mapBackgroundImage[selectedMap] || '/board 1.jpeg';
+
+//   useEffect(() => {
+//     const accessToken = localStorage.getItem("accessToken");
+//     if (!accessToken) {
+//       console.error("No access token found.");
+//       return;
+//     }
+
+//     const websocket = createWebSocketConnection(accessToken, room_name);
+//     setWs(websocket);
+
+//     websocket.onmessage = (event) => {
+//       const data = JSON.parse(event.data);
+//       handleWebSocketMessage(data);
+//     };
+
+//     websocket.onerror = (error) => console.error("WebSocket error:", error);
+
+//     return () => {
+//       websocket.close();
+//     };
+//   }, [room_name]);
+
+//   const handleWebSocketMessage = (data: any) => {
+//     switch (data.type) {
+//       case "game_start":
+//         setPlayers({
+//           player1: { username: data.player1_username, avatar: data.player1_avatar },
+//           player2: { username: data.player2_username, avatar: data.player2_avatar },
+//         });
+//         setGameState(data.game_state);
+//         setIsSearching(false);
+//         setGameOver(false);
+//         setTimeoutReached(false);
+//         break;
+//       case "game_state":
+//         setGameState(data.game_state);
+//         setTimeoutReached(false);
+//         setIsSearching(false);
+//         break;
+//       case "game_ends":
+//         setGameOver(true);
+//         setGameResult({
+//           message: data.message,
+//           finalScore: data.final_score || [0, 0],
+//         });
+//         break;
+//       case "searching":
+//         setIsSearching(true);
+//         console.log("Searching for an opponent...");
+//         break;
+//       case "searching_expanded":
+//         setIsSearching(true);
+//         console.log("Searching expanded");
+//         break;
+//       case "No_opponent":
+//         setTimeoutReached(true); // Trigger timeout behavior
+//         console.log("No opponent found.");
+//         break;
+//       default:
+//         console.warn("Unknown WebSocket message type:", data.type);
+//     }
+//   };
+
+//   useEffect(() => {
+//     if (!gameState || !canvasRef.current) return;
+
+//     const ctx = canvasRef.current.getContext("2d");
+//     if (!ctx) return;
+
+//     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+//     ctx.fillStyle = "white";
+
+//     // Draw ball
+//     ctx.beginPath();
+//     ctx.arc(gameState.ballX, gameState.ballY, 10, 0, Math.PI * 2);
+//     ctx.fill();
+
+//     // Draw paddles
+//     ctx.fillRect(10, gameState.player1Y, 10, 100);
+//     ctx.fillRect(canvasRef.current.width - 20, gameState.player2Y, 10, 100);
+//   }, [gameState]);
+
+//   const handleKeyDown = (e: KeyboardEvent) => {
+//     if (!ws) return;
+
+//     const direction: Direction = e.key as Direction;
+//     if (direction === "ArrowUp" || direction === "ArrowDown") {
+//       ws.send(JSON.stringify({ action: "move", direction }));
+//     }
+//   };
+
+//   useEffect(() => {
+//     window.addEventListener("keydown", handleKeyDown);
+//     return () => window.removeEventListener("keydown", handleKeyDown);
+//   }, [ws]);
+
+//   const leaveGame = () => {
+//     ws?.close();
+//     setGameOver(true);
+//     router.push("/game");
+//   };
+//   const leaveGame2 = () => {
+//     ws?.close();
+//     setGameOver(true);
+//     router.push("/game");
+//   };
+//   return (
+//     <div className="flex flex-col items-center justify-center min-h-screen">
+//       {timeoutReached ? (
+//         <div className="flex flex-col items-center justify-center h-full">
+//           <p className="text-xl font-bold text-red-600">Timeout! No opponent joined.</p>
+//           <button
+//             onClick={leaveGame}
+//             className="px-6 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 mt-4"
+//           >
+//             Leave Game
+//           </button>
+//         </div>
+//       ) : (
+//         <SearchingIndicator />
+//       )}
+//       {gameState && (
+//          <div className="relative border-2 rounded-lg shadow-lg p-6 aspect-w-16 aspect-h-9">
+//          <div >
+//            <Scoreboards
+//              player1={{
+//                alias: players.player1.username || 'Player 1',
+//                avatar: players.player1.avatar || '/board1.jpeg',
+//              }}
+//              player2={{
+//                alias: players.player2.username || 'Player 2',
+//                avatar: players.player2.avatar || '/board1.jpeg',
+//              }}
+//              player1Score={gameState?.score[0] || 0}
+//              player2Score={gameState?.score[1] || 0}
+//            />
+//          </div>
+//          <canvas
+//            ref={canvasRef}
+//            width={800}
+//            height={400}
+//            className="w-full bg-cover bg-center border-2 rounded-lg"
+//            style={{
+//              backgroundImage: `url('${backgroundImage}')`,
+//              backgroundColor: '#07325F',
+//            }}
+//          ></canvas>
+//          {gameOver && gameResult && (
+//            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+//              <p className="text-4xl font-bold text-white mb-4">{gameResult.message}</p>
+//              <p className="text-2xl text-white">Final Score: {gameResult.finalScore[0]} : {gameResult.finalScore[1]}</p>
+//              <button
+//                onClick={leaveGame}
+//                className="px-6 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 mt-4"
+//              >
+//                Leave Game
+//              </button>
+//            </div>
+//          )}
+//          </div> 
+//       )}
+//       {!gameOver && (
+//         <button
+//           onClick={leaveGame2}
+//           className="absolute bottom-8 right-8 px-4 py-2 bg-red-500 text-white font-bold rounded-lg hover:bg-red-700"
+//         >
+//           Leave
+//         </button>
+//       )}
+//     </div>
+//   );
+// };
+
+// export default GameCanvas;
+
 "use client";
 
 import React, { useEffect, useRef, useState } from "react";
 import { createWebSocketConnection } from "@/utils/websocket";
 import { GameState, Direction } from "@/utils/typess";
-import { useRouter } from "next/navigation";
-import { useSearchParams } from 'next/navigation';
-import Scoreboard from "./Scoreboard";
+import { useRouter, useSearchParams } from "next/navigation";
+import Scoreboards from "../tournaments/Scoreboard";
 
 const WINNING_SCORE = 5;
 
 const WaitingIndicator: React.FC = () => (
   <div className="flex flex-col items-center justify-center h-full">
     <div className="loader mb-4"></div>
-    <p className="text-xl font-bold text-white">waiting for another player...</p>
-  </div>
-);
-const SearchingIndicator: React.FC = () => (
-  <div className="flex flex-col items-center justify-center h-full">
-    <div className="loader mb-4"></div>
-    <p className="text-xl font-bold text-white">searching for another player...</p>
+    <p className="text-xl font-bold text-white">Waiting for another player...</p>
   </div>
 );
 
+const SearchingIndicator: React.FC = () => (
+  <div className="flex flex-col items-center justify-center h-full">
+    <div className="loader mb-4"></div>
+    <p className="text-xl font-bold text-white">Searching for an opponent...</p>
+  </div>
+);
 
 const GameCanvas: React.FC = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const selectedMap = searchParams.get('selectedMap') || 'Board 1';
+  const selectedMap = searchParams.get("selectedMap") || "Board 1";
+  const room_name: any = useSearchParams().get('room_name');
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [gameState, setGameState] = useState<GameState | null>(null);
   const [ws, setWs] = useState<WebSocket | null>(null);
-  const [isWaiting, setIsWaiting] = useState(true);
   const [isSearching, setIsSearching] = useState(true);
   const [gameOver, setGameOver] = useState(false);
-  const [winner, setWinner] = useState<string | null>(null);
-  const [gameResult, setGameResult] = useState({ message: '', finalScore: [0, 0] });
-  const [player1, setPlayer1] = useState<{ username: string; avatar: string }>({ username: "", avatar: "" });
-  const [player2, setPlayer2] = useState({ username: "", avatar: "" });
-  const room_name:any = useSearchParams().get('room_name');
-  // $1.log("room_name", room_name);
-  window.onload = function() {
-      router.push("/game");
-      //close the socket connection
-      if (ws) {
-        ws.close();
-      }
-  }
+  const [gameResult, setGameResult] = useState({ message: "", finalScore: [0, 0] });
+  const [players, setPlayers] = useState({
+    player1: { username: "", avatar: "" },
+    player2: { username: "", avatar: "" },
+  });
+  const [timeoutReached, setTimeoutReached] = useState(false);
 
-  //
-  //
-  // Map a selectedMap value to image URLS
   const mapBackgroundImage: Record<string, string> = {
-    'Board 1': '/board 1.jpeg',
-    'Board 2': '/board 2.jpeg',
-    'Board 3': '/board 3.avif',
+    "Board 1": "/board 1.jpeg",
+    "Board 2": "/board 2.jpeg",
+    "Board 3": "/board 3.avif",
   };
-  const backgroundImage = mapBackgroundImage[selectedMap] || '/board 1.jpeg';
+  const backgroundImage = mapBackgroundImage[selectedMap] || "/board 1.jpeg";
 
+  // WebSocket setup
   useEffect(() => {
-    
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
-      // $1.error("No access token found in localStorage");
+      console.error("No access token found.");
+      router.push("/login");
       return;
     }
 
     const websocket = createWebSocketConnection(accessToken, room_name);
     setWs(websocket);
 
-    websocket.onmessage = (event) => {
+    const handleWebSocketMessage = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
 
-      if (data.type === "game_start") {
-        // $1.log("Game starting: ", data);
-        setPlayer1({ username: data.player1_username, avatar: data.player1_avatar });
-        setPlayer2({ username: data.player2_username, avatar: data.player2_avatar });
-        setGameState(data.game_state);
-      } else if (data.type === "game_state") {
-        // $1.log("Game state: ", data.game_state);
-        setGameState(data.game_state);
-        setIsWaiting(false);
-      } else if (data.type === "searching") {
-        setIsSearching(true);
-      }
-       else if (data.type === "waiting") {
-        setIsWaiting(true);
-      }
-      else if (data.type === "game_ends") {
-        setGameOver(true);
-        //setGameState(data.game_state);
-        if (data.message === "You win! Opponent disconnected") {
-          setGameResult({
-            message: data.message,
-            finalScore: [gameState?.score[0] || 0, gameState?.score[1] || 0],
+      switch (data.type) {
+        case "game_start":
+          setPlayers({
+            player1: { username: data.player1_username, avatar: data.player1_avatar },
+            player2: { username: data.player2_username, avatar: data.player2_avatar },
           });
-        } else if (data.message === "You win!"){
+          setGameState(data.game_state);
+          setIsSearching(false);
+          setGameOver(false);
+          setTimeoutReached(false);
+          break;
+
+        case "game_state":
+          setGameState(data.game_state);
+          setTimeoutReached(false);
+          setIsSearching(false);
+          break;
+
+        case "game_ends":
+          setGameOver(true);
           setGameResult({
             message: data.message,
             finalScore: data.final_score || [0, 0],
           });
-        } else if (data.message === "You lost!"){
-          setGameResult({
-            message: data.message,
-            finalScore: data.final_score || [0, 0],
-          });
-        }
-        
-      } else if (data.type === "Already in queue" || data.type === "Already in game") {
-        alert(data.type === "Already in queue" 
-          ? "You are already in a queue!" 
-          : "You are already in a game!");
+          break;
+
+        case "searching":
+          setIsSearching(true);
+          console.log("Searching for an opponent...");
+          break;
+        case "searching_expanded":
+          setIsSearching(true);
+          console.log("Searching expanded");
+          break;
+
+        case "No_opponent":
+          setTimeoutReached(true);
+          console.log("No opponent found.");
+          break;
+
+        default:
+          console.warn("Unknown WebSocket message type:", data.type);
       }
     };
 
-    websocket.onerror = (error) => {
-      // $1.error("WebSocket error:", error);
-    };
+    websocket.onmessage = handleWebSocketMessage;
+    websocket.onerror = (error) => console.error("WebSocket error:", error);
 
     return () => {
-      if (websocket.readyState === WebSocket.OPEN) {
-        websocket.close();
-      }
+      websocket.close();
     };
-  }, [room_name]);
+  }, [room_name, router]);
 
+  // Game rendering logic
   useEffect(() => {
-    if (gameState && canvasRef.current) {
-      const ctx = canvasRef.current.getContext("2d");
-      if (!ctx) return;
+    if (!gameState || !canvasRef.current) return;
 
-      ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    const ctx = canvasRef.current.getContext("2d");
+    if (!ctx) return;
 
-      ctx.fillStyle = "white";
+    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+    ctx.fillStyle = "white";
 
-      // Draw ball
-      ctx.beginPath();
-      ctx.arc(gameState.ballX, gameState.ballY, 10, 0, Math.PI * 2);
-      ctx.fill();
+    // Draw ball
+    ctx.beginPath();
+    ctx.arc(gameState.ballX, gameState.ballY, 10, 0, Math.PI * 2);
+    ctx.fill();
 
-      // Draw paddles
-      ctx.fillRect(10, gameState.player1Y, 10, 100);
-      ctx.fillRect(canvasRef.current.width - 20, gameState.player2Y, 10, 100);
-
-    }
+    // Draw paddles
+    ctx.fillRect(10, gameState.player1Y, 10, 100);
+    ctx.fillRect(canvasRef.current.width - 20, gameState.player2Y, 10, 100);
   }, [gameState]);
 
   const handleKeyDown = (e: KeyboardEvent) => {
+    if (!ws) return;
+
     const direction: Direction = e.key as Direction;
-    if (ws && (direction === "ArrowUp" || direction === "ArrowDown")) {
+    if (direction === "ArrowUp" || direction === "ArrowDown") {
       ws.send(JSON.stringify({ action: "move", direction }));
     }
   };
 
   useEffect(() => {
     window.addEventListener("keydown", handleKeyDown);
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [ws]);
 
   const leaveGame = () => {
-    if (ws) {
-      ws.close();
-      // $1.log("Left the game.");
-    }
-    setGameOver(true);
-    setIsWaiting(false);
-    setGameResult({
-      message: "You left the game.",
-      finalScore: [gameState?.score[0] || 0, gameState?.score[1] || 0],
-    });
-    setTimeout(() => {
-      router.push("/game");
-    }, 1000);
-  };
-  const leaveGame2 = () => {
-    if (ws) {
-      ws.close();
-      // $1.log("Left the game.");
-    }
-
-    setGameOver(true);
-    setIsWaiting(false);
-    setGameResult({
-      message: "You left the game.",
-      finalScore: [gameState?.score[0] || 0, gameState?.score[1] || 0],
-    });
-      router.push("/game");
-  };
-  const handleRestart = () => {
-    setGameOver(false);
-    setGameResult({ message: '', finalScore: [0, 0] });
-    // window.location.reload();
+    ws?.close();
+    router.push("/game");
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      {isWaiting ? (
-        <WaitingIndicator />
+      {timeoutReached ? (
+        <div className="flex flex-col items-center justify-center h-full">
+          <p className="text-xl font-bold text-red-600">Timeout! No opponent joined.</p>
+          <button
+            onClick={leaveGame}
+            className="px-6 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 mt-4"
+          >
+            Leave Game
+          </button>
+        </div>
+      ) : isSearching ? (
+        <SearchingIndicator />
       ) : (
-        <div className="relative w-full max-w-4xl aspect-w-16 aspect-h-9 border-2 rounded-lg shadow-lg">
-          <div className="p-4">
-            <Scoreboard
-              player1Score={gameState?.score[0] || 0}
-              player2Score={gameState?.score[1] || 0}
-              player1Avator={player1.avatar}
-              player2Avator={player2.avatar}
-              scoreToWin={WINNING_SCORE} />
-          </div>
+        <div className="relative border-2 rounded-lg shadow-lg p-6 aspect-w-16 aspect-h-9">
+          <Scoreboards
+            player1={{
+              alias: players.player1.username || "Player 1",
+              avatar: players.player1.avatar || "/board1.jpeg",
+            }}
+            player2={{
+              alias: players.player2.username || "Player 2",
+              avatar: players.player2.avatar || "/board1.jpeg",
+            }}
+            player1Score={gameState?.score[0] || 0}
+            player2Score={gameState?.score[1] || 0}
+          />
           <canvas
             ref={canvasRef}
             width={800}
@@ -216,33 +413,28 @@ const GameCanvas: React.FC = () => {
             className="w-full bg-cover bg-center border-2 rounded-lg"
             style={{
               backgroundImage: `url('${backgroundImage}')`,
-              backgroundColor: '#07325F',
+              backgroundColor: "#07325F",
             }}
           ></canvas>
           {gameOver && gameResult && (
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
               <p className="text-4xl font-bold text-white mb-4">{gameResult.message}</p>
-              <p className="text-2xl text-white">Final Score: {gameResult.finalScore[0]} : {gameResult.finalScore[1]}</p>
+              <p className="text-2xl text-white">
+                Final Score: {gameResult.finalScore[0]} : {gameResult.finalScore[1]}
+              </p>
               <button
                 onClick={leaveGame}
                 className="px-6 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 mt-4"
               >
                 Leave Game
               </button>
-
-              <button
-                onClick={handleRestart}
-                className="px-6 py-2 bg-[#008000] text-white font-bold rounded-lg hover:bg-[#006400] ml-4"
-              >
-                Restart Game
-              </button>
             </div>
           )}
         </div>
       )}
-      {!gameOver &&(
+      {!gameOver && !timeoutReached && (
         <button
-          onClick={leaveGame2}
+          onClick={leaveGame}
           className="absolute bottom-8 right-8 px-4 py-2 bg-red-500 text-white font-bold rounded-lg hover:bg-red-700"
         >
           Leave

@@ -12,4 +12,3 @@ function tournament() {
 }
 
 export default tournament;
-
