@@ -2,7 +2,7 @@
 import axios, { AxiosResponse, AxiosError } from 'axios';
 
 const customAxios = axios.create({
-  baseURL: 'http://localhost:9002',  
+  baseURL: '',  
 });
 
 customAxios.interceptors.response.use(

@@ -329,7 +329,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             await asyncio.sleep(timeout)
             if room_name in self.invites and len(self.invites[room_name]) < 2:
                 player = self.invites[room_name][0]
-                await player.send(text_data=json.dumps({"type": "Timeout" , "message" : "No second player joined."}))
+                await player.send(text_data=json.dumps({"type": "timeout" , "message" : "No second player joined."}))
                 print("SECOND PLAYER DIDNT JOIN")
                 try:
                     game_invite = await GameInvite.objects.aget(room_name=room_name)

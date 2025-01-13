@@ -13,15 +13,15 @@ RUN npm install
 COPY . .
 
 # Build the Next.js application for production
-# RUN npm run build
+RUN npm run build
 
 # Check if build output exists in .next directory
 
-# RUN ls -l .next
-# ENV NODE_ENV=production
+RUN ls -l .next
+ENV NODE_ENV=production
 
 # Expose the port the app runs on
 # EXPOSE 3000
 
 # Start the app in production mode
-CMD ["npm", "run", "dev"]
+CMD ["npm", "run", "start"]
