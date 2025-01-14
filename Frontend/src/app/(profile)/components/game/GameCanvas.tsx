@@ -329,6 +329,7 @@ const GameCanvas: React.FC = () => {
           break;
 
         case "game_state":
+          console.log("game state", data.game_state);
           setGameState(data.game_state);
           setTimeoutReached(false);
           setIsSearching(false);
@@ -381,6 +382,7 @@ const GameCanvas: React.FC = () => {
     const ctx = canvasRef.current.getContext("2d");
     if (!ctx) return;
 
+    
     ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
     ctx.fillStyle = "white";
 
@@ -408,7 +410,10 @@ const GameCanvas: React.FC = () => {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [ws]);
 
+ 
   const leaveGame = () => {
+    console.log("leaving game");
+    ws?.send(JSON.stringify({ action: "leave" }));
     ws?.close();
     const path = room_name ? "/chat" : "/game";
     router.push(path);
@@ -430,6 +435,7 @@ const GameCanvas: React.FC = () => {
          isSearching ? <SearchingIndicator /> : <WaitingIndicator />
       ) : (
         <div className="relative border-2 rounded-lg shadow-lg p-6 aspect-w-16 aspect-h-9">
+          {!gameOver && 
           <Scoreboards
             player1={{
               alias: players.player1.username || "Player 1",
@@ -442,6 +448,7 @@ const GameCanvas: React.FC = () => {
             player1Score={gameState?.score[0] || 0}
             player2Score={gameState?.score[1] || 0}
           />
+          }
           {!gameOver && <canvas
             ref={canvasRef}
             width={800}
@@ -453,7 +460,7 @@ const GameCanvas: React.FC = () => {
             }}
           ></canvas>}
           {gameOver && gameResult && (
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center">
+            <>
               <p className="text-4xl font-bold text-white mb-4">{gameResult.message}</p>
               <p className="text-2xl text-white">
                 Final Score: {gameResult.finalScore[0]} : {gameResult.finalScore[1]}
@@ -464,7 +471,7 @@ const GameCanvas: React.FC = () => {
               >
                 Leave Game
               </button>
-            </div>
+            </>
           )}
         </div>
       )}
@@ -475,7 +482,7 @@ const GameCanvas: React.FC = () => {
         >
           Leave
         </button>
-      )}
+       )}
     </div>
   );
 };
