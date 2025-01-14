@@ -43,6 +43,34 @@ const ProfilePage = (props: any) => {
   const [listFriends, setListFriends] = useState([]);
 
   const isUser = (user: string) => profileState.username === user;
+  const checkIsBloked = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token || !profileData.username) {
+      message.error("Invalid token or username.");
+      return;
+    }
+    try {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/friends/status/?username=${props.params.friendId}`, {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` },
+      });
+      if (res.data.success) {
+        const { is_blocked,blocked_by } = res.data.success;
+        if (is_blocked)
+        {
+          if (blocked_by !== profileState.username)
+            {
+              message.error("you can't do this action");
+              router.push("/dashboard");
+              return true;
+            }
+        }
+      }
+      return false;
+    }
+    catch (error:any) {
+      router.push("/dashboard");
+    }
+  }
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
@@ -142,7 +170,7 @@ const ProfilePage = (props: any) => {
     } catch (error:any) {
       const errorMessage = error.response ? error.response.data.error : error.message;
       message.error(errorMessage);
-      // // $1.log("Error canceling friend request:", errorMessage);
+    
     }
   };
 
@@ -152,6 +180,29 @@ const ProfilePage = (props: any) => {
       message.error("Invalid token or username.");
       return;
     }
+    // try {
+    //   const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/friends/status/?username=${props.params.friendId}`, {
+    //     headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` },
+    //   });
+    //   if (res.data.success) {
+    //     const { is_blocked,blocked_by } = res.data.success;
+    //     if (is_blocked)
+    //     {
+    //       if (blocked_by !== profileState.username)
+    //         {
+    //           message.error("you can't block this user");
+    //           router.push("/dashboard");
+    //           return;
+    //         }
+    //     }
+    //   }
+    // }
+    // catch (error:any) {
+    //   router.push("/dashboard");
+    // }
+    const isBlocked = await checkIsBloked();
+    if (isBlocked)
+      return;
 
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/friends/block/`, {
@@ -163,12 +214,10 @@ const ProfilePage = (props: any) => {
       if (response.data.success) {
         message.success("User has been blocked successfully!");
         setBlockStatus(true);
-        // router.push("/dashboard");
       }
     } catch (error:any) {
       const errorMessage = error.response ? error.response.data.error : error.message;
       message.error(errorMessage);
-      // // $1.log("Error blocking user:", errorMessage);
     }
   };
 
@@ -193,7 +242,32 @@ const ProfilePage = (props: any) => {
     } catch (error:any) {
       const errorMessage = error.response ? error.response.data.error : error.message;
       message.error(errorMessage);
-      // // $1.log("Error unblocking user:", errorMessage);
+
+    }
+  };
+  const handleRemoveFriend = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token || !profileData.username) {
+      message.error("Invalid token or username.");
+      return;
+    }
+    const isBlocked = await checkIsBloked();
+    if (isBlocked)
+      return;
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/friends/delete/`, {
+        username: profileData.username,
+      }, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+
+      if (response.data.success) {
+        message.success("User has been removed successfully!");
+        setFriendStatus("not_friends");
+      }
+    } catch (error:any) {
+      const errorMessage = error.response ? error.response.data.error : error.message;
+      message.error(errorMessage);
     }
   };
 
@@ -294,13 +368,22 @@ const ProfilePage = (props: any) => {
                     </button>
                     
                     ) : (
+                      <div className="flex gap-x-4">
                           <button
-      onClick={handleBlockUser}
-      className="flex items-center justify-center py-3 px-5 bg-red-600 text-white text-lg font-semibold rounded-xl hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform "
-    >
-      <MdBlockFlipped className="mr-2 text-xl" />
-      Block
-    </button>
+                onClick={handleBlockUser}
+                className="flex items-center justify-center py-3 px-5 bg-red-600 text-white text-lg font-semibold rounded-xl hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform "
+              >
+                <MdBlockFlipped className="mr-2 text-xl" />
+                Block
+              </button>
+                          <button
+                onClick={handleRemoveFriend}
+                className="flex items-center justify-center py-3 px-5 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform "
+              >
+                <MdBlockFlipped className="mr-2 text-xl" />
+                remove
+              </button>
+    </div>
                     )}
                   </>
                 )}

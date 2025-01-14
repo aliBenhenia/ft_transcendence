@@ -27,6 +27,7 @@ MAX_BALL_SPEED = 13
 WINNING_SCORE = 5
 
 class LiveGameFlow(AsyncWebsocketConsumer):
+    connected_users = []
     games = {}
     game_queue = []
     in_game = []
@@ -58,18 +59,23 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             'type': 'searching',
             'message': 'Looking for a match...'
         }))
-        await self.find_match()
+
+        asyncio.create_task(self.find_match())
+        # await self.find_match()
 
     async def find_match(self):
         player_level = await sync_to_async(lambda: self.scope['user'].DETAILS.level)()
         current_time = time.time()
         level_range = 0
-        
+
         while level_range <= max(player_level, len(self.game_queues)):
             # Check levels above and below the player's level
+            if self.channel_name not in self.channel_layer.channels:
+                return
             if all(entry['player'] != self for queue in self.game_queues.values() for entry in queue):
                 return
             for level_diff in range(-level_range, level_range + 1):
+                print("here 1")
                 check_level = player_level + level_diff
                 if check_level in self.game_queues:
                     # Filter out the current player and get viable opponents
@@ -109,10 +115,8 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 }))
                 level_range += self.LEVEL_RANGE_INCREMENT
                 current_time = time.time()
-            await asyncio.sleep(1)
-        await self.send(text_data=json.dumps({
-            'type' : 'no_opponent'
-        }))
+            await asyncio.sleep(1 / 60)
+        await self.send(text_data=json.dumps({'type' : 'no_opponent'}))
 
     def initialize_game_state(self):
         return {
@@ -348,102 +352,98 @@ class LiveGameFlow(AsyncWebsocketConsumer):
         room_name = event['room_name']
         if room_name in self.invites:
             await self.send(text_data=json.dumps({"type": "game_rejected",  "message":"game rejected"}))
-            await self.channel_layer.group_send(
-            self.user.token_notify,
-            {
-                "type": "game_rejected",  # Message handler type
-                "sender": self.user.username,
-                "picture" : str(self.user.photo_url),
-                "full-name" : f"{self.user.first_name} {self.user.last_name}",
-            }
-        ) 
+        #     await self.channel_layer.group_send(
+        #     self.user.token_notify,
+        #     {
+        #         "type": "game_rejected",  # Message handler type
+        #         "sender": self.user.username,
+        #         "picture" : str(self.user.photo_url),
+        #         "full-name" : f"{self.user.first_name} {self.user.last_name}",
+        #     }
+        # ) 
             del self.invites[room_name]
             await self.close()
             print("GAME REJECTED")
 
+    async def handle_game_invite(self, room_name):
+        await self.channel_layer.group_add(room_name, self.channel_name)
+        if room_name in self.invites and self.user.id in self.invites[room_name]['players']:
+            for connection in self.invites[room_name]['connections']:
+                if connection.user.id == self.user.id:
+                    await self.send(json.dumps({'type' : 'close', 'message' : 'You are already in the room'}))
+                    self.user = None
+                    return await self.close()
+            self.invites[room_name]['connections'].append(self)
+            if (len(self.invites[room_name]['connections'])) == 2:
+                await self.invites[room_name]['connections'][0].send(text_data=json.dumps({"type": "game_accepted",  "message":"game invite accepted"}))
+                await self.start_game_with_opponent(self.invites[room_name]['connections'][0], room_name)
+                del self.invites[room_name]
+            elif (len(self.invites[room_name]['connections'])) == 1:
+                await self.send(text_data=json.dumps({"type": "waiting" , "message": "Waiting for player to join..."}))
+                asyncio.create_task(self.check_for_second_player(room_name, timeout=15))
+        else:
+            await self.send(text_data=json.dumps({"type" : "invalid_room" , "message": "Invalid room or game not found."}))
+            await self.close()
+
     async def connect(self):
         self.user = self.scope['user']
-        if self.user is None:
-            await self.close()
         query_params = parse_qs(self.scope['query_string'].decode())
         room_name = query_params.get('room_name', [None])[0]
         self.room_name = room_name
         await self.accept()
+
+        if self.user is None:
+            await self.send(json.dumps({'type':'unauthorized'}))
+            return await self.close()
+
+        if self.user.id in self.connected_users:
+            self.user = None
+            await self.send(json.dumps({'type':'close', 'message':'already in queue or game!'}))
+            return await self.close()
+        self.connected_users.append(self.user.id)
+
+        # # if player is already in a queue
+        # user_level = await sync_to_async(lambda: self.user.DETAILS.level)()
+        # if user_level in self.game_queues:
+        #         queue = self.game_queues[user_level]
+        #         for p in queue:
+        #             if p['player'].scope['user'].id == self.user.id:
+        #                 await self.send(text_data=json.dumps({'type':'close', 'message':'Already in queue!' }))
+        #                 return await self.close()
+        #         # if player is in game
+        # if self.user.username in self.in_game:
+        #     await self.send(text_data=json.dumps({'type':'close','message' : 'Already in game'}))
+        #     return await self.close()
+
         if room_name != None:
-            await self.channel_layer.group_add(
-                room_name,
-                self.channel_name
-            )
-            if room_name in self.invites and self.user.id in self.invites[room_name]['players']:
-                for connection in self.invites[room_name]['connections']:
-                    if connection.user.id == self.user.id:
-                        await self.send(json.dumps({'type' : 'close', 'message' : 'You are already in room'}))
-                        self.user = None
-                        return await self.close()
-                self.invites[room_name]['connections'].append(self)
-                if (len(self.invites[room_name]['connections'])) == 2:
-                    await self.start_game_with_opponent(self.invites[room_name]['connections'][0], room_name)
-                    del self.invites[room_name]
-                elif (len(self.invites[room_name]['connections'])) == 1:
-                    await self.send(text_data=json.dumps(
-                    {
-                        "type": "waiting",
-                        "message": "Waiting for player to join..."
-                    }))
-                    asyncio.create_task(self.check_for_second_player(room_name, timeout=15))
-            else:
-                await self.send(text_data=json.dumps({"type" : "invalid_room" , "message": "Invalid room or game not found."}))
-                await self.close()
+            await self.handle_game_invite(room_name)
         ##
         else:
-                # if player is already in a queue
-                user_level = await sync_to_async(lambda: self.user.DETAILS.level)()
-                if user_level in self.game_queues:
-                    queue = self.game_queues[user_level]
-                    for p in queue:
-                        if p['player'].scope['user'].id == self.user.id:
-                            # print(f"user ")
-                            await self.send(text_data=json.dumps(
-                            {
-                                'type' : 'close',
-                                'message':'Already in queue!' 
-                            }))
-                            await self.close()
-                            return
-                # if player is in game
-                if self.user.username in self.in_game:
-                    await self.send(text_data=json.dumps(
-                    {
-                        'type' : 'close',
-                        'message' : 'Already in game'
-                    }))
-                    await self.close()
-                    return
-                await self.add_to_waiting_queue()
+            await self.add_to_waiting_queue()
 
     async def disconnect(self, close_code):
-        print("Inside disconnect")
-        if self.user is None:
-            return
         try:
+            if self.user is None:
+                return
+            self.connected_users.remove(self.user.id)
             print(f"Player {self.scope['user'].username} disconnected")
             # Remove player from queue if present
             player_level = await sync_to_async(lambda: self.scope['user'].DETAILS.level)()
             if player_level in self.game_queues:
-                print("hna!")
                 self.game_queues[player_level] = [
                     p for p in self.game_queues[player_level]
-                    if p['player'].scope['user'].id == self.user.id
+                    if p['player'].scope['user'].id != self.user.id
                 ]
                 if not self.game_queues[player_level]:
                     del self.game_queues[player_level]
-            ###
+
+            #from the invite
             if self.room_name in self.invites:
                 if self in self.invites[self.room_name]['connections']:
+                    print("connection removed from invite dict!")
                     self.invites[self.room_name]['connections'].remove(self)
-                # game_invite = await GameInvite.objects.aget(room_name=self.room_name)
-                # game_invite.status = 'disconnected'
-                # await sync_to_async(game_invite.save)()
+
+            #from the game
             if hasattr(self, 'room_name') and self.room_name in self.games:
                     game = self.games[self.room_name]
                     if self in  game.get('players', None):
@@ -463,8 +463,6 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                         game['players'].remove(remaining_player)
                         del self.games[self.room_name]
                         self.in_game.clear()
-
-            
         except Exception as e:
             print("error in disconnected : ", str(e))
 
