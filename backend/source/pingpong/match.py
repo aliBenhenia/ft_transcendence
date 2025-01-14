@@ -365,8 +365,6 @@ class LiveGameFlow(AsyncWebsocketConsumer):
         self.user = self.scope['user']
         if self.user is None:
             await self.close()
-
-
         query_params = parse_qs(self.scope['query_string'].decode())
         room_name = query_params.get('room_name', [None])[0]
         self.room_name = room_name
@@ -424,6 +422,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 await self.add_to_waiting_queue()
 
     async def disconnect(self, close_code):
+        print("Inside disconnect")
         if self.user is None:
             return
         try:
@@ -438,6 +437,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 ]
                 if not self.game_queues[player_level]:
                     del self.game_queues[player_level]
+            ###
             if self.room_name in self.invites:
                 if self in self.invites[self.room_name]['connections']:
                     self.invites[self.room_name]['connections'].remove(self)
@@ -479,5 +479,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                         game['game_state'][player_key] = max(0, game['game_state'][player_key] - PADDLE_SPEED)
                     elif data['direction'] == 'ArrowDown':
                         game['game_state'][player_key] = min(CANVAS_HEIGHT - PADDLE_HEIGHT, game['game_state'][player_key] + PADDLE_SPEED)
+            if data['action'] == 'leave':
+                print('leave button clicked')
         except Exception as e:
             print(str(e))

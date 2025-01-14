@@ -4,15 +4,40 @@ import { SiProbot } from "react-icons/si";
 import { IoGameController } from "react-icons/io5";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store/store";
+import { useEffect } from "react";
+import getFriendListUser from "@/services/getFriendsList";
 
 
 function PingPongGame() {
+  const profileState = useSelector((state: RootState) => state.profile);
   const router = useRouter();
   const [customSettingsEnabled, setCustomSettingsEnabled] = useState<boolean>(false);
   const [scoreToWin, setScoreToWin] = useState<number>(3);
   const [botLevel, setBotLevel] = useState<string>("easy");
   const [selectedMap, setSelectedMap] = useState<string>("Board 1");
+  const [friendList, setFriendList] = useState<any[]>([]); // State for friend list
+  const [loadingFriends, setLoadingFriends] = useState<boolean>(true); 
 
+  
+  const username = profileState.username;
+  const accessToken = localStorage.getItem("accessToken");
+  useEffect(() => {
+    const fetchFriendList = async () => {
+      try {
+        const friends = await getFriendListUser(accessToken, username);
+        console.log("Fetched friends:", friends);
+        setFriendList(friends || []);
+      } catch (error) {
+        console.error("Error fetching friend list:", error);
+      } finally {
+        setLoadingFriends(false);
+      }
+    };
+  
+    fetchFriendList();
+  }, [accessToken, username]);
   const handleCustomSettings = (enabled: boolean) => {
     setCustomSettingsEnabled(enabled);
     if (!enabled) {
@@ -140,7 +165,7 @@ function PingPongGame() {
 
       </div>
       {/* Column for Section 3 and section 4*/}
-      <div className=" flex flex-col flex-1 p-4 min-h-screen space-y-4">
+      {/* <div className=" flex flex-col flex-1 p-4 min-h-screen space-y-4">
         <div className="bg-blue-50 rounded h-2/3 ">
           <header className="bg-blue-400">
             <h1 className="text-xl text-center text-[#041b34] font-bold">Friends</h1>
@@ -148,6 +173,39 @@ function PingPongGame() {
           <div>
             <h2 className="text-center text-gray-400 p-6">you havent add any friends yet!</h2>
 
+          </div>
+        </div> */}
+         <div className="flex flex-col flex-1 p-4 min-h-screen space-y-4">
+        {/* Friends Section */}
+        <div className="bg-blue-50 rounded h-2/3">
+          <header className="bg-blue-400">
+            <h1 className="text-xl text-center text-[#041b34] font-bold">Friends</h1>
+          </header>
+          <div>
+            {loadingFriends ? (
+              <h2 className="text-center text-gray-400 p-6">Loading friends...</h2>
+            ) : friendList.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4 items-center bg-blue-100 ">
+                {friendList.map((friend, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-blue-100 rounded-lg p-4 flex items-center justify-center gap-2"
+                  >
+                    <img
+                      src={friend.picture || "/avatar.png"}
+                      alt={friend.username}
+                      className="w-12 h-12 rounded-full"
+                    />
+                    <div>
+                      <h3 className="text-lg font-semibold">{friend.username}</h3>
+                      <p className="text-sm text-gray-500">{friend.email}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <h2 className="text-center text-gray-400 p-6">You haven't added any friends yet!</h2>
+            )}
           </div>
         </div>
         <div className="flex flex-col items-center  space-y-4 p-4 h-1/5">
