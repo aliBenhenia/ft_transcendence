@@ -83,7 +83,7 @@ const DropdownMenu: React.FC = () => {
       {isOpen && (
         <div
           ref={dropdownRef}
-          className="absolute right-0 top-10 w-48 bg-gray-800 border border-gray-700 rounded-lg shadow-lg z-[99] mt-2"
+          className="absolute right-0 top-10 w-48 bg-[#001529] border border-gray-700 rounded-lg shadow-lg z-[99] mt-2"
         >
           <div className="py-2">
             {menuItems.map((item) => (

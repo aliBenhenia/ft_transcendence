@@ -196,6 +196,29 @@ const ProfilePage = (props: any) => {
       // // $1.log("Error unblocking user:", errorMessage);
     }
   };
+  const handleRemoveFriend = async () => {
+    const token = localStorage.getItem("accessToken");
+    if (!token || !profileData.username) {
+      message.error("Invalid token or username.");
+      return;
+    }
+
+    try {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/friends/delete/`, {
+        username: profileData.username,
+      }, {
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+
+      if (response.data.success) {
+        message.success("User has been removed successfully!");
+        setFriendStatus("not_friends");
+      }
+    } catch (error:any) {
+      const errorMessage = error.response ? error.response.data.error : error.message;
+      message.error(errorMessage);
+    }
+  };
 
   return (
     <div className="h-screen">
@@ -294,13 +317,22 @@ const ProfilePage = (props: any) => {
                     </button>
                     
                     ) : (
+                      <div className="flex gap-x-4">
                           <button
-      onClick={handleBlockUser}
-      className="flex items-center justify-center py-3 px-5 bg-red-600 text-white text-lg font-semibold rounded-xl hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform "
-    >
-      <MdBlockFlipped className="mr-2 text-xl" />
-      Block
-    </button>
+                onClick={handleBlockUser}
+                className="flex items-center justify-center py-3 px-5 bg-red-600 text-white text-lg font-semibold rounded-xl hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform "
+              >
+                <MdBlockFlipped className="mr-2 text-xl" />
+                Block
+              </button>
+                          <button
+                onClick={handleRemoveFriend}
+                className="flex items-center justify-center py-3 px-5 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform "
+              >
+                <MdBlockFlipped className="mr-2 text-xl" />
+                remove
+              </button>
+    </div>
                     )}
                   </>
                 )}

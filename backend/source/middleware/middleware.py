@@ -24,5 +24,6 @@ class TokenAuthMiddleware(BaseMiddleware):
         try:
             payload = jwt.decode(token, SECRET_KEY, algorithms=['HS256'])
             return Register.objects.get(id=payload['user_id'])
-        except Register.DoesNotExist:
+        except Exception as e:
+            print("error in token ws middlware:", str(e))
             return None

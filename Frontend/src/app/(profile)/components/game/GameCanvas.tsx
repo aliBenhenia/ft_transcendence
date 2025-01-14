@@ -280,7 +280,7 @@ const GameCanvas: React.FC = () => {
     const accessToken = localStorage.getItem("accessToken");
     if (!accessToken) {
       console.error("No access token found.");
-      router.push("/login");
+      router.push("/");
       return;
     }
 
@@ -295,18 +295,24 @@ const GameCanvas: React.FC = () => {
       switch (data.type) {
         case "timeout":
           console.log("timeout reached")
-          // setTimeoutReached(true);
           message.error(data?.message);
           router.push('/chat');
-          // setTimeout(() => router.push('/chat'), 1000);
+          break ;
+        case "game_accepted":
+          message.success(data?.message);
           break ;
         case "game_rejected":
           message.error(data?.message);
           router.push('/chat');
           break ;
 
+        case 'unauthorized':
+          console.log("unauthorized")
+          localStorage.removeItem('accessToken');
+          router.push('/');
+          break ;
+
         case 'close':
-          // console.log('')
           message.error(data?.message);
           websocket.close();
           router.push('/game');
