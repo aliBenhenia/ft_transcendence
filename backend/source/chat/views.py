@@ -16,15 +16,13 @@ from .models import GameInvite
 from pingpong.match import LiveGameFlow 
 from django.utils import timezone
 
-@api_view(['GET'])
-def fix_online(request):
-    obj = Register.objects.all()
-    for o in obj:
-        o.is_online = False
-        o.save()
-    return Response({'success'  : 'ok'}, status=200)
-    
-
+# @api_view(['GET'])
+# def fix_online(request):
+#     obj = Register.objects.all()
+#     for o in obj:
+#         o.is_online = False
+#         o.save()
+#     return Response({'success'  : 'ok'}, status=200)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -64,114 +62,117 @@ def query_conversation(request):
         data.append(informations)
     return Response({'vide': False, 'sender-info': sender_info, 'data': reversed(data)}, status=200)
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-def list_conversation(request):
-    account = request.user
+# @api_view(['GET'])
+# @permission_classes([IsAuthenticated])
+# def list_conversation(request):
+#     account = request.user
     
-    messages = MESSAGES.objects.filter(Q(account=account) | Q(sender=account))
-    if not messages:
-        return Response({'vide': True, 'message': SUCCESS[1]}, status=200)
-    chats = []
-    for message in messages:
-        client = message.account if message.account != account else message.sender
-        if client.username not in chats:
-            chats.append(client.username)
-            chats.append(chat_structure(account, client))
-    return Response({'vide': False, 'info' : chats}, status=200)
+#     messages = MESSAGES.objects.filter(Q(account=account) | Q(sender=account))
+#     if not messages:
+#         return Response({'vide': True, 'message': SUCCESS[1]}, status=200)
+#     chats = []
+#     for message in messages:
+#         client = message.account if message.account != account else message.sender
+#         if client.username not in chats:
+#             chats.append(client.username)
+#             chats.append(chat_structure(account, client))
+#     return Response({'vide': False, 'info' : chats}, status=200)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def send_message(request):
     account = request.user
-    INFO = request.data
-    reciver = INFO.get('account')
-    if not reciver:
+    data = request.data
+    receiver = data.get('account')
+    if not receiver:
         return Response({'error': ERROR[3]}, status=400)
-    obj, state = AccountLookup(reciver)
+    receiver, state = AccountLookup(receiver)
     if not state:
         return Response({'error': ERROR[2]}, status=404)
-    message = INFO.get('message')
+    message = data.get('message')
     if not message:
         return Response({'error': ERROR[5]}, status=400)
 
-    is_blk, option = is_blocked(account, obj)
+    is_blk, option = is_blocked(account, receiver)
     if is_blk:
         if option:
             return Response({'error': ERROR[8]}, status=400)
         return Response({'error': ERROR[9]}, status=400)
 
-    new = create_message(account, obj, message)
-    new_message(account, obj, new)
+    new = create_message(account, receiver, message)
+    new_message(account, receiver, new)
     return Response({'success': SUCCESS[2]}, status=200)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def send_game_invite(request):
-    sender = request.user
-    data = request.data
-    receiver = data.get('to_invite')
-    if not receiver:
-        return Response({'error': ERROR[3]}, status=400)
-    to_invite, state = AccountLookup(receiver)
-    if not state:
-        return Response({'error': ERROR[2]}, status=404)
-    is_blk, option = is_blocked(sender, to_invite)
-    if is_blk:
-        if option:
-            return Response({'error': ERROR[8]}, status=400)
-        return Response({'error': ERROR[9]}, status=400)
-    #
-    if to_invite.username in LiveGameFlow.in_game:
-        return Response({'error', 'Currently in game'}, status=400)
+    try:
+        sender = request.user
+        data = request.data
+        receiver = data.get('to_invite')
+        if not receiver:
+            return Response({'error': ERROR[3]}, status=400)
+        if receiver == sender.username:
+            return Response({'error': 'Invalid Game Invite'}, status=400)
+        to_invite, state = AccountLookup(receiver)
+        if not state:
+            return Response({'error': ERROR[2]}, status=404)
+        is_blk, option = is_blocked(sender, to_invite)
+        if is_blk:
+            if option:
+                return Response({'error': ERROR[8]}, status=400)
+            return Response({'error': ERROR[9]}, status=400)
+        #
+        if to_invite.username in LiveGameFlow.in_game:
+            return Response({'error', 'Currently in game'}, status=400)
 
-    game_invite = GameInvite.objects.filter(inviter=sender, invited=to_invite, status='pending').first()
-    if game_invite:
-        current_time = timezone.now()
-        time_diff = current_time - game_invite.created_at
-        if time_diff.total_seconds() <= 15:
-            return Response({'error', 'A game invite is already pending.'}, status=400)
-        game_invite.status = 'timeout'
-        game_invite.save()
+        game_invite = GameInvite.objects.filter(inviter=sender, invited=to_invite, status='pending').first()
+        if game_invite:
+            current_time = timezone.now()
+            time_diff = current_time - game_invite.created_at
+            if time_diff.total_seconds() <= 15:
+                return Response({'error', 'A game invite is already pending.'}, status=400)
+            game_invite.status = 'timeout'
+            game_invite.save()
 
-    room_name = LiveGameFlow.generate_room_id()
-    GameInvite.objects.create(room_name=room_name, inviter=sender, invited=to_invite, status='pending')
-    LiveGameFlow.invites[room_name] = {'players' : [sender.id, to_invite.id],'connections': []}
-    notification_data =  {
-        'type': 'game_invite',
-        'room_name' : room_name,
-        'sender' : sender.username,
-        'picture' : str(sender.photo_url),
-        'full-name' : f"{sender.first_name} {sender.last_name}",
-    }   
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(to_invite.token_notify, notification_data)
-    # async_to_sync(channel_layer.group_send)(sender.token_notify, {'type' : 'join_room', 'room_name' : room_name})
+        room_name = LiveGameFlow.generate_room_id()
+        GameInvite.objects.create(room_name=room_name, inviter=sender, invited=to_invite, status='pending')
+        LiveGameFlow.invites[room_name] = {'players' : [sender.id, to_invite.id],'connections': []}
+        notification_data =  {
+            'type': 'game_invite',
+            'room_name' : room_name,
+            'sender' : sender.username,
+            'picture' : str(sender.photo_url),
+            'full-name' : f"{sender.first_name} {sender.last_name}",
+        }   
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(to_invite.token_notify, notification_data)
+        # async_to_sync(channel_layer.group_send)(sender.token_notify, {'type' : 'join_room', 'room_name' : room_name})
 
-    return Response({'success': SUCCESS[3], 'room_name' : room_name}, status=200)
+        return Response({'success': SUCCESS[3], 'room_name' : room_name}, status=200)
+    except:
+        return Response({'error' : 'invalid format'}, status=400)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def accept_game_invite(request):
-    receiver = request.user
-    if not request.body:
-        return Response({"error": "Empty request body"}, status=400)
     try:
-        data = json.loads(request.body)
+        receiver = request.user
+        room_name = request.data.get('room_name', None)
+        if room_name is None:
+            return Response({"error": "room name key required"}, status=400)
+        try:
+            game_invite = GameInvite.objects.get(room_name=room_name, invited=receiver, status='pending')
+        except GameInvite.DoesNotExist:
+            return Response({'error': 'Invalid game invite'}, status=400)
+        game_invite.status = 'accepted'
+        game_invite.save()
+        invited = receiver
+        # channel_layer = get_channel_layer()
+        # async_to_sync(channel_layer.group_send)(invited.token_notify, {'type' : 'join_room', 'room_name' : room_name})
+        return Response({'success': SUCCESS[4]})
     except:
-        return Response({"error": "Invalid JSON format"}, status=400)
-    room_name = data.get('room_name', '')
-    try:
-        game_invite = GameInvite.objects.get(room_name=room_name, invited=receiver, status='pending')
-    except GameInvite.DoesNotExist:
-        return Response({'error': 'Invalid game invite'}, status=400)
-    game_invite.status = 'accepted'
-    game_invite.save()
-    invited = receiver
-    # channel_layer = get_channel_layer()
-    # async_to_sync(channel_layer.group_send)(invited.token_notify, {'type' : 'join_room', 'room_name' : room_name})
-
-    return Response({'success': SUCCESS[4]})
+        return Response({'error' : 'invalid format'}, status=400)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])

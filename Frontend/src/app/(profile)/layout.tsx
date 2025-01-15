@@ -21,16 +21,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   const dispatch = useDispatch();
   const urlSocket = process.env.NEXT_PUBLIC_WS_URL || "wss://localhost:8443/ws";
   useWebSocket(`${urlSocket}/connection/?token=`);
-  useEffect(() => {
-    const token = localStorage.getItem("accessToken") || '';
-    const getProfileData = async () => {
-      try {
-        const data = await FetchProfile(token);
-        dispatch(updateProfile(data.informations));
-      } catch (err) { }
-    };
-    getProfileData();
-  }, []);
+  // useEffect(() => {
+  //   const token = localStorage.getItem("accessToken") || '';
+  //   const getProfileData = async () => {
+  //     try {
+  //       const data = await FetchProfile(token);
+  //       dispatch(updateProfile(data.informations));
+  //     } catch (err) { }
+  //   };
+  //   getProfileData();
+  // }, []);
   return (
     <div className="flex h-screen overflow-hidden bg-[#001529]">
         <ProtectedRoute>

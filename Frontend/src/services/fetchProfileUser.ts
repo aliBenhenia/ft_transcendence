@@ -1,7 +1,11 @@
 import axios from 'axios';
+import {message} from 'antd';
+// import {useRouter} from 'next/navigation';
 
 const FetchProfileUser = async (token:any, username:any) => {
 
+
+    // const router = useRouter();
     const url = `${process.env.NEXT_PUBLIC_API_URL}/account/search/?username=${username}`;
     
     const headers = {
@@ -15,7 +19,7 @@ const FetchProfileUser = async (token:any, username:any) => {
         if (err.response) {
             if (err.response.status === 404) {
               message.error("User not found.");
-              router.push("/dashboard");
+            //   router.push("/dashboard");
             }
           }
 

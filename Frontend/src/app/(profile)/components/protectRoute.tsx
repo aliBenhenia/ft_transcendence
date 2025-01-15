@@ -27,7 +27,7 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
       }
     };
     getProfileData();
-  }, [token, dispatch, router]);
+  }, []);
 
   if (isLoading) {
     return null; 

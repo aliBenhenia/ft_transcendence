@@ -12,11 +12,8 @@ from datetime import timedelta
 import random
 
 class RegisterAccount(APIView):
-    
     permission_classes = [AllowAny]
-
     def post(self, request):
-
         try:
             obj = Register.objects.create_user(request.data)
         except Exception as e:
@@ -30,7 +27,7 @@ class RegisterAccount(APIView):
 
 @api_view(['POST'])
 def intra_register(request):
-    code = request.data.get('code')
+    code = request.data.get('code', None)
     if not code:
         return Response({'error': 'Authorization code is missing'}, status=400)
     token_url = 'https://api.intra.42.fr/oauth/token'
@@ -58,15 +55,20 @@ def intra_register(request):
                 if Register.objects.filter(email=user_data['email']).first():
                     return Response({'error', 'Email already associated with an account.'})
                 password = uuid.uuid4().hex
-                random_numbers = ''.join([str(random.randint(0, 9)) for _ in range(4)])
-                generated_username = user_data.get('login') + random_numbers
+                # GENERATE A USERNAME
+                while True:
+                    random_numbers = ''.join([str(random.randint(0, 9)) for _ in range(4)])
+                    generated_username = f"{user_data.get('login')}{random_numbers}"
+                    if not Register.objects.filter(username=generated_username).exists():
+                        break
+                # DATA TO SAVE
                 data_to_save = {
                     'provider_id' : int(user_data.get('id')),
                     'username' : generated_username,
                     'first_name': user_data.get('first_name'),
                     'last_name': user_data.get('last_name'),
                     'email': user_data.get('email'),
-                    'photo_url': str(user_data['image']['link']),
+                    'photo_url': str(user_data.get('image', {}).get('link', settings.DEFAULT_PICTURE)),
                     'password' : password,
                     'repassword' : password,
                 }

@@ -11,7 +11,6 @@ green = "\033[92m"
 OFFLINE = '1337'
 
 class Notifications(AsyncWebsocketConsumer):
-    # Dictionary to track the number of active connections per user
     ONLINE = {}
 
     async def connect(self):
@@ -34,11 +33,9 @@ class Notifications(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def set_online_status(self, status):
-        """Updates user's online status in the database."""
         if self.user:
             self.user.is_online = status
-            self.user.save(update_fields=['is_online']) #
-            # await sync_to_async(self.user.save)(update_fields=['status'])
+            self.user.save(update_fields=['is_online'])
 
     async def add_user_to_online_group(self):
         """Add user to online group and manage online status in memory."""

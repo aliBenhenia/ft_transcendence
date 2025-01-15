@@ -7,13 +7,13 @@ import { useSelector } from 'react-redux';
 import rejectGameInvite from '@/services/reject_game_invite';
 import { RootState } from '@/store/store';
 import { useRouter } from 'next/navigation';
-import {message} from 'antd';
+import { message } from 'antd';
 import axios from 'axios';
 
 const GameNotification = () => {
   const notifications = useSelector((state: RootState) => state.notifications.notifications);
   const router = useRouter();
-  const acceptGameInvite = async(roomName:any)=> {
+  const AcceptGameInvite = async(roomName:any)=> {
    
     const token = localStorage.getItem('accessToken'); 
     if (!token) {
@@ -60,7 +60,7 @@ const GameNotification = () => {
               type="primary"
               onClick={() => {
                 isInteracted = true;
-                acceptGameInvite(latestNotification.room_name);
+                AcceptGameInvite(latestNotification.room_name);
                 notification.destroy();
               }}
             >
