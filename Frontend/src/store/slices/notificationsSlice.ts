@@ -37,6 +37,8 @@ const notificationsSlice = createSlice({
         },
         addNotification: (state:any, action) => {
             state.notifications.push(action.payload);
+            if (action.payload.subject === "NEW_MESSAGE" || action.payload.subject === "GAME_INVITE")
+                return;
             state.unreadCount += 1;
         },
     },

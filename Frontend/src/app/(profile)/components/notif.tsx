@@ -99,7 +99,9 @@ const Notification: React.FC = () => {
                     </div>
                     <div className="max-h-60 overflow-y-auto">
                         {notifications.length > 0 ? (
-                            notifications.map((notification: any, index: number) => (
+                            notifications
+                            .filter((notification: any) => notification.subject !== "NEW_MESSAGE" && notification.subject !== "GAME_INVITE")
+                            .map((notification: any, index: number) => (
                                 <div key={index} className="flex items-center space-x-2 p-2 transition">
                                     <img
                                         src={notification.picture}
