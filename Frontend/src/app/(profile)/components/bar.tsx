@@ -54,14 +54,11 @@ const Nav = () => {
 
   const menuItems = [
     { label: <Link href="/dashboard">Dashboard</Link>, key: "1", icon: <FaHome className="text-xl" /> },
-    { label: <Link href="/profile">Profile</Link>, key: "2", icon: <FaUser className="text-xl" /> },
-    { label: <Link href="/game">Game</Link>, key: "3", icon: <FaGamepad className="text-xl" /> },
-    { label: <Link href="/tournament">tournament</Link>, key: "4", icon: <GiChampions className="text-xl"/> },
-    { label: <Link href="/chat">Chat</Link>, key: "5", icon: <FaCommentAlt className="text-xl" /> },
-    { label: <Link href="/leaderboard">Leaderboard</Link>, key: "6", icon: <FaTrophy className="text-xl" /> },
-    { label: <Link href="/setting">Setting</Link>, key: "7", icon: <FaCog className="text-xl" /> },
-    { label: <Link href="/req">Friends</Link>, key: "8", icon: <FaSearch className="text-xl" /> },
-    // { label: <span  onClick={handleLogout}>Logout</span>, key: "8", icon: <FaSignOutAlt onClick={handleLogout} className="text-xl" />, style: { backgroundColor: "red" } }
+    { label: <Link href="/game">Game</Link>, key: "2", icon: <FaGamepad className="text-xl" /> },
+    { label: <Link href="/tournament">tournament</Link>, key: "3", icon: <GiChampions className="text-xl"/> },
+    { label: <Link href="/chat">Chat</Link>, key: "4", icon: <FaCommentAlt className="text-xl" /> },
+    { label: <Link href="/setting">Setting</Link>, key: "5", icon: <FaCog className="text-xl" /> },
+    { label: <Link href="/req">Friends</Link>, key: "6", icon: <FaSearch className="text-xl" /> },
   ];
 
   return (

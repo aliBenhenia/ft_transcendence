@@ -67,7 +67,7 @@ const Dashboard = (): JSX.Element => {
         />
         {profileState?.id && <LastMatchesCard userId={profileState.id} />}
       </div>
-      <Achievements />
+      {/* <Achievements /> */}
     </div>
   );
 };

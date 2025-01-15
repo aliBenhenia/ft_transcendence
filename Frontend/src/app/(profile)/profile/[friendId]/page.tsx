@@ -90,6 +90,7 @@ const ProfilePage = (props: any) => {
       } catch (err) {
         setError(true);
         // // $1.log("Error fetching profile data:", err);
+        router.push("/dashboard");
       } finally {
         setLoading(false);
       }
@@ -180,26 +181,6 @@ const ProfilePage = (props: any) => {
       message.error("Invalid token or username.");
       return;
     }
-    // try {
-    //   const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/friends/status/?username=${props.params.friendId}`, {
-    //     headers: { 'Authorization': `Bearer ${localStorage.getItem("accessToken")}` },
-    //   });
-    //   if (res.data.success) {
-    //     const { is_blocked,blocked_by } = res.data.success;
-    //     if (is_blocked)
-    //     {
-    //       if (blocked_by !== profileState.username)
-    //         {
-    //           message.error("you can't block this user");
-    //           router.push("/dashboard");
-    //           return;
-    //         }
-    //     }
-    //   }
-    // }
-    // catch (error:any) {
-    //   router.push("/dashboard");
-    // }
     const isBlocked = await checkIsBloked();
     if (isBlocked)
       return;

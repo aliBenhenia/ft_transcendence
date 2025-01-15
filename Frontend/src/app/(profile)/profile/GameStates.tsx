@@ -118,13 +118,6 @@ const GameStats = ({ level, loss, matches, win,isUser ,last_match="win"}:GameSta
         <span className="text-xs">Stats</span>
       </button>
       <button
-        className={`flex flex-col items-center w-1/3 py-2 text-lg font-semibold rounded-2xl ${activeTab === 'achievements' ? 'bg-blue-600 text-white shadow-lg' : 'bg-transparent text-gray-600  hover:text-blue-600'} transition-all duration-300 ease-in-out`}
-        onClick={() => setActiveTab('achievements')}
-      >
-        <FaTrophy className="text-2xl" />
-        <span className="text-xs">Achievements</span>
-      </button>
-      <button
         className={`flex flex-col items-center w-1/3 py-2 text-lg font-semibold rounded-2xl ${activeTab === 'friends' ? 'bg-blue-600 text-white shadow-lg' : 'bg-transparent text-gray-600  hover:text-blue-600'} transition-all duration-300 ease-in-out`}
         onClick={() => setActiveTab('friends')}
       >
@@ -159,36 +152,6 @@ const GameStats = ({ level, loss, matches, win,isUser ,last_match="win"}:GameSta
                 </p>
               </div>
             </div>
-          </div>
-        </div>
-      )}
-  
-      {/* Achievements Tab */}
-      {activeTab === 'achievements' && (
-        <div className="p-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {achievements.map((achievement, idx) => (
-              <div
-                key={idx}
-                className={`cursor-pointer relative flex items-center justify-center p-4 rounded-2xl shadow-lg transition-transform duration-300 transform cursor-pointer hover:scale-105 ${
-                  achievement.completed ? 'bg-[#07325F]' : 'bg-gray-700 opacity-50 blur-sm'
-                }`}
-              >
-                <div className="flex flex-col items-center">
-                  <div className="text-white text-5xl transition-transform duration-300 transform hover:scale-125">
-                    {achievement.icon}
-                  </div>
-                  <div className="text-white text-lg mt-2">{achievement.title}</div>
-                  <div className="text-sm text-gray-300">{achievement.description}</div>
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center text-center bg-black bg-opacity-60 opacity-0 transition-opacity duration-300 hover:opacity-100 rounded-2xl">
-                  <div className="transform transition-transform duration-300 scale-100 hover:scale-110">
-                    <p className="font-bold text-lg">{achievement.title}</p>
-                    <p className="text-sm text-gray-300">{achievement.description}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       )}
