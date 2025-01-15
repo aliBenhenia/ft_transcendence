@@ -1,6 +1,8 @@
 import axios from 'axios';
 import {message} from 'antd';
+import {useRouter} from 'next/navigation';
 async function acceptGameInvite(roomName:any) {
+    const router = useRouter();
     const token = localStorage.getItem('accessToken'); // Assuming the token is stored in localStorage
     if (!token) {
         // $1.error('No auth token found');
@@ -17,9 +19,10 @@ async function acceptGameInvite(roomName:any) {
                 }
             }
         );
+        if (response.status === 200)
+            router.push(`/game/online?room_name=${roomName}`);
 
-        // $1.log('Game invite accepted:', response.data);
-        // Handle successful acceptance, such as showing a message or redirecting
+
 
     } catch (error:any) {
         if (error.response) {

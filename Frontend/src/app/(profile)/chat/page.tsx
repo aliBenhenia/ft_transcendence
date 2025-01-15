@@ -276,6 +276,8 @@ export default function ChatPage() {
         body: JSON.stringify({ to_invite: selectedUser.on_talk }),
       })
       const data = await response.json()
+      if (response.ok)
+        router.push(`/game/online?room_name=${data.room_name}`)
       if (!data.success) {
         throw new Error(data.message || 'Error sending game request.')
       }

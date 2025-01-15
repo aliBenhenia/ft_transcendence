@@ -11,10 +11,13 @@ const FetchProfileUser = async (token:any, username:any) => {
     try {
         const response = await axios.get(url, { headers });
         return response.data;
-    } catch (error:any) {
-        if (error.response) {
-                // $1.log("=====>",error.response)
-        }
+    } catch (err:any) {
+        if (err.response) {
+            if (err.response.status === 404) {
+              message.error("User not found.");
+              router.push("/dashboard");
+            }
+          }
 
     }
 };

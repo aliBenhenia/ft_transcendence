@@ -87,10 +87,8 @@ const ProfilePage = (props: any) => {
         setProfileData(data.account);
         setListFriends(data.details.friends);
         setError(false);
-      } catch (err) {
+      } catch (err:any) {
         setError(true);
-        // // $1.log("Error fetching profile data:", err);
-        router.push("/dashboard");
       } finally {
         setLoading(false);
       }
@@ -118,7 +116,7 @@ const ProfilePage = (props: any) => {
       } catch (error:any) {
         const errorMessage = error.response ? error.response.data.error : error.message;
         message.error(errorMessage);
-        // router.push("/dashboard");
+        router.push("/dashboard");
       }
     };
 

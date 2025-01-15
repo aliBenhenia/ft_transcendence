@@ -7,7 +7,7 @@ import { useRouter } from 'next/navigation';
 
 
 interface ServerMessage {
-  case: 'ONLINE' | 'OFFLINE' | 'NEW_MESSAGE' | 'INVITATION' | 'DECLINE' | 'ACCEPT' | 'UNFRIEND' | `GAME_INVITE`;
+  case: 'ONLINE' | 'OFFLINE' | 'NEW_MESSAGE' | 'INVITATION' | 'DECLINE' | 'ACCEPT' | 'UNFRIEND' | `GAME_INVITE` | "unauthorized";
   sender: string;
   picture?: string;
   'full-name'?: string;
@@ -53,13 +53,14 @@ const useWebSocket = (url: string) => {
 
     socket.onopen = () => {
       // $1.log("WebSocket connection established.");
+      
     };
 
     socket.onmessage = (event: MessageEvent) => {
       // $1.log("WebSocket message received:===>", event.data);
       const serverMessage = JSON.parse(event.data);
       const { case: messageCase, sender, picture } = serverMessage;
-
+     
       switch (messageCase) {
         case 'ONLINE':
         case 'OFFLINE':
@@ -106,6 +107,10 @@ const useWebSocket = (url: string) => {
           handleNotification('Game Invite Rejected', `Rejected by: ${sender}`,React.createElement(Avatar, { src: picture }), 2);
             
             break;
+        case "unauthorized":
+          localStorage.removeItem('accessToken');
+          router.push('/');
+          break;
         default:
           // $1.warn("Unhandled message case:", messageCase);
       }

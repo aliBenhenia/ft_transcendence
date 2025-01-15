@@ -204,7 +204,7 @@ function PingPongGame() {
                 ))}
               </div>
             ) : (
-              <h2 className="text-center text-gray-400 p-6">You haven't added any friends yet!</h2>
+              <h2 className="text-center text-gray-400 p-6">You havent added any friends yet!</h2>
             )}
           </div>
         </div>

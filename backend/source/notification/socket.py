@@ -16,9 +16,8 @@ class Notifications(AsyncWebsocketConsumer):
 
     async def connect(self):
         try:
-            user = self.scope['user']
-            self.user = user
-            if user:
+            self.user = self.scope['user']
+            if self.user:
                 await self.set_online_status(True)  # Mark user as online in DB
                 await self.accept()
                 await self.add_user_to_online_group()  # Track online status in memory
@@ -27,7 +26,8 @@ class Notifications(AsyncWebsocketConsumer):
                 await self.channel_layer.group_add(self.user.token_notify, self.channel_name)
                 await self.channel_layer.group_add(OFFLINE, self.channel_name)
             else:
-                await self.close()
+                await self.send(json.dumps({'case':'unauthorized'}))
+                return await self.close()
         except Exception as e:
             print(f'[ERROR] Connection failed: {e}')
             await self.close()
@@ -51,6 +51,8 @@ class Notifications(AsyncWebsocketConsumer):
             Notifications.ONLINE[self.user.username] += 1
 
     async def disconnect(self, close_code):
+        if self.user is None:
+            return
         # Decrement active connections count for the user
         active_connections = Notifications.ONLINE.get(self.user.username, 0)
 

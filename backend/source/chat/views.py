@@ -144,12 +144,11 @@ def send_game_invite(request):
         'picture' : str(sender.photo_url),
         'full-name' : f"{sender.first_name} {sender.last_name}",
     }   
- 
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(to_invite.token_notify, notification_data)
-    async_to_sync(channel_layer.group_send)(sender.token_notify, {'type' : 'join_room', 'room_name' : room_name})
+    # async_to_sync(channel_layer.group_send)(sender.token_notify, {'type' : 'join_room', 'room_name' : room_name})
 
-    return Response({'success': SUCCESS[3]}, status=200)
+    return Response({'success': SUCCESS[3], 'room_name' : room_name}, status=200)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -169,8 +168,8 @@ def accept_game_invite(request):
     game_invite.status = 'accepted'
     game_invite.save()
     invited = receiver
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(invited.token_notify, {'type' : 'join_room', 'room_name' : room_name})
+    # channel_layer = get_channel_layer()
+    # async_to_sync(channel_layer.group_send)(invited.token_notify, {'type' : 'join_room', 'room_name' : room_name})
 
     return Response({'success': SUCCESS[4]})
 
