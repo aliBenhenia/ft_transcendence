@@ -35,7 +35,6 @@ class LiveGameFlow(AsyncWebsocketConsumer):
     LEVEL_RANGE_INCREMENT = 1
     MAX_WAIT_TIME = 30
     invites = {}
-    # connected_players = {}
 
 
     @staticmethod

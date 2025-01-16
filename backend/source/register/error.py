@@ -1,11 +1,11 @@
-ALL_CASSES = {
+ERRORS = {
     
     # PASSWORD CASES 
     
-    "1": 'Password cannot be empty.',
+    "1": 'Password is required',
     "2": 'Password must be at least 12 characters long.',
     "3": 'Password too long: The password exceeds the maximum allowed length.',
-    "4": 'Re-Password is required: The re password field is left blank.',
+    "4": 'Re-Password is required',
     "5": 'Password confirmation does not match: The confirmation password does not match the original password.',
 
     # EMAIL CASES

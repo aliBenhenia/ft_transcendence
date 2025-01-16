@@ -36,11 +36,11 @@ class RegisterManager(BaseUserManager):
 
     @staticmethod
     def ValidateRegister(requested, validate=True):
-        RegisterManager.ValidateEmail(requested.get('email', None),  validate)
-        RegisterManager.ValidateUsername(requested.get('username', None),  validate)
-        RegisterManager.ValidatePassword(requested.get('password', None), requested.get('repassword', None),  validate)
         RegisterManager.ValidateName(requested.get('first_name', None), True, validate)
         RegisterManager.ValidateName(requested.get('last_name', None), False,  validate)
+        RegisterManager.ValidateUsername(requested.get('username', None),  validate)
+        RegisterManager.ValidateEmail(requested.get('email', None),  validate)
+        RegisterManager.ValidatePassword(requested.get('password', None), requested.get('repassword', None),  validate)
 
     @staticmethod
     def ValidateName(name, state, to_validate):
@@ -110,10 +110,6 @@ class RegisterManager(BaseUserManager):
 
         if not password:
             raise RegisterException("1")
-        if not re_password:
-            raise RegisterException("4")
-        if re_password != password:
-            raise RegisterException("5")
         if len(password) < 12:
             raise RegisterException("2")
         if len(password) > 98:
@@ -126,6 +122,10 @@ class RegisterManager(BaseUserManager):
             raise RegisterException("24")
         if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
             raise RegisterException("25")
+        if not re_password:
+            raise RegisterException("4")
+        if re_password != password:
+            raise RegisterException("5")
 
 class Register(AbstractBaseUser):
 
