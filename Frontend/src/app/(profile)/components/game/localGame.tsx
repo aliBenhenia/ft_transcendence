@@ -139,7 +139,7 @@ function OneVone() {
     
             // Check for winner
             if (player1Score >= parseInt(scoreToWin) || player2Score >= parseInt(scoreToWin)) {
-              setWinner(player1Score >= parseInt(scoreToWin) ? 'Player 1' : 'Player 2');
+              setWinner(player1Score >= parseInt(scoreToWin) ? `${profileState.username}` : 'Player 2');
               return;
             }
     
