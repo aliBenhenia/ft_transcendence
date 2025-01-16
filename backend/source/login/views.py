@@ -11,31 +11,27 @@ from django.contrib.auth import authenticate
 
 class TokenOnLoginPairView(TokenObtainPairView):
     def post(self, request, *args, **kwargs):
-        
-        email = request.data.get('email')
-        password = request.data.get('password')
-        
-        if not email:
-            return Response({'error': ERROR_MSG[1]}, status=400)
-        if not password:
-            return Response({'error': ERROR_MSG[2]}, status=400)
-            
-        user = authenticate(request, email=email, password=password)
-        if user is None:
-            return Response({'error': ERROR_MSG[3]}, status=404)
         try:
-            token_serializer = TokenObtainPairSerializer(data={'email': email, 'password': password})
-            if token_serializer.is_valid():
-                if user.SECURE.activate:
-                    code  = generate_code()
-                    user.SECURE.code = code
-                    user.SECURE.status = 'pending'
-                    user.SECURE.save()
-                    send_email(user.email, code, "2FA VERIFICATION")
-                    return Response({'2FA': True, 'user_id' : str(user.id)}, status=200)
-                else:
-                    return Response(token_serializer.validated_data, status=200)
+            email = request.data.get('email')
+            password = request.data.get('password')
+            if not email:
+                return Response({'error': ERROR_MSG[1]}, status=400)
+            if not password:
+                return Response({'error': ERROR_MSG[2]}, status=400)
+            try:
+                token_serializer = TokenObtainPairSerializer(data={'email': email, 'password': password})
+                if token_serializer.is_valid(raise_exception=True):
+                    user = token_serializer.user
+                    if user.SECURE.activate:
+                        code  = generate_code()
+                        user.SECURE.code = code
+                        user.SECURE.status = 'pending'
+                        user.SECURE.save()
+                        send_email(user.email, code, "2FA VERIFICATION")
+                        return Response({'2FA': True, 'user_id' : str(user.id)}, status=200)
+                    else:
+                        return Response(token_serializer.validated_data, status=200)
+            except:
+                return Response({'error': ERROR_MSG[4]}, status=404)
         except:
-            pass
-        return Response({'error': ERROR_MSG[4]}, status=404)
-
+            return Response({'error' : 'Invalid format'}, status=400)
