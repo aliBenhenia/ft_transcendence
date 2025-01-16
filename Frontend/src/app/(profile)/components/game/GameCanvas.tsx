@@ -290,11 +290,11 @@ const GameCanvas: React.FC = () => {
     const handleWebSocketMessage = (event: MessageEvent) => {
       const data = JSON.parse(event.data);
 
-      console.log("backend message :", data?.message);
+      // console.log("backend message :", data?.message);
 
       switch (data.type) {
         case "timeout":
-          console.log("timeout reached")
+          // console.log("timeout reached")
           message.error(data?.message);
           router.push('/chat');
           break ;
@@ -307,7 +307,7 @@ const GameCanvas: React.FC = () => {
           break ;
 
         case 'unauthorized':
-          console.log("unauthorized")
+          // console.log("unauthorized")
           localStorage.removeItem('accessToken');
           router.push('/');
           break ;
@@ -335,7 +335,7 @@ const GameCanvas: React.FC = () => {
           break;
 
         case "game_state":
-          console.log("game state", data.game_state);
+          // console.log("game state", data.game_state);
           setGameState(data.game_state);
           setTimeoutReached(false);
           setIsSearching(false);
@@ -356,20 +356,20 @@ const GameCanvas: React.FC = () => {
           
         case "searching":
           setIsSearching(true);
-          console.log("Searching for an opponent...");
+          // console.log("Searching for an opponent...");
           break;
         case "searching_expanded":
           setIsSearching(true);
-          console.log("Searching expanded");
+          // console.log("Searching expanded");
           break;
 
         case "no_opponent":
           setTimeoutReached(true);
-          console.log("No opponent found.");
+          // console.log("No opponent found.");
           break;
 
         default:
-          console.warn("Unknown WebSocket message type:", data.type);
+          // console.warn("Unknown WebSocket message type:", data.type);
       }
     };
 
@@ -418,7 +418,7 @@ const GameCanvas: React.FC = () => {
 
  
   const leaveGame = () => {
-    console.log("leaving game");
+    // console.log("leaving game");
     ws?.send(JSON.stringify({ action: "leave" }));
     ws?.close();
     const path = room_name ? "/chat" : "/game";

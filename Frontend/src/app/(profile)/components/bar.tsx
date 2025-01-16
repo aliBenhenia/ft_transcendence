@@ -41,6 +41,7 @@ const Nav = () => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
         setIsMobile(true);
+        setCollapsed(true);
       } else {
         setIsMobile(false);
       }

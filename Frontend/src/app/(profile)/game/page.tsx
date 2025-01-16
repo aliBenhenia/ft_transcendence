@@ -27,10 +27,10 @@ function PingPongGame() {
     const fetchFriendList = async () => {
       try {
         const friends = await getFriendListUser(accessToken, username);
-        console.log("Fetched friends:", friends);
+        // console.log("Fetched friends:", friends);
         setFriendList(friends || []);
       } catch (error) {
-        console.error("Error fetching friend list:", error);
+        // console.error("Error fetching friend list:", error);
       } finally {
         setLoadingFriends(false);
       }
