@@ -1,5 +1,5 @@
 from .models import SECURITY
-from register.models import Register
+from register.models import Register, RegisterManager
 from security.tools import AccountLookup
 from .cases import ERROR_MSG, SUCCESS_MSG
 from rest_framework.response import Response
@@ -19,50 +19,61 @@ from server.settings import FRONT_END_URL
 def find_account(request):
     account = request.GET.get('account')
     if not account:
-        return Response({'error': ERROR_MSG['16']}, status=400)
-    obj, state = AccountLookup(account)
-    if not state:
+        return Response({'error': 'The "account" query parameter is required.'}, status=400)
+    if Register.objects.filter(username=account).exists():
+        user = Register.objects.filter(username=account).first()
+    else:
         return Response({'error': ERROR_MSG['1']}, status=404)
     data = {
-        'email' : obj.email,
-        'full_name' : f"{obj.first_name} {obj.last_name}",
-        'picture' : obj.photo_url,
+        'email' : user.email,
+        'full_name' : f"{user.first_name} {user.last_name}",
+        'picture' : user.photo_url,
     }
     return Response({'success': data}, status=200)
 
 @api_view(['POST'])
 def request_password_reset(request):
-    email = request.data.get("email")
     try:
-        user = Register.objects.get(email=email)
+        email = request.data.get("email")
+        if not email:
+            return Response({'error': 'email is required'}, status=404)
+        if Register.objects.filter(email=email).exists():
+            user = Register.objects.filter(email=email).first()
+        else:
+            return Response({'error': 'User with this email does not exist.'}, status=404)
+
         token = PasswordResetTokenGenerator().make_token(user)
         uid = urlsafe_base64_encode(force_bytes(user.pk))
         frontend_url = FRONT_END_URL
         reset_path = f"/reset-password/?uid={uid}&token={token}"
         reset_link = frontend_url + reset_path
         send_email(email, reset_link, "Password reset")
-        print(reset_link)
         return Response({'message': 'Password reset link sent to your email.'}, status=200)
-    except Register.DoesNotExist:
-        return Response({'error': 'User with this email does not exist.'}, status=404)
+    except:
+        return Response({'error': 'User with this email does not exist.'}, status=400)
 
 @api_view(['POST'])
 def reset_password(request):
-    uid = request.data.get('uid')
-    token = request.data.get('token')
-    new_password = request.data.get('newPassword')
-
     try:
-        user_id = urlsafe_base64_decode(uid).decode()
-        user = Register.objects.get(pk=user_id)
-    except (TypeError, ValueError, OverflowError, Register.DoesNotExist):
-        return Response({"error": "Invalid reset link"}, status=400)
+        uid = request.data.get('uid')
+        token = request.data.get('token')
+        new_password = request.data.get('newPassword')
+        if not uid or not token or not new_password:
+            return Response({"error": "Invalid reset password request"}, status=400)
+        try:
+            user_id = urlsafe_base64_decode(uid).decode()
+            user = Register.objects.get(pk=user_id)
+        except (TypeError, ValueError, OverflowError, Register.DoesNotExist):
+            return Response({"error": "Invalid reset link"}, status=400)
 
-    token_generator = PasswordResetTokenGenerator()
-    if not token_generator.check_token(user, token):
-        return Response({"error": "Invalid or expired token"}, status=400)
+        token_generator = PasswordResetTokenGenerator()
+        if not token_generator.check_token(user, token):
+            return Response({"error": "Invalid or expired token"}, status=400)
+        #
+        RegisterManager.ValidatePassword()
+        user.set_password(new_password)
+        user.save()
 
-    user.set_password(new_password)
-    user.save()
-
-    return Response({"status": "Password reset successful"}, status=200)
+        return Response({"success": "Password reset successful"}, status=200)
+    except:
+        return Response({"error": "Invalid format"}, status=200)

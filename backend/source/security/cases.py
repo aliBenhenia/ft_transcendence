@@ -19,7 +19,7 @@ ERROR_MSG = {
 
     # RESET PASSWORD CASES 
 
-    "1" : "We couldn't find an account matching the provided information. Please double-check your username or email address and try again.",
+    "1" : "account not found",
     "2" : "Retry limit reached. Please wait ",
     "3" : "Invalid Verification code, Please try again .",
     "4" : "Invalid Verification code, Please enter a numeric code.",
