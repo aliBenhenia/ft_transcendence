@@ -54,6 +54,13 @@ export default function Settings() {
 
   const handleSave = async (event: React.FormEvent) => {
     event.preventDefault()
+    if ((!avatar && !username && !email && !firstName && !lastName && !oldPassword && !password && !rePassword))
+    {
+      message.error(("Empty fields"));
+      
+      return;
+    }
+      
     setIsLoading(true)
     setError('')
     setSuccess('')
@@ -65,6 +72,8 @@ export default function Settings() {
       setIsLoading(false)
       return
     }
+
+   
 
     const formData = new FormData()
     if (avatar) formData.append('picture', avatar)
@@ -102,7 +111,7 @@ export default function Settings() {
     } catch (error:any) {
       if (error?.response?.status == 400)
       {
-        message.error(error?.response?.data?.error);
+        message.error(error?.response?.data?.error || "error");
         return  ;
       }
       if (error?.response?.status == 409)

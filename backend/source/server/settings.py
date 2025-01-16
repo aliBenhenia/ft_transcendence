@@ -18,7 +18,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR , 'media')
 
 # PICTURE FULL URL
 
-FULL_PICTURE = f'https://{HOST_IP}:8443/media/avatars/unknown.jpeg'
+DEFAULT_PICTURE = f'https://{HOST_IP}:8443/media/avatars/unknown.jpeg'
 PATH_PICTURE = f'https://{HOST_IP}:8443'
 
 DEBUG = True

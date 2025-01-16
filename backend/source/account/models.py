@@ -10,9 +10,6 @@ class STATICS(models.Model):
     level = models.IntegerField(default=0)
     level_progress_percentage = models.IntegerField(default=0)
 
-    achievements = models.IntegerField(default=1)
-    rank = models.IntegerField(default=0)
-
     def calculate_level(self):
 
         xps_for_each_level = [0, 100, 300, 600, 1000]
