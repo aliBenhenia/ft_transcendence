@@ -14,6 +14,7 @@ from django.utils.encoding import force_bytes
 from django.urls import reverse
 from login.tools import send_email
 from server.settings import FRONT_END_URL
+from register.error import ERRORS
 
 @api_view(['GET'])
 def find_account(request):
@@ -70,10 +71,14 @@ def reset_password(request):
         if not token_generator.check_token(user, token):
             return Response({"error": "Invalid or expired token"}, status=400)
         #
-        RegisterManager.ValidatePassword(new_password, new_password ,True)
+        try:
+            RegisterManager.ValidatePassword(new_password, new_password ,True)
+        except Exception as e:
+            error_case = str(e)
+            return Response({'error': ERRORS[error_case]}, status=400)
         user.set_password(new_password)
         user.save()
 
         return Response({"success": "Password reset successful"}, status=200)
     except:
-        return Response({"error": "Invalid format"}, status=200)
+        return Response({"error": "Invalid format"}, status=400)

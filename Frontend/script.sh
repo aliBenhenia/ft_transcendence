@@ -1,4 +1,4 @@
 #!/bin/bash
 
-npm run buid
+npm run build
 npm start
