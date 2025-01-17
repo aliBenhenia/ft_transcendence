@@ -1,24 +1,9 @@
 FROM node:18
 
-# Set the working directory
 WORKDIR /app
-
-# Copy package.json and package-lock.json (if present)
+RUN touch .env
 COPY package*.json ./
-
-# Install dependencies
 RUN npm install
-
-# Copy the rest of the application code (including .env)
 COPY . .
-
-# Build the Next.js application for production
-# RUN npm run build
-
-# Check if build output exists in .next directory
-
-# RUN ls -l .next
-# ENV NODE_ENV=production
-
-# Start the app in production mode
-CMD ["npm", "run", "dev"]
+RUN chmod +x script.sh
+CMD ["sh", "script.sh"]

@@ -70,7 +70,7 @@ def reset_password(request):
         if not token_generator.check_token(user, token):
             return Response({"error": "Invalid or expired token"}, status=400)
         #
-        RegisterManager.ValidatePassword()
+        RegisterManager.ValidatePassword(new_password, new_password ,True)
         user.set_password(new_password)
         user.save()
 
