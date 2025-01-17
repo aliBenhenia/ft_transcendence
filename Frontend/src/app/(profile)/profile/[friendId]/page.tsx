@@ -17,6 +17,9 @@ import { TbLockOpen2 } from "react-icons/tb";
 import { FaUserPlus } from 'react-icons/fa'
 import { FaTimes } from 'react-icons/fa';
 import { FaComment } from 'react-icons/fa';
+import { CiCircleRemove } from "react-icons/ci";
+
+
 
 
 interface profileData {
@@ -357,9 +360,9 @@ const ProfilePage = (props: any) => {
               </button>
                           <button
                 onClick={handleRemoveFriend}
-                className="flex items-center justify-center py-3 px-5 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-red-700 active:bg-red-800 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all duration-300 ease-in-out transform "
+                className="flex items-center justify-center py-3 px-5 bg-blue-600 text-white text-lg font-semibold rounded-xl hover:bg-slate-700 active:bg-slate-800 focus:outline-none focus:ring-2  focus:ring-offset-2 transition-all duration-300 ease-in-out transform "
               >
-                <MdBlockFlipped className="mr-2 text-xl" />
+                <CiCircleRemove className="mr-2 text-xl" />
                 remove
               </button>
     </div>
