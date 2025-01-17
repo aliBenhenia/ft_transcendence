@@ -1,7 +1,7 @@
 from PIL import Image
 from .achivement import ACHIEVEMENTS
 from register.models import Register, RegisterException,  RegisterManager
-from register.error import ALL_CASSES
+from register.error import ERRORS
 from server.settings import PATH_PICTURE
 from .cases import ERROR_MSG, SUCCESS_MSG
 from rest_framework.response import Response
@@ -109,7 +109,7 @@ def update_profile(request):
         try:
             RegisterManager.ValidateRegister(request.data, False)
         except RegisterException as e:
-            return Response({'error' : ALL_CASSES[str(e)]}, status=400)
+            return Response({'error' : ERRORS[str(e)]}, status=400)
         #
         Account.set_password(new_password)
         Account.save()

@@ -52,15 +52,6 @@ class SECURITY(models.Model):
             return True
         return False
 
-    def send_code(self, state):
-        if state:
-            self.code = random.randint(100000, 999999)
-            print('code : ', self.code)
-        else:
-            self.code_2fa = random.randint(100000, 999999)
-            print('code : ', self.code_2fa)
-        self.save()
-
     def convert_to_datetime(self, time):
         if not time:
             return None
