@@ -17,8 +17,6 @@ import FetchProfile from '@/services/FetchProfile'
 
 export default function ChatPage() {
   const router = useRouter();
-  const socketUrl = process.env.NEXT_PUBLIC_API_URL || 'localhost:9003';
-  const messagesEndRef = useRef<HTMLDivElement>(null)
   const [users, setUsers] = useState<any>([])
   const [filteredUsers, setFilteredUsers] = useState<any>([])
   const [messages, setMessages] = useState<any>([])
@@ -39,7 +37,7 @@ export default function ChatPage() {
            
            if (selectedUser && lastMessage.sender === selectedUser.on_talk) {
              addMessage(lastMessage.sender)
-             // $1.log('new message:', lastMessage)
+            
            }
         }
     }, [newMessageNotification])
@@ -94,8 +92,8 @@ export default function ChatPage() {
         },
       })
       const data = await response.json()
-      if (!data.vide && data.information) {//vide is a boolean to check if the list is empty
-        // const ress = await sortLastConversations(data.information)
+      if (!data.vide && data.information) {
+       
         const friendsList = data.information; // render the list as it is
         // check if friendsList is an array of objects or is empty
         if (!friendsList || friendsList.length === 0) {
@@ -213,32 +211,9 @@ export default function ChatPage() {
       router.push('/dashboard')
       setMessages((prevMessages:any) => prevMessages.filter((msg:any) => msg !== newMessageEntry))
     } finally {
-      // setTimeout(() => {
-      //   setIsSending(false)
-      // }, 500)
+
       setIsSending(false)
     }
-  }
-
-  const openSocket = () => { // unused function
-    if (!token) return { close: () => {} }
-    const socket = new WebSocket(`${socketUrl}/connection/?token=${token}`)
-    // $1.log('Socket:sss')
-    // alert('Socket:')
-
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data)
-      if (data.case === 'NEW_MESSAGE') {
-        if (selectedUser && data.sender === selectedUser.on_talk) {
-          addMessage(data.sender)
-          // if (messagesEndRef.current) {
-          //   messagesEndRef.current.scrollIntoView({ behavior: 'smooth' })
-          // }
-        }
-      }
-    }
-
-    return socket
   }
 
   const addMessage = async (username:any) => {
@@ -254,7 +229,6 @@ export default function ChatPage() {
         setMessages(data.data || [])
       }
     } catch (err) {
-      // $1.log('Error fetching new messages:', err)
     }
   }
 
@@ -313,11 +287,6 @@ export default function ChatPage() {
               <IoSearchSharp className="h-5 w-5 absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
             </div>
           </div>
-          {/* {loading && (
-            <div className="flex justify-center items-center h-20">
-              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-            </div>
-          )} */}
           {error && <div className="p-4 text-red-500">{error}</div>}
           <ul className="space-y-2 p-4">
             {filteredUsers?.map((user:any) => (
