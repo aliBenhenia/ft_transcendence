@@ -388,7 +388,7 @@ const ProfilePage = (props: any) => {
            }
           </div>
         </div>
-        <Achievements />
+        {/* <Achievements /> */}
       </div>
     </div>
   );

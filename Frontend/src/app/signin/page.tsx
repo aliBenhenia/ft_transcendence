@@ -101,23 +101,17 @@ export default function SignIn() {
     const passwordValidation = isValidInput(inputPassword);
     const newError: Record<string, string> = {};
 
-    if (!emailValidation.valid) {
-      newError.email = emailValidation.error;
-    }
-    if (!passwordValidation.valid) {
-      newError.password = passwordValidation.error;
-    }
-    setError(newError);
-    if (!emailValidation.valid || !passwordValidation.valid) {
-      setLoading(false);  // Stop loading if there's an invalid field
-      return;
-    }
-
-    if (data.password.length < 8) {
-      setPassErr(true);
-      setLoading(false);
-      return;
-    }
+    // if (!emailValidation.valid) {
+    //   newError.email = emailValidation.error;
+    // }
+    // if (!passwordValidation.valid) {
+    //   newError.password = passwordValidation.error;
+    // }
+    // setError(newError);
+    // if (!emailValidation.valid || !passwordValidation.valid) {
+    //   setLoading(false);  // Stop loading if there's an invalid field
+    //   return;
+    // }
 
     try {
       const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/login/token/`, {
@@ -215,7 +209,6 @@ export default function SignIn() {
                   {!hidePass ? <FaEye /> : <FaEyeSlash />}
                 </span>
               </div>
-                {passErr && <p className="text-red-500">Password must be at least 8 characters long.</p>}
                 {error.password && !passErr && <p className="text-red-500">{error.password}</p>}
               <div className="flex justify-between items-center">
                 <Link className="text-gray-400 hover:underline" href="/request-password-reset">
