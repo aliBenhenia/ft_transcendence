@@ -32,12 +32,11 @@ services:
       context: ./Frontend
       dockerfile: Dockerfile
     container_name: frontend
-    env_file:
-      - .env
     volumes:
       - ./Frontend:/app
       - /app/node_modules
       - /app/.next
+      - ./.env:/app/.env
     networks:
       - mynetwork
     restart: always

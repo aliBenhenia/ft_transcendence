@@ -100,12 +100,15 @@ def update_profile(request):
         new_password = request.data.get('new_password')
         re_password = request.data.get('re_password')
         if new_password or re_password or old_password:
-            if not old_password:
-                return Response({'error': 'Old password is required to change the password.'}, status=400)
-            if not check_password(old_password, Account.password):
-                return Response({'error': 'Incorrect password'}, status=400)
-            if new_password == old_password:
-                return Response({'error': 'Try with diffrent new password'}, status=400)
+            if new_password and re_password and old_password:
+                if not old_password:
+                    return Response({'error': 'Old password is required to change the password.'}, status=400)
+                if not check_password(old_password, Account.password):
+                    return Response({'error': 'Incorrect password'}, status=400)
+                if new_password == old_password:
+                    return Response({'error': 'Try with diffrent new password'}, status=400)
+            else:
+                return Response({'error' : 'Both current password and re-password are required'}, status=400)
         try:
             RegisterManager.ValidateRegister(request.data, False)
         except RegisterException as e:

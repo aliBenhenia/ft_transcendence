@@ -48,7 +48,10 @@ const ResetPassword = () => {
           newPassword:password,
         }
       );
-
+      if (response?.data?.error === "Invalid format") {
+        message.error(response?.data?.error || "Invalid format");
+        return;
+      }
       message.success("Password reset successful!");
       router.push("/signin"); // Redirect to login page after successful password reset
     } catch (err) {
