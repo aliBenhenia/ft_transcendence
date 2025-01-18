@@ -82,26 +82,29 @@ def query_conversation(request):
 @permission_classes([IsAuthenticated])
 def send_message(request):
     account = request.user
-    data = request.data
-    receiver = data.get('account')
-    if not receiver:
-        return Response({'error': ERROR[3]}, status=400)
-    receiver, state = AccountLookup(receiver)
-    if not state:
-        return Response({'error': ERROR[2]}, status=404)
-    message = data.get('message')
-    if not message:
-        return Response({'error': ERROR[5]}, status=400)
+    try:
+        data = request.data
+        receiver = data.get('account')
+        if not receiver:
+            return Response({'error': ERROR[3]}, status=400)
+        receiver, state = AccountLookup(receiver)
+        if not state:
+            return Response({'error': ERROR[2]}, status=404)
+        message = data.get('message')
+        if not message:
+            return Response({'error': ERROR[5]}, status=400)
 
-    is_blk, option = is_blocked(account, receiver)
-    if is_blk:
-        if option:
-            return Response({'error': ERROR[8]}, status=400)
-        return Response({'error': ERROR[9]}, status=400)
+        is_blk, option = is_blocked(account, receiver)
+        if is_blk:
+            if option:
+                return Response({'error': ERROR[8]}, status=400)
+            return Response({'error': ERROR[9]}, status=400)
 
-    new = create_message(account, receiver, message)
-    new_message(account, receiver, new)
-    return Response({'success': SUCCESS[2]}, status=200)
+        new = create_message(account, receiver, message)
+        new_message(account, receiver, new)
+        return Response({'success': SUCCESS[2]}, status=200)
+    except:
+        return Response({'error': 'invalid format'}, status=400)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -178,6 +181,7 @@ def accept_game_invite(request):
 @permission_classes([IsAuthenticated])
 def reject_game_invite(request):
     receiver = request.user
+
     if not request.body:
         return Response({"error": "Empty request body"}, status=400)
     try:

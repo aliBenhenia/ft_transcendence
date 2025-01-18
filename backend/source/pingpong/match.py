@@ -75,7 +75,6 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             if all(entry['player'] != self for queue in self.game_queues.values() for entry in queue):
                 return
             for level_diff in range(-level_range, level_range + 1):
-                print("here 1")
                 check_level = player_level + level_diff
                 if check_level in self.game_queues:
                     # Filter out the current player and get viable opponents
@@ -282,9 +281,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                             'type': 'game_ends',
                             'message': 'You win!',
                             'final_score': game['game_state']['score']
-                        }))
-                        print(f"sending result of the game for player winner : {player.user.username}")
-                        
+                        }))                        
                     # Loser
                     else:
                         loser_player = player.user
@@ -293,9 +290,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                             'type': 'game_ends',
                             'message': 'You lost!',
                             'final_score': game['game_state']['score']
-                        }))
-                        print(f"sending result of the game for player loser : {player.user.username}")
-                        
+                        }))                        
                 except:
                     pass
             await self.update_players_stats(winner_player, loser_player)
@@ -336,7 +331,6 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             if room_name in self.invites and len(self.invites[room_name]['connections']) < 2:
                 player = self.invites[room_name]['connections'][0]
                 await player.send(text_data=json.dumps({"type": "timeout" , "message" : "No second player joined."}))
-                print("SECOND PLAYER DIDNT JOIN")
                 try:
                     game_invite = await GameInvite.objects.aget(room_name=room_name)
                     game_invite.status = 'timeout'
@@ -352,18 +346,8 @@ class LiveGameFlow(AsyncWebsocketConsumer):
         room_name = event['room_name']
         if room_name in self.invites:
             await self.send(text_data=json.dumps({"type": "game_rejected",  "message":"game rejected"}))
-        #     await self.channel_layer.group_send(
-        #     self.user.token_notify,
-        #     {
-        #         "type": "game_rejected",  # Message handler type
-        #         "sender": self.user.username,
-        #         "picture" : str(self.user.photo_url),
-        #         "full-name" : f"{self.user.first_name} {self.user.last_name}",
-        #     }
-        # ) 
             del self.invites[room_name]
             await self.close()
-            print("GAME REJECTED")
 
     async def handle_game_invite(self, room_name):
         await self.channel_layer.group_add(room_name, self.channel_name)
@@ -402,19 +386,6 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             return await self.close()
         self.connected_users.append(self.user.id)
 
-        # # if player is already in a queue
-        # user_level = await sync_to_async(lambda: self.user.DETAILS.level)()
-        # if user_level in self.game_queues:
-        #         queue = self.game_queues[user_level]
-        #         for p in queue:
-        #             if p['player'].scope['user'].id == self.user.id:
-        #                 await self.send(text_data=json.dumps({'type':'close', 'message':'Already in queue!' }))
-        #                 return await self.close()
-        #         # if player is in game
-        # if self.user.username in self.in_game:
-        #     await self.send(text_data=json.dumps({'type':'close','message' : 'Already in game'}))
-        #     return await self.close()
-
         if room_name != None:
             await self.handle_game_invite(room_name)
         ##
@@ -446,23 +417,43 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             #from the game
             if hasattr(self, 'room_name') and self.room_name in self.games:
                     game = self.games[self.room_name]
+                    winner = None
+                    loser = self.user
+
                     if self in  game.get('players', None):
                         game['players'].remove(self)
                     await self.send(text_data=json.dumps(
                     {
                         'type' : 'game_ends',
-                        'message' : 'You disconnected'
+                        'message' : 'You disconnected',
+                        'final_score' : game['game_state']['score']
                     }))
                     if game['players']:
                         remaining_player = game['players'][0]
+                        if remaining_player.player_number == 1:
+                            game['game_state']['score'][0] = 5
+                            game['game_state']['score'][1] = 0
+                        else:
+                            game['game_state']['score'][0] = 0
+                            game['game_state']['score'][1] = 5
+                        winner = remaining_player.user
                         await remaining_player.send(text_data=json.dumps(
                         {
                             'type' : 'game_ends',
-                            'message' : 'You win! Opponent disconnected'
+                            'message' : 'You win! Opponent disconnected',
+                            'final_score' : game['game_state']['score']
                         }))
                         game['players'].remove(remaining_player)
                         del self.games[self.room_name]
                         self.in_game.clear()
+                        await sync_to_async(Game.objects.create)(
+                            end_time=datetime.now(),
+                            winner=winner,
+                            loser=loser,
+                            winner_score=5,
+                            loser_score=0
+                        )
+
         except Exception as e:
             print("error in disconnected : ", str(e))
 
@@ -486,8 +477,5 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                         current_pos * (1 - MOVEMENT_SMOOTHING) + 
                         target_pos * MOVEMENT_SMOOTHING
                     )
-            
-            if data['action'] == 'leave':
-                print('leave button clicked')
         except Exception as e:
             print(str(e))

@@ -31,9 +31,9 @@ const DropdownMenu: React.FC = () => {
   const menuItems: MenuItem[] = [
     {
       key: '1',
-      label: 'Profile',
+      label: 'Dashboard',
       icon: <FaUser className="text-gray-300 mr-2" />,
-      route: '/profile',
+      route: '/dashboard',
     },
     {
       key: '2',

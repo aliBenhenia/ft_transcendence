@@ -127,18 +127,21 @@ def activate_2FA(request):
     account = request.user
     if request.method == 'GET':
         return Response({'success': {'2FA' : account.SECURE.activate}}, status=200)
-    data = request.data
-    state = data.get('status')
-    if not state:
+    try:
+        data = request.data
+        state = data.get('status')
+        if not state:
+            return Response({'error': ERROR_MSG['24']}, status=400)
+        if state == 'true':
+            if account.SECURE.activate == False:
+                account.SECURE.activate_2FA(True)
+                return Response({'success': SUCCESS_MSG['2']}, status=200)
+            return Response({'error': ERROR_MSG['22']}, status=400)
+        elif state == 'false':
+            if account.SECURE.activate == True:
+                account.SECURE.activate_2FA(False)
+                return Response({'success': SUCCESS_MSG['3']}, status=200)
+            return Response({'error': ERROR_MSG['23']}, status=400)
         return Response({'error': ERROR_MSG['24']}, status=400)
-    if state == 'true':
-        if account.SECURE.activate == False:
-            account.SECURE.activate_2FA(True)
-            return Response({'success': SUCCESS_MSG['2']}, status=200)
-        return Response({'error': ERROR_MSG['22']}, status=400)
-    elif state == 'false':
-        if account.SECURE.activate == True:
-            account.SECURE.activate_2FA(False)
-            return Response({'success': SUCCESS_MSG['3']}, status=200)
-        return Response({'error': ERROR_MSG['23']}, status=400)
-    return Response({'error': ERROR_MSG['24']}, status=400)
+    except:
+        return Response({'error': 'invalid format'}, status=400)

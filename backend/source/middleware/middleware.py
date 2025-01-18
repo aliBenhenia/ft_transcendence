@@ -10,7 +10,6 @@ class TokenAuthMiddleware(BaseMiddleware):
         path = scope['path']
         print(path)
         if path not in ("/ws/pingpong/", "/ws/connection/"):
-            print("middleware")
             return
         query_params = parse_qs(scope['query_string'].decode())
         token = query_params.get('token', [None])[0]

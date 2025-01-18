@@ -11,42 +11,44 @@ from rest_framework.decorators import api_view, permission_classes
 @permission_classes([IsAuthenticated])
 def friend_status(request_id):
     account = request_id.user
-    
-    reciver_user = request_id.GET.get('username')
-    client, error = get_user(reciver_user)
-    if error:
-        return Response({'error': error}, status=404)
-    if client == account:
-        return Response({'error' : ERROR_MSG['10']}, status=400)
-    information = {
-        'invite_me' : False,
-        'on_request' : False,
-        'is_friends' : False,
-        'is_blocked' : False,
-        'blocked_by' : None,
-    }
-    open_request = REQUEST.objects.filter(Q(sender=client, reciver=account) | Q(sender=account, reciver=client)).first()
-    if open_request:
-        if open_request.sender == account:
-            information['on_request'] = True
-        else:
-            information['invite_me'] = True
-    else:
-        is_friends = FRIENDS.objects.filter(Q(account=account, friends=client) | Q(account=client, friends=account)).first()
-        if is_friends:
-            already = BLOCKER.objects.filter(Q(blocker=account, blocked=client) | Q(blocker=client, blocked=account)).first()
-            if already:
-                information['is_blocked'] = True
-                information['blocked_by'] = account.username if already.blocker == account else client.username
+    try:    
+        reciver_user = request_id.GET.get('username')
+        client, error = get_user(reciver_user)
+        if error:
+            return Response({'error': error}, status=404)
+        if client == account:
+            return Response({'error' : ERROR_MSG['10']}, status=400)
+        information = {
+            'invite_me' : False,
+            'on_request' : False,
+            'is_friends' : False,
+            'is_blocked' : False,
+            'blocked_by' : None,
+        }
+        open_request = REQUEST.objects.filter(Q(sender=client, reciver=account) | Q(sender=account, reciver=client)).first()
+        if open_request:
+            if open_request.sender == account:
+                information['on_request'] = True
             else:
-                information['is_friends'] = True
-    return Response({'success': information}, status=200)
+                information['invite_me'] = True
+        else:
+            is_friends = FRIENDS.objects.filter(Q(account=account, friends=client) | Q(account=client, friends=account)).first()
+            if is_friends:
+                already = BLOCKER.objects.filter(Q(blocker=account, blocked=client) | Q(blocker=client, blocked=account)).first()
+                if already:
+                    information['is_blocked'] = True
+                    information['blocked_by'] = account.username if already.blocker == account else client.username
+                else:
+                    information['is_friends'] = True
+        return Response({'success': information}, status=200)
+    except:
+        return Response({'error': 'invalid format'}, status=400)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def search_query(request):
     account = request.user
-    
+
     username = request.GET.get('username')
     if not username:
         return Response({'error': ERROR_MSG['3']}, status=400)
@@ -64,6 +66,7 @@ def search_query(request):
         }
         queryset.append(information)
     return Response({'success': queryset}, status=200)
+    
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])

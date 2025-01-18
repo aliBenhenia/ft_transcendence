@@ -8,37 +8,18 @@ from rest_framework.response import Response
 from django.utils.timesince import timesince
 from django.utils.timezone import now
 
-# Create your views here.
-@api_view(['GET'])
-def player_stats(request):
-    user_id = int(request.query_params.get('user_id'))
-    user = Register.objects.get(id=user_id)
-    total_wins = Game.objects.filter(winner=user).count()
-    total_losses = Game.objects.filter(loser=user).count()
-    last_game = Game.objects.filter(Q(winner=user) | Q(loser=user)).order_by('-end_time').first()
-    last_game_status = None
-    if last_game.winner == user:
-        last_game_status = "WIN"
-    else:
-        last_game_status = "LOSS"
-    return Response({
-        "total_matches" : total_wins + total_losses,
-        "total_wins" : total_wins,
-        "total_losses" : total_losses,
-        "last_game" : last_game_status
-    })
-
 @api_view(['GET'])
 def match_history(request):
-    try:
-        
-        user_id = int(request.query_params.get('user_id'))
-        user = Register.objects.get(id=user_id)
+        user_id = request.query_params.get('user_id', None)
+        if user_id is None:
+            return Response({'error': '"user_id" param is required'}, status=400)
+        user_id = int(user_id)
+        try:
+            user = Register.objects.get(id=user_id)
+        except Register.DoesNotExist:
+            return Response({'error': 'User does not exist'}, status=400)
         games = Game.objects.filter(Q(winner=user) | Q(loser=user)).order_by('-end_time')
         if not games:
             return Response({'error': 'No games found'})
         serializer = GameSerializer(games, many=True)
         return Response(serializer.data)
-    except Exception as e:
-        print(f"exception : {type(e).__name__}")
-        return Response({'error': 'not found'}, status=404)

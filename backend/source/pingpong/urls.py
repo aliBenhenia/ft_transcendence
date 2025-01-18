@@ -1,6 +1,5 @@
 from django.urls import path
-from .views import match_history, player_stats
+from .views import match_history
 urlpatterns = [
-    path('match_history/', match_history),
-    path('player_stats/', player_stats)
+    path('match_history/', match_history)
 ]
