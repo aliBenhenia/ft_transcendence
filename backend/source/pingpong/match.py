@@ -446,6 +446,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                         game['players'].remove(remaining_player)
                         del self.games[self.room_name]
                         self.in_game.clear()
+                        await self.update_players_stats(winner, loser)
                         await sync_to_async(Game.objects.create)(
                             end_time=datetime.now(),
                             winner=winner,
@@ -453,7 +454,6 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                             winner_score=5,
                             loser_score=0
                         )
-
         except Exception as e:
             print("error in disconnected : ", str(e))
 
