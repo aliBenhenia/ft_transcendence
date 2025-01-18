@@ -18,13 +18,14 @@ CANVAS_WIDTH = 800
 CANVAS_HEIGHT = 400
 PADDLE_WIDTH = 10
 PADDLE_HEIGHT = 100
-PADDLE_SPEED = 20
+PADDLE_SPEED = 8
 BALL_SPEED = 5
 BALL_RADIUS = 10
 INITIAL_BALL_SPEED = 4
 BALL_SPEED_INCREMENT = 0.1
 MAX_BALL_SPEED = 13
 WINNING_SCORE = 5
+MOVEMENT_SMOOTHING = 0.8
 
 class LiveGameFlow(AsyncWebsocketConsumer):
     connected_users = []
@@ -472,10 +473,20 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 if hasattr(self, 'room_name') and self.room_name in self.games:
                     game = self.games[self.room_name]
                     player_key = f'player{self.player_number}Y'
+                    current_pos = game['game_state'][player_key]
+                    
                     if data['direction'] == 'ArrowUp':
-                        game['game_state'][player_key] = max(0, game['game_state'][player_key] - PADDLE_SPEED)
+                        target_pos = max(0, current_pos - PADDLE_SPEED)
                     elif data['direction'] == 'ArrowDown':
-                        game['game_state'][player_key] = min(CANVAS_HEIGHT - PADDLE_HEIGHT, game['game_state'][player_key] + PADDLE_SPEED)
+                        target_pos = min(CANVAS_HEIGHT - PADDLE_HEIGHT, current_pos + PADDLE_SPEED)
+                    else:
+                        return
+                    
+                    game['game_state'][player_key] = (
+                        current_pos * (1 - MOVEMENT_SMOOTHING) + 
+                        target_pos * MOVEMENT_SMOOTHING
+                    )
+            
             if data['action'] == 'leave':
                 print('leave button clicked')
         except Exception as e:

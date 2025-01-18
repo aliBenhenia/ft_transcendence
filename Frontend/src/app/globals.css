@@ -23,3 +23,7 @@ body
       transform: rotate(360deg);
     }
   }
+
+  .result{
+    width: 154px;
+  }

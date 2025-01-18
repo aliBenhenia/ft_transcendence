@@ -6,7 +6,7 @@ import { GameState, Direction } from "@/utils/typess";
 import { useRouter, useSearchParams } from "next/navigation";
 import Scoreboards from "../tournaments/Scoreboard";
 import { message } from "antd"; 
-
+// import "../../../global.css"
 
 const WINNING_SCORE = 5;
 
@@ -42,7 +42,7 @@ const GameCanvas: React.FC = () => {
   });
   const [timeoutReached, setTimeoutReached] = useState(false);
   const [waiting, setWaiting] = useState(false);
-
+  const [keysPressed, setKeysPressed] = useState<Set<string>>(new Set());
 
   const mapBackgroundImage: Record<string, string> = {
     "Board 1": "/board 1.jpeg",
@@ -178,18 +178,47 @@ const GameCanvas: React.FC = () => {
     ctx.fillRect(canvasRef.current.width - 20, gameState.player2Y, 10, 100);
   }, [gameState]);
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (!ws) return;
-
-    const direction: Direction = e.key as Direction;
-    if (direction === "ArrowUp" || direction === "ArrowDown") {
-      ws.send(JSON.stringify({ action: "move", direction }));
-    }
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!ws) return;
+      
+      const direction: Direction = e.key as Direction;
+      if (direction === "ArrowUp" || direction === "ArrowDown") {
+          setKeysPressed(prev => new Set(prev).add(direction));
+      }
   };
 
+  const handleKeyUp = (e: KeyboardEvent) => {
+    const direction: Direction = e.key as Direction;
+    if (direction === "ArrowUp" || direction === "ArrowDown") {
+        setKeysPressed(prev => {
+            const newKeys = new Set(prev);
+            newKeys.delete(direction);
+            return newKeys;
+        });
+    }
+};
   useEffect(() => {
-    window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    const moveInterval = setInterval(() => {
+        if (!ws || keysPressed.size === 0) return;
+        
+        keysPressed.forEach(direction => {
+            ws.send(JSON.stringify({ action: "move", direction }));
+        });
+    }, 16); // 60 FPS update rate
+
+    return () => clearInterval(moveInterval);
+  }, [ws, keysPressed]);
+
+
+
+    useEffect(() => {
+      window.addEventListener("keydown", handleKeyDown);
+      window.addEventListener("keyup", handleKeyUp);
+      
+      return () => {
+          window.removeEventListener("keydown", handleKeyDown);
+          window.removeEventListener("keyup", handleKeyUp);
+      };
   }, [ws]);
 
  
@@ -216,7 +245,7 @@ const GameCanvas: React.FC = () => {
       ) : (isSearching || waiting) ? (
          isSearching ? <SearchingIndicator /> : <WaitingIndicator />
       ) : (
-        <div className="relative border-2 rounded-lg shadow-lg p-6 aspect-w-16 aspect-h-9">
+        <div className="relative p-6 aspect-w-16 aspect-h-9">
           {!gameOver && 
           <Scoreboards
             player1={{
@@ -242,18 +271,39 @@ const GameCanvas: React.FC = () => {
             }}
           ></canvas>}
           {gameOver && gameResult && (
-            <>
-              <p className="text-4xl font-bold text-white mb-4">{gameResult.message}</p>
-              <p className="text-2xl text-white">
-                Final Score: {gameResult.finalScore[0]} : {gameResult.finalScore[1]}
-              </p>
+            <div className="absolute inset-0  bg-opacity-80 flex flex-col items-center justify-center p-8 rounded-lg">
+              <h1 className="text-6xl font-bold text-white mb-8">Game Over</h1>
+              <div className="flex justify-center items-center space-x-8 mb-8">
+                <div className="flex flex-col items-center">
+                  <img 
+                    src={players.player1.avatar || "/default-avatar.png"} 
+                    alt={`Avatar of ${players.player1.username || "Player 1"}`} 
+                    className="w-24 h-24 rounded-full border-4 border-blue-500 mb-2" 
+                  />
+                  <p className="text-xl font-semibold text-white mt-2">{players.player1.username || "Player 1"}</p>
+                </div>
+                <div style={{width: "155px"}} className="result text-center bg-white bg-opacity-20 px-8 py-4 rounded-full w-[154px] text-center">
+                  <p className="text-5xl font-bold text-yellow-400 text-[30px]">
+                    {gameResult.finalScore[0]} - {gameResult.finalScore[1]}
+                  </p>
+                </div>
+                <div className="flex flex-col items-center">
+                  <img 
+                    src={players.player2.avatar || "/default-avatar.png"} 
+                    alt={`Avatar of ${players.player2.username || "Player 2"}`} 
+                    className="w-24 h-24 rounded-full border-4 border-red-500 mb-2" 
+                  />
+                  <p className="text-xl font-semibold text-white mt-2">{players.player2.username || "Player 2"}</p>
+                </div>
+              </div>
+              <p className="text-3xl font-bold text-yellow-400 mb-8">{gameResult.message}</p>
               <button
                 onClick={leaveGame}
-                className="px-6 py-2 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 mt-4"
+                className="px-6 py-3 bg-red-600 text-white font-bold rounded-lg hover:bg-red-700 transition duration-300"
               >
-                Leave Game
+                Return to Menu
               </button>
-            </>
+            </div>
           )}
         </div>
       )}
@@ -270,3 +320,4 @@ const GameCanvas: React.FC = () => {
 };
 
 export default GameCanvas;
+
