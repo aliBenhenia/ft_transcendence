@@ -293,10 +293,13 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                         }))                        
                 except:
                     pass
-            await self.update_players_stats(winner_player, loser_player)
+
             game['players'].clear()
-            self.in_game.clear()
+            self.in_game.remove(winner_player.username)
+            self.in_game.remove(loser_player.username)
+            del self.games[room_name]
             #save in database
+            await self.update_players_stats(winner_player, loser_player)
             await sync_to_async(Game.objects.create)(
                 end_time=datetime.now(),
                 winner=winner_player,
@@ -304,7 +307,6 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 winner_score=winner_score,
                 loser_score=loser_score
             )
-            del self.games[room_name]
 
     async def game_task(self, room_name):
         while room_name in self.games:
@@ -328,16 +330,18 @@ class LiveGameFlow(AsyncWebsocketConsumer):
     async def check_for_second_player(self, room_name, timeout):
         try:
             await asyncio.sleep(timeout)
-            if room_name in self.invites and len(self.invites[room_name]['connections']) < 2:
+            if room_name in self.invites and len(self.invites[room_name]['connections']) == 1:
+                print('bef')
                 player = self.invites[room_name]['connections'][0]
-                await player.send(text_data=json.dumps({"type": "timeout" , "message" : "No second player joined."}))
-                try:
-                    game_invite = await GameInvite.objects.aget(room_name=room_name)
-                    game_invite.status = 'timeout'
-                    await sync_to_async(game_invite.save)()
-                except GameInvite.DoesNotExist:
-                    print(f"GameInvite with room_name '{room_name}' does not exist.")
+                print('after')
                 del self.invites[room_name]
+                await player.send(text_data=json.dumps({"type": "timeout" , "message" : "No second player joined."}))
+                # try:
+                #     game_invite = await GameInvite.objects.aget(room_name=room_name)
+                #     game_invite.status = 'timeout'
+                #     await sync_to_async(game_invite.save)()
+                # except GameInvite.DoesNotExist:
+                #     print(f"GameInvite with room_name '{room_name}' does not exist.")
                 await self.close()
         except Exception as e:
             print(f"Error during timeout check: {e}")
@@ -366,6 +370,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 await self.send(text_data=json.dumps({"type": "waiting" , "message": "Waiting for player to join..."}))
                 asyncio.create_task(self.check_for_second_player(room_name, timeout=15))
         else:
+            print("++ invalid room ++")
             await self.send(text_data=json.dumps({"type" : "invalid_room" , "message": "Invalid room or game not found."}))
             await self.close()
 
@@ -444,8 +449,11 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                             'final_score' : game['game_state']['score']
                         }))
                         game['players'].remove(remaining_player)
+                        self.connected_users.remove(remaining_player.user.id)
+                        self.in_game.remove(winner.username)
+                        self.in_game.remove(loser.username)
                         del self.games[self.room_name]
-                        self.in_game.clear()
+
                         await self.update_players_stats(winner, loser)
                         await sync_to_async(Game.objects.create)(
                             end_time=datetime.now(),

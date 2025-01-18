@@ -23,9 +23,7 @@ def account_view(request):
         'online' : Account.is_online,
         'picture' : Account.photo_url,
         'full_name' : Account.first_name + ' ' + Account.last_name,
-        
         # STATICS INFO
-        
         'win' :  Account.DETAILS.win,
         'loss' :  Account.DETAILS.loss,
         'total_match' : Account.DETAILS.total_match,
@@ -40,7 +38,7 @@ def account_view(request):
 @permission_classes([IsAuthenticated])
 def searching_view(request):
     try:
-        username = request.GET.get('username')
+        username = request.GET.get('username', None)
         if not username:
             return Response({'error' : ERROR_MSG['3']}, status=400)
         TARGET = Register.objects.get(username=username)
@@ -107,19 +105,19 @@ def update_profile(request):
                     return Response({'error': 'Incorrect password'}, status=400)
                 if new_password == old_password:
                     return Response({'error': 'Try with diffrent new password'}, status=400)
+                try:
+                    RegisterManager.ValidateRegister(request.data, False)
+                    Account.set_password(new_password)
+                except RegisterException as e:
+                    return Response({'error' : ERRORS[str(e)]}, status=400)
             else:
                 return Response({'error' : 'Both current password and re-password are required'}, status=400)
-        try:
-            RegisterManager.ValidateRegister(request.data, False)
-        except RegisterException as e:
-            return Response({'error' : ERRORS[str(e)]}, status=400)
         #
-        Account.set_password(new_password)
         Account.save()
         return Response({'success': SUCCESS_MSG['1']}, status=200)
         #
     except Exception as e:
-        return Response({'error' : str(e)}, status=400)
+        return Response({'error' : 'invalid request'}, status=400)
 
 @api_view(['POST', 'GET'])
 @permission_classes([IsAuthenticated])
@@ -144,4 +142,4 @@ def activate_2FA(request):
             return Response({'error': ERROR_MSG['23']}, status=400)
         return Response({'error': ERROR_MSG['24']}, status=400)
     except:
-        return Response({'error': 'invalid format'}, status=400)
+        return Response({'error': 'invalid request'}, status=400)

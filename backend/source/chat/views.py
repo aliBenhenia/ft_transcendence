@@ -126,35 +126,45 @@ def send_game_invite(request):
                 return Response({'error': ERROR[8]}, status=400)
             return Response({'error': ERROR[9]}, status=400)
         #
-        if to_invite.username in LiveGameFlow.in_game:
-            return Response({'error', 'Currently in game'}, status=400)
 
-        game_invite = GameInvite.objects.filter(inviter=sender, invited=to_invite, status='pending').first()
-        if game_invite:
+        if to_invite.username in LiveGameFlow.in_game:
+            error = f"{to_invite.username} is already in game"
+            return Response({'error', error}, status=400)
+    
+        if sender.username in LiveGameFlow.in_game:
+            return Response({'error', "you are already in game"}, status=400)
+        # game_invite = GameInvite.objects.filter(inviter=sender, invited=to_invite, status='pending').first()
+        # if game_invite:
+        #     current_time = timezone.now()
+        #     time_diff = current_time - game_invite.created_at
+        #     if time_diff.total_seconds() <= 15:
+        #         return Response({'error', 'A game invite is already pending.'}, status=400)
+        #     game_invite.status = 'timeout'
+        #     game_invite.save()
+
+        room = next((invite for invite in LiveGameFlow.invites.values() if sender.id in invite['players'] and to_invite.id in invite['players']),None)    
+        if room:
             current_time = timezone.now()
-            time_diff = current_time - game_invite.created_at
+            time_diff = current_time - room['time_created']
             if time_diff.total_seconds() <= 15:
-                return Response({'error', 'A game invite is already pending.'}, status=400)
-            game_invite.status = 'timeout'
-            game_invite.save()
+                return Response({'error', 'a game invite is already pending.'}, status=400)
+            room['status'] = 'timeout'
 
         room_name = LiveGameFlow.generate_room_id()
-        GameInvite.objects.create(room_name=room_name, inviter=sender, invited=to_invite, status='pending')
-        LiveGameFlow.invites[room_name] = {'players' : [sender.id, to_invite.id],'connections': []}
+        # GameInvite.objects.create(room_name=room_name, inviter=sender, invited=to_invite, status='pending')
+        LiveGameFlow.invites[room_name] = {'players' : [sender.id, to_invite.id],'connections': [], 'time_created' : timezone.now(), 'status' : 'pending'}
         notification_data =  {
             'type': 'game_invite',
             'room_name' : room_name,
             'sender' : sender.username,
             'picture' : str(sender.photo_url),
             'full-name' : f"{sender.first_name} {sender.last_name}",
-        }   
+        }
         channel_layer = get_channel_layer()
         async_to_sync(channel_layer.group_send)(to_invite.token_notify, notification_data)
-        # async_to_sync(channel_layer.group_send)(sender.token_notify, {'type' : 'join_room', 'room_name' : room_name})
-
         return Response({'success': SUCCESS[3], 'room_name' : room_name}, status=200)
     except:
-        return Response({'error' : 'invalid format'}, status=400)
+        return Response({'error' : 'invalid request'}, status=400)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -162,41 +172,45 @@ def accept_game_invite(request):
     try:
         receiver = request.user
         room_name = request.data.get('room_name', None)
+        print("1")
         if room_name is None:
             return Response({"error": "room name key required"}, status=400)
-        try:
-            game_invite = GameInvite.objects.get(room_name=room_name, invited=receiver, status='pending')
-        except GameInvite.DoesNotExist:
+        # try:
+        #     game_invite = GameInvite.objects.get(room_name=room_name, invited=receiver, status='pending')
+        # except GameInvite.DoesNotExist:
+        #     return Response({'error': 'Invalid game invite'}, status=400)
+        # game_invite.status = 'accepted'
+        # game_invite.save()
+        # invited = receiver
+        print("2")
+        if room_name in LiveGameFlow.invites:
+            LiveGameFlow.invites[room_name]['status'] == 'accepted'
+            return Response({'success': SUCCESS[4]})
+        else:
             return Response({'error': 'Invalid game invite'}, status=400)
-        game_invite.status = 'accepted'
-        game_invite.save()
-        invited = receiver
         # channel_layer = get_channel_layer()
         # async_to_sync(channel_layer.group_send)(invited.token_notify, {'type' : 'join_room', 'room_name' : room_name})
-        return Response({'success': SUCCESS[4]})
+        # return Response({'success': SUCCESS[4]})
     except:
+        print("3")
         return Response({'error' : 'invalid format'}, status=400)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def reject_game_invite(request):
-    receiver = request.user
-
-    if not request.body:
-        return Response({"error": "Empty request body"}, status=400)
     try:
-        data = json.loads(request.body)
-    except:
-        return Response({"error": "Invalid JSON format"}, status=400)
-    room_name = data.get('room_name', '')
-    try:
-        game_invite = GameInvite.objects.get(room_name=room_name, invited=receiver, status='pending')
-    except GameInvite.DoesNotExist:
-        return Response({'error': 'Invalid game invite'}, status=400)
-    game_invite.status = 'rejected'
-    game_invite.save()
-    inviter = game_invite.inviter
-    channel_layer = get_channel_layer()
-    async_to_sync(channel_layer.group_send)(room_name, {'type' : 'game_rejected', 'room_name' : room_name})
-
-    return Response({'success': 'Game invite rejected successfully'})
+        receiver = request.user
+        room_name = request.data.get('room_name', None)
+        # try:
+        #     game_invite = GameInvite.objects.get(room_name=room_name, invited=receiver, status='pending')
+        # except GameInvite.DoesNotExist:
+        #     return Response({'error': 'Invalid game invite'}, status=400)
+        # game_invite.status = 'rejected'
+        # game_invite.save()
+        # inviter = game_invite.inviter
+        channel_layer = get_channel_layer()
+        async_to_sync(channel_layer.group_send)(room_name, {'type' : 'game_rejected', 'room_name' : room_name})
+        return Response({'success': 'Game invite rejected successfully'})
+    except Exception as e:
+        print(str(e))
+        return Response({'error', 'invalid request'}, status=400)
