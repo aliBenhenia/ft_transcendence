@@ -39,14 +39,15 @@ const Ai = () => {
   const searchParams = useSearchParams();
 
   const scoreToWin = searchParams.get('scoreToWin') || '3';
-  const botLevel = searchParams.get('botLevel') || 'easy';
+  const botLevel = searchParams.get('botLevel') || "hard";
   const selectedMap = searchParams.get('selectedMap') || 'Board 1';
 
   const cleanedBotLevel = botLevel.trim();
 
-  const level = cleanedBotLevel === 'easy' ? 2 :
-                cleanedBotLevel === 'medium' ? 3 : 
-                cleanedBotLevel === 'hard' ? 5 : 2;
+  const level = cleanedBotLevel === "easy" ? "easy" :
+                cleanedBotLevel === "medium" ? "medium" :
+                cleanedBotLevel === "hard" ? "hard" : "hard";
+                console.log(level);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [player1Score, setPlayer1Score] = useState(0);
