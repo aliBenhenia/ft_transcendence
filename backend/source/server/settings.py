@@ -158,7 +158,7 @@ CHANNEL_LAYERS = {
 #  42 CONFIGURATIONS
 OAUTH_CLIENT_ID=env('UID')
 OAUTH_CLIENT_SECRET=env('SECRET')
-
+OAUTH_REDIRECT_URI=env('REDIRECT_URI')
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'  # Default backend
 
