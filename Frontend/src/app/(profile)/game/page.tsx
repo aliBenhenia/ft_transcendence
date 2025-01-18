@@ -15,7 +15,7 @@ function PingPongGame() {
   const router = useRouter();
   const [customSettingsEnabled, setCustomSettingsEnabled] = useState<boolean>(false);
   const [scoreToWin, setScoreToWin] = useState<number>(3);
-  const [botLevel, setBotLevel] = useState<string>("easy");
+  const [botLevel, setBotLevel] = useState<string>("hard");
   const [selectedMap, setSelectedMap] = useState<string>("Board 1");
   const [friendList, setFriendList] = useState<any[]>([]); // State for friend list
   const [loadingFriends, setLoadingFriends] = useState<boolean>(true); 
@@ -42,7 +42,7 @@ function PingPongGame() {
     setCustomSettingsEnabled(enabled);
     if (!enabled) {
       setScoreToWin(3);
-      setBotLevel("easy");
+      setBotLevel("hard");
       setSelectedMap("Board 1");
     }
   };
@@ -61,7 +61,7 @@ function PingPongGame() {
     // Prepare settings object
     const settings = customSettingsEnabled
       ? { scoreToWin, botLevel, selectedMap }
-      : { scoreToWin: 3, botLevel: "easy", selectedMap: "Board 1" };
+      : { scoreToWin: 3, botLevel: "hard", selectedMap: "Board 1" };
 
     // Pass settings via query parameters
     router.push(
@@ -236,7 +236,7 @@ function PingPongGame() {
               onClick={handlePlayWithBot}
             >
               <SiProbot className="text-xl" />
-              <span className="text-lg font-semibold">Play with Bot</span>
+              <span className="text-lg font-semibold">Play with AI</span>
             </button>
           </div>
         </div>
