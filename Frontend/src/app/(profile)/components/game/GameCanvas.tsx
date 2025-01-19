@@ -265,6 +265,19 @@ const GameCanvas: React.FC = () => {
                 }}
               ></canvas>
             )}
+            {!gameOver && (
+              <>
+                {/* Game Controls */}
+                <div className="flex justify-between items-center w-full max-w-4xl mt-4">
+                  <div className="text-left">
+                    <h1 className="text-lg md:text-xl font-bold text-blue-400">
+                      Use: <span className="text-[#FA7ECC]">Arrow Up/Down</span>
+                    </h1>
+                  </div>
+
+                </div>
+              </>
+            )}
             {gameOver && gameResult && (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="w-[800px] h-[500px] bg-black/20 backdrop-blur-md rounded-3xl border border-white/20 shadow-2xl">
@@ -347,6 +360,7 @@ const GameCanvas: React.FC = () => {
                       </div>
                     </div>
 
+
                     {/* Footer with Leave Game Button */}
                     <div className="text-center py-8">
                       <button
@@ -363,6 +377,7 @@ const GameCanvas: React.FC = () => {
             )}
           </div>
         )}
+
         {!gameOver && !timeoutReached && (
           <button
             onClick={leaveGame}
