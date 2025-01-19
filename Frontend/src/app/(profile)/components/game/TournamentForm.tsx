@@ -11,10 +11,10 @@ interface Player {
 }
 
 const avatars = [
-  '/avatars/board 1.jpeg',
-  '/avatars/board 2.jpeg',
-  '/avatars/board 3.avif',
-  '/avatars/me.jpeg',
+  '/avatars/ava1.png',
+  '/avatars/ava2.png',
+  '/avatars/ava3.webp',
+  '/avatars/pic11.jpeg',
 ];
 
 const RegistrationForm: React.FC = () => {
@@ -28,7 +28,7 @@ const RegistrationForm: React.FC = () => {
   const [registeredPlayers, setRegisteredPlayers] = useState<Player[] | null>(null);
   const [matches, setMatches] = useState<{ player1: Player; player2: Player }[] | null>(null);
 
-// function to save the registered players and matches in the local storage
+  // function to save the registered players and matches in the local storage
   useEffect(() => {
     const savedPlayers = localStorage.getItem('registeredPlayers');
     const savedMatches = localStorage.getItem('matches');
@@ -65,22 +65,22 @@ const RegistrationForm: React.FC = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     // Check for empty aliases
     if (players.some((p) => p.alias.trim() === '')) {
       alert('All players must have aliases!');
       return;
     }
-  
+
     // Check for duplicate aliases
     const aliases = players.map((p) => p.alias.trim().toLowerCase());
     const hasDuplicates = aliases.some((alias, index) => aliases.indexOf(alias) !== index);
-  
+
     if (hasDuplicates) {
       alert('Each player must have a unique alias!');
       return;
     }
-  
+
     // Save players and matches
     setRegisteredPlayers(players);
     setMatches(generateMatches(players));
@@ -131,11 +131,10 @@ const RegistrationForm: React.FC = () => {
                     <img
                       src={avatar}
                       alt="avatar"
-                      className={`w-12 h-12 rounded-full border-4 transition ${
-                        player.avatar === avatar
+                      className={`w-12 h-12 rounded-full border-4 transition ${player.avatar === avatar
                           ? 'border-blue-500 scale-105'
                           : 'border-gray-500'
-                      }`}
+                        }`}
                     />
                   </label>
                 ))}
@@ -155,16 +154,15 @@ const RegistrationForm: React.FC = () => {
           <AllMatches matches={matches!} />
 
           <button
-  onClick={handleStartTournament}
-  className={`w-full py-3 text-white text-lg font-semibold rounded-lg transition ${
-    matches && matches.length > 0
-      ? 'bg-blue-600 hover:bg-blue-500'
-      : 'bg-gray-400 cursor-not-allowed'
-  }`}
-  disabled={!matches || matches.length === 0}
->
-  Start Tournament
-</button>
+            onClick={handleStartTournament}
+            className={`w-full py-3 text-white text-lg font-semibold rounded-lg transition ${matches && matches.length > 0
+                ? 'bg-blue-600 hover:bg-blue-500'
+                : 'bg-gray-400 cursor-not-allowed'
+              }`}
+            disabled={!matches || matches.length === 0}
+          >
+            Start Tournament
+          </button>
           <button
             onClick={handleEndTournament}
             className="mt-4 w-full py-3 bg-red-600 text-white text-lg font-semibold rounded-lg hover:bg-red-500 transition"
