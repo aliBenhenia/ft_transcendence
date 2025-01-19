@@ -68,32 +68,6 @@ export class Paddle {
     }
   }
 
-  // updateAI(ball: Ball, canvasHeight: number, reactionTime: number) {
-  //   // Reduce reactionTimer based on elapsed time
-  //   if (this.reactionTimer > 0) {
-  //     this.reactionTimer -= 1;
-  //     return; // Skip update until timer reaches zero
-  //   }
-
-  //   // Reset the timer based on reactionTime (lower reactionTime = quicker AI)
-  //   this.reactionTimer = Math.max(1, Math.floor(60 / reactionTime));
-
-  //   // Predict ball movement
-  //   let targetY = ball.pos.y + (ball.velocity.y * (this.pos.x - ball.pos.x)) / ball.velocity.x;
-
-  //   // Account for wall bounces
-  //   while (targetY < 0 || targetY > canvasHeight) {
-  //     if (targetY < 0) targetY = -targetY;
-  //     else if (targetY > canvasHeight) targetY = 2 * canvasHeight - targetY;
-  //   }
-
-  //   const centerY = this.pos.y + this.height / 2;
-  //   if (targetY > centerY + this.velocity) {
-  //     this.pos.y = Math.min(canvasHeight - this.height, this.pos.y + this.velocity);
-  //   } else if (targetY < centerY - this.velocity) {
-  //     this.pos.y = Math.max(0, this.pos.y - this.velocity);
-  //   }
-  // }
   updateAI(ball: Ball, canvasHeight: number,  difficulty: "easy" | "medium" | "hard") {
     // Reduce reactionTimer based on elapsed time
     if (this.reactionTimer > 0) {
