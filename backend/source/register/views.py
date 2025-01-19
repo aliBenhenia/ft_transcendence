@@ -26,7 +26,10 @@ def register_account(request):
 
 @api_view(['POST'])
 def intra_register(request):
-    code = request.data.get('code', None)
+    try:
+        code = request.data.get('code', None)
+    except:
+        return Response({'error' : 'Invalid request'}, status=400)
     if not code:
         return Response({'error': 'Authorization code is missing'}, status=400)
     token_url = 'https://api.intra.42.fr/oauth/token'
@@ -38,11 +41,17 @@ def intra_register(request):
         'client_id': settings.OAUTH_CLIENT_ID, 
         'client_secret': settings.OAUTH_CLIENT_SECRET,
     }
-    response = requests.post(token_url, data=data)
+    try:
+        response = requests.post(token_url, data=data)
+    except:
+        return Response({'error' : 'connection error occured'}, status=400)
     if response.status_code == 200:
         token_data = response.json()
         access_token = token_data.get('access_token')
-        response = requests.get(api_url, headers={"Authorization": f"Bearer {access_token}"})
+        try:
+            response = requests.get(api_url, headers={"Authorization": f"Bearer {access_token}"})
+        except:
+            return Response({'error' : 'connection error occured'}, status=400)
         if response.status_code == 200:
             user_data = response.json()
             user = Register.objects.filter(provider_id=user_data['id']).first()
