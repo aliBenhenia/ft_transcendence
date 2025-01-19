@@ -170,7 +170,7 @@ export default function OneVone() {
     }, [countdown, winner, paused, player1Score, player2Score, matches, currentMatch]);
 
     // const handleNextMatch = () => {
-        
+
     //     const remainingMatches = matches.slice(1);
     //     setMatches(remainingMatches);
     //     localStorage.setItem('matches', JSON.stringify(remainingMatches));
@@ -189,24 +189,24 @@ export default function OneVone() {
         const remainingMatches = matches.slice(1);
         setMatches(remainingMatches);
         localStorage.setItem("matches", JSON.stringify(remainingMatches));
-    
+
         if (remainingMatches.length > 0) {
-          const nextMatchDetails = `${remainingMatches[0].player1.alias} vs ${remainingMatches[0].player2.alias}`;
-          setNextMatchInfo(nextMatchDetails);
-          setShowNextMatchPopup(true);
-    
-          setTimeout(() => {
-            setCurrentMatch(remainingMatches[0]);
-            setPlayer1Score(0);
-            setPlayer2Score(0);
-            setWinner(null);
-            setCountdown(3);
-          }, 5000);
+            const nextMatchDetails = `${remainingMatches[0].player1.alias} vs ${remainingMatches[0].player2.alias}`;
+            setNextMatchInfo(nextMatchDetails);
+            setShowNextMatchPopup(true);
+
+            setTimeout(() => {
+                setCurrentMatch(remainingMatches[0]);
+                setPlayer1Score(0);
+                setPlayer2Score(0);
+                setWinner(null);
+                setCountdown(3);
+            }, 5000);
         } else {
-          calculateTournamentWinner();
+            calculateTournamentWinner();
         }
-      };
-    
+    };
+
     const endTournament = () => {
         localStorage.removeItem('registeredPlayers');
         localStorage.removeItem('matches');
@@ -236,7 +236,7 @@ export default function OneVone() {
                 />
             )}
             {!tournamentWinner && currentMatch ? (
-                <div className="relative border-2 rounded-lg shadow-lg p-6 aspect-w-16 aspect-h-9">
+                <div className="relative">
                     {countdown !== null && (
                         <div className="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center text-white text-4xl md:text-6xl font-bold">
                             {countdown === 0 ? 'Go!' : countdown}
@@ -281,7 +281,21 @@ export default function OneVone() {
                             backgroundColor: '#07325F',
                         }}
                     ></canvas>
+                    {/* Game Controls */}
+                    <div className="flex justify-between items-center w-full max-w-4xl mt-4">
+                        <div className="text-left">
+                            <h1 className="text-lg md:text-xl font-bold text-blue-400">
+                                Player 1: <span className="text-[#FA7ECC]">W/S</span>
+                            </h1>
+                        </div>
+                        <div className="text-right">
+                            <h1 className="text-lg md:text-xl font-bold text-orange-400">
+                                Player 2: <span className="text-[#FA7ECC]">Up/Down</span>
+                            </h1>
+                        </div>
+                    </div>
                 </div>
+
             ) : (
                 <div className="absolute inset-0 flex flex-col justify-center items-center text-white p-4 sm:p-8">
                     <h1 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-6 text-center">
