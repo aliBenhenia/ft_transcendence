@@ -3,39 +3,16 @@ import { SiProbot } from "react-icons/si";
 import { IoGameController } from "react-icons/io5";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
-import { RootState } from "@/store/store";
-import { useEffect } from "react";
-import getFriendListUser from "@/services/getFriendsList";
+
 
 function PingPongGame() {
-  const profileState = useSelector((state: RootState) => state.profile);
+
   const router = useRouter();
   const [customSettingsEnabled, setCustomSettingsEnabled] = useState<boolean>(false);
   const [scoreToWin, setScoreToWin] = useState<number>(3);
   const [botLevel, setBotLevel] = useState<string>("hard");
   const [selectedMap, setSelectedMap] = useState<string>("Board 1");
 
-  const username = profileState.username;
-  const accessToken = localStorage.getItem("accessToken");
-
-  const [friendList, setFriendList] = useState<any[]>([]); // State for friend list
-  const [loadingFriends, setLoadingFriends] = useState<boolean>(true);
-
-  useEffect(() => {
-    const fetchFriendList = async () => {
-      try {
-        const friends = await getFriendListUser(accessToken, username);
-        setFriendList(friends || []);
-      } catch (error) {
-        console.error("Error fetching friend list:", error);
-      } finally {
-        setLoadingFriends(false);
-      }
-    };
-
-    fetchFriendList();
-  }, [accessToken, username]);
 
   const handleCustomSettings = (enabled: boolean) => {
     setCustomSettingsEnabled(enabled);
@@ -78,8 +55,8 @@ function PingPongGame() {
 
   return (
     <div className="flex flex-col gap-4 p-4 h-full">
-      <div className="flex gap-4 w-full">
-        {/* Game Settings Column (left side) */}
+      <div className="flex gap-4 w-full flex-cols">
+        {/* Settings Column (left side) */}
         <div className="flex flex-col bg-blue-50 rounded w-1/2">
           <header className="bg-blue-400">
             <h1 className="text-xl text-center text-[#041b34] font-bold">Game Settings</h1>
@@ -118,7 +95,7 @@ function PingPongGame() {
             </div>
             <div className={customSettingsEnabled ? "" : "pointer-events-none opacity-50"}>
               <h2 className="text-xl text-center py-3 text-[#083b71] font-semibold">Bot level (for bot game only)</h2>
-              <div className="flex justify-center space-x-4">
+              <div className="flex justify-center">
                 {["easy", "medium", "hard"].map((level) => (
                   <button
                     key={level}

@@ -178,10 +178,6 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             if paddle_y - BALL_RADIUS <= next_ballY <= paddle_y + PADDLE_HEIGHT + BALL_RADIUS:
                 # Collision detected
                 collision_y = next_ballY - paddle_y
-                # if is_left_paddle:
-                #     print('hits the paddle 1')
-                # else:
-                #     print('hits the paddle 2')
                 # Calculate collision point
                 collide_point = (collision_y - PADDLE_HEIGHT / 2) / (PADDLE_HEIGHT / 2)
                 angle = collide_point * (math.pi / 4)  # Max angle of 45 degrees
@@ -264,48 +260,44 @@ class LiveGameFlow(AsyncWebsocketConsumer):
         player_states.save()
 
     async def end_game(self, room_name, winner):
-        if room_name in self.games:
-            game = self.games[room_name]
-            winner_player = None
-            loser_player = None
-            winner_score = 0
-            loser_score = 0
-            for player in game['players']:
-                try:
-                    # Winner
-                    if player.player_number == winner:
-                        winner_player = player.user
-                        winner_score = game['game_state']['score'][player.player_number - 1]
-                        await player.send(text_data=json.dumps({
-                            'type': 'game_ends',
-                            'message': 'You win!',
-                            'final_score': game['game_state']['score']
-                        }))                        
-                    # Loser
-                    else:
-                        loser_player = player.user
-                        loser_score = game['game_state']['score'][player.player_number - 1]
-                        await player.send(text_data=json.dumps({
-                            'type': 'game_ends',
-                            'message': 'You lost!',
-                            'final_score': game['game_state']['score']
-                        }))                        
-                except:
-                    pass
+        if room_name not in self.games:
+            return
+        
+        game = self.games[room_name]
+        players = game['players']
+        game_scores = game['game_state']['score']
 
-            game['players'].clear()
-            self.in_game.remove(winner_player.username)
-            self.in_game.remove(loser_player.username)
-            del self.games[room_name]
-            #save in database
-            await self.update_players_stats(winner_player, loser_player)
-            await sync_to_async(Game.objects.create)(
-                end_time=datetime.now(),
-                winner=winner_player,
-                loser=loser_player,
-                winner_score=winner_score,
-                loser_score=loser_score
-            )
+        winner_player = loser_player = None
+        winner_score = loser_score = 0
+        
+        for player in players:
+            player_score = game_scores[player.player_number - 1]
+            
+            if player.player_number == winner:
+                winner_player = player.user
+                winner_score = player_score
+                message = 'You win!'
+            else:
+                loser_player = player.user
+                loser_score = player_score
+                message = 'You lost!'
+
+            await player.send(text_data=json.dumps({
+                'type': 'game_ends',
+                'message': message,
+                'final_score': game_scores
+            }))
+
+        del self.games[room_name]
+
+        await self.update_players_stats(winner_player, loser_player)
+        await sync_to_async(Game.objects.create)(
+            end_time=datetime.now(),
+            winner=winner_player,
+            loser=loser_player,
+            winner_score=winner_score,
+            loser_score=loser_score
+        )
 
     async def game_task(self, room_name):
         while room_name in self.games:
@@ -330,9 +322,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
         try:
             await asyncio.sleep(timeout)
             if room_name in self.invites and len(self.invites[room_name]['connections']) == 1:
-                print('bef')
                 player = self.invites[room_name]['connections'][0]
-                print('after')
                 del self.invites[room_name]
                 await player.send(text_data=json.dumps({"type": "timeout" , "message" : "No second player joined."}))
                 # try:
@@ -369,7 +359,6 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 await self.send(text_data=json.dumps({"type": "waiting" , "message": "Waiting for player to join..."}))
                 asyncio.create_task(self.check_for_second_player(room_name, timeout=15))
         else:
-            print("++ invalid room ++")
             await self.send(text_data=json.dumps({"type" : "invalid_room" , "message": "Invalid room or game not found."}))
             await self.close()
 
@@ -402,6 +391,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                 return
             self.connected_users.remove(self.user.id)
             print(f"Player {self.scope['user'].username} disconnected")
+
             # Remove player from queue if present
             player_level = await sync_to_async(lambda: self.scope['user'].DETAILS.level)()
             if player_level in self.game_queues:
@@ -415,13 +405,11 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             #from the invite
             if self.room_name in self.invites:
                 if self in self.invites[self.room_name]['connections']:
-                    print("connection removed from invite dict!")
                     self.invites[self.room_name]['connections'].remove(self)
 
             #from the game
             if hasattr(self, 'room_name') and self.room_name in self.games:
                     game = self.games[self.room_name]
-                    winner = None
                     loser = self.user
 
                     if self in  game.get('players', None):
@@ -433,13 +421,11 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                         'final_score' : game['game_state']['score']
                     }))
                     if game['players']:
-                        remaining_player = game['players'][0]
+                        remaining_player = game['players'].pop(0)
                         if remaining_player.player_number == 1:
-                            game['game_state']['score'][0] = 5
-                            game['game_state']['score'][1] = 0
+                            game['game_state']['score'] = [5, 0]
                         else:
-                            game['game_state']['score'][0] = 0
-                            game['game_state']['score'][1] = 5
+                            game['game_state']['score'] = [0, 5]
                         winner = remaining_player.user
                         await remaining_player.send(text_data=json.dumps(
                         {
@@ -447,7 +433,6 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                             'message' : 'You win! Opponent disconnected',
                             'final_score' : game['game_state']['score'] 
                         }))
-                        game['players'].remove(remaining_player)
                         self.connected_users.remove(remaining_player.user.id)
                         self.in_game.remove(winner.username)
                         self.in_game.remove(loser.username)
