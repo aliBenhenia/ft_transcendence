@@ -126,13 +126,18 @@ def send_game_invite(request):
                 return Response({'error': ERROR[8]}, status=400)
             return Response({'error': ERROR[9]}, status=400)
         #
-
-        if to_invite.username in LiveGameFlow.in_game:
-            error = f"{to_invite.username} is already in game"
-            return Response({'error', error}, status=400)
-    
-        if sender.username in LiveGameFlow.in_game:
-            return Response({'error', "you are already in game"}, status=400)
+        print("1")
+        for room in LiveGameFlow.games.values():
+            players = room['players']
+            for player in players:
+                if player.user.username == to_invite.username:
+                    return Response({'error', 'to invite is in game'}, status=400)
+                if player.user.username == sender.user.username:
+                    print("second")
+                    return Response({'error', 'you are already in game'}, status=400)
+        print("2")
+        # if sender.username in LiveGameFlow.in_game:
+        #     return Response({'error', "you are already in game"}, status=400)
         # game_invite = GameInvite.objects.filter(inviter=sender, invited=to_invite, status='pending').first()
         # if game_invite:
         #     current_time = timezone.now()
