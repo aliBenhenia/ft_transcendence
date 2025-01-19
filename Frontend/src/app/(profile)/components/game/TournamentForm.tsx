@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import RegisteredPlayers from './RegisteredPlayers';
 import AllMatches from './AllMatches';
 import { useRouter } from 'next/navigation';
+import {message} from 'antd';
 
 interface Player {
   alias: string;
@@ -14,7 +15,7 @@ const avatars = [
   '/avatars/ava1.png',
   '/avatars/ava2.png',
   '/avatars/ava3.webp',
-  '/avatars/pic11.jpeg',
+  '/avatars/ava4.png',
 ];
 
 const RegistrationForm: React.FC = () => {
@@ -68,7 +69,7 @@ const RegistrationForm: React.FC = () => {
 
     // Check for empty aliases
     if (players.some((p) => p.alias.trim() === '')) {
-      alert('All players must have aliases!');
+      message.error('All players must have aliases!');
       return;
     }
 
@@ -77,7 +78,7 @@ const RegistrationForm: React.FC = () => {
     const hasDuplicates = aliases.some((alias, index) => aliases.indexOf(alias) !== index);
 
     if (hasDuplicates) {
-      alert('Each player must have a unique alias!');
+      message.error('Each player must have a unique alias!');
       return;
     }
 
