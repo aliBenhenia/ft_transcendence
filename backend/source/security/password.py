@@ -48,10 +48,10 @@ def request_password_reset(request):
         frontend_url = FRONT_END_URL
         reset_path = f"/reset-password/?uid={uid}&token={token}"
         reset_link = frontend_url + reset_path
-        send_email(email, reset_link, "Password reset")
+        send_email(email, "Password reset", reset_link)
         return Response({'message': 'Password reset link sent to your email.'}, status=200)
     except:
-        return Response({'error': 'User with this email does not exist.'}, status=400)
+        return Response({'error': 'Invalid request'}, status=400)
 
 @api_view(['POST'])
 def reset_password(request):
@@ -81,4 +81,4 @@ def reset_password(request):
 
         return Response({"success": "Password reset successful"}, status=200)
     except:
-        return Response({"error": "Invalid format"}, status=400)
+        return Response({"error": "Invalid request"}, status=400)

@@ -5,6 +5,7 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.core.mail import send_mail
 import random
+from server.settings import EMAIL_HOST_USER
 
 def on_ready(username, on_check):
     i = 1
@@ -18,23 +19,10 @@ def ConnectToApplication(oauth):
     refresh = RefreshToken.for_user(oauth)
     return Response({'access': str(refresh.access_token),'refresh': str(refresh),}, status=200)
 
-def make_api_call(access_token):
-
-    headers = {'Authorization': f'Bearer {access_token}'}
-    try:
-        api_url = 'https://api.intra.42.fr/v2/me'
-        response = requests.get(api_url, headers=headers)
-        account = response.json()
-        if account['login']:
-            return True, account
-    except:
-        pass
-    return False, None
-
-def send_email(recipient, message, subject):
+def send_email(recipient, subject, message):
     subject = str(subject)
     message = str(message)
-    sender = "marwan.zaroual.1337.1@gmail.com"
+    sender = EMAIL_HOST_USER
     recipient_list = []
     recipient_list.append(recipient)
     try:

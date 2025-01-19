@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-from .tools import AccountLookup, generate_token, on_ready, make_api_call, ConnectToApplication, generate_code, send_email
+from .tools import AccountLookup, generate_token, on_ready, ConnectToApplication, generate_code, send_email
 from django.contrib.auth import authenticate
 
 class TokenOnLoginPairView(TokenObtainPairView):
@@ -27,7 +27,7 @@ class TokenOnLoginPairView(TokenObtainPairView):
                         user.SECURE.code = code
                         user.SECURE.status = 'pending'
                         user.SECURE.save()
-                        send_email(user.email, code, "2FA VERIFICATION")
+                        send_email(user.email, "2FA VERIFICATION", code)
                         return Response({'2FA': True, 'user_id' : str(user.id)}, status=200)
                     else:
                         return Response(token_serializer.validated_data, status=200)
