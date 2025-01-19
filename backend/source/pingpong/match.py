@@ -1,5 +1,4 @@
 import json
-from notification.socket import extract_auth_user, get_recipient
 from channels.generic.websocket import AsyncWebsocketConsumer
 import random
 import string
@@ -179,10 +178,10 @@ class LiveGameFlow(AsyncWebsocketConsumer):
             if paddle_y - BALL_RADIUS <= next_ballY <= paddle_y + PADDLE_HEIGHT + BALL_RADIUS:
                 # Collision detected
                 collision_y = next_ballY - paddle_y
-                if is_left_paddle:
-                    print('hits the paddle 1')
-                else:
-                    print('hits the paddle 2')
+                # if is_left_paddle:
+                #     print('hits the paddle 1')
+                # else:
+                #     print('hits the paddle 2')
                 # Calculate collision point
                 collide_point = (collision_y - PADDLE_HEIGHT / 2) / (PADDLE_HEIGHT / 2)
                 angle = collide_point * (math.pi / 4)  # Max angle of 45 degrees
@@ -446,7 +445,7 @@ class LiveGameFlow(AsyncWebsocketConsumer):
                         {
                             'type' : 'game_ends',
                             'message' : 'You win! Opponent disconnected',
-                            'final_score' : game['game_state']['score']
+                            'final_score' : game['game_state']['score'] 
                         }))
                         game['players'].remove(remaining_player)
                         self.connected_users.remove(remaining_player.user.id)
