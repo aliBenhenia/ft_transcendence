@@ -5,7 +5,7 @@ import Scoreboard from './Scoreboard';
 import { Ball, Paddle, checkCollisions } from '@/utils/bot';
 import { useRouter } from 'next/navigation';
 import { useSearchParams } from 'next/navigation';
-import {useSelector, useDispatch} from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/store/store';
 import Scoreboards from '../tournaments/Scoreboard';
 
@@ -45,9 +45,9 @@ const Ai = () => {
   const cleanedBotLevel = botLevel.trim();
 
   const level = cleanedBotLevel === "easy" ? "easy" :
-                cleanedBotLevel === "medium" ? "medium" :
-                cleanedBotLevel === "hard" ? "hard" : "hard";
-                console.log(level);
+    cleanedBotLevel === "medium" ? "medium" :
+      cleanedBotLevel === "hard" ? "hard" : "hard";
+  console.log(level);
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [player1Score, setPlayer1Score] = useState(0);
@@ -67,7 +67,7 @@ const Ai = () => {
   useEffect(() => {
     const canvas = canvasRef.current!;
     const ctx = canvas.getContext('2d')!;
-    
+
     const setCanvasDimensions = () => {
       canvas.width = Math.min(window.innerWidth * 0.8, 800);
       canvas.height = Math.min(window.innerHeight * 0.5, 450);
@@ -177,7 +177,7 @@ const Ai = () => {
 
   return (
     <div className='flex flex-col items-center justify-center'>
-      <div className="relative border-2 rounded-lg shadow-lg p-6 aspect-w-16 aspect-h-9">
+      <div className="relative">
         {countdown !== null && (
           <div className="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center text-white text-4xl md:text-6xl font-bold">
             {countdown === 0 ? 'Go!' : countdown}
@@ -200,17 +200,17 @@ const Ai = () => {
           </div>
         )}
         <Scoreboards
-            player1={{
-              alias: profileState.username || "Player 1",
-              avatar:profileState.picture || "/board1.jpeg",
-            }}
-            player2={{
-              alias:user2.username || "AI-Bot",
-              avatar: user2.avatar || "/board1.jpeg",
-            }}
-            player1Score={player1Score || 0}
-            player2Score={player2Score || 0}
-          />
+          player1={{
+            alias: profileState.username || "Player 1",
+            avatar: profileState.picture || "/board1.jpeg",
+          }}
+          player2={{
+            alias: user2.username || "AI-Bot",
+            avatar: user2.avatar || "/board1.jpeg",
+          }}
+          player1Score={player1Score || 0}
+          player2Score={player2Score || 0}
+        />
         <div className="w-full sm:max-w-2xl md:max-w-3xl lg:max-w-5xl aspect-w-16 aspect-h-9">
           <canvas
             ref={canvasRef}
@@ -221,6 +221,17 @@ const Ai = () => {
             }}
           ></canvas>
         </div>
+        <>
+          {/* Game Controls */}
+          <div className="flex justify-between items-center w-full max-w-4xl mt-4">
+            <div className="text-left">
+              <h1 className="text-lg md:text-xl font-bold text-blue-400">
+                Use: <span className="text-[#FA7ECC]">Arrow Up/Down</span>
+              </h1>
+            </div>
+
+          </div>
+        </>
       </div>
       <div className='absolute bottom-8 right-4'>
         <button
