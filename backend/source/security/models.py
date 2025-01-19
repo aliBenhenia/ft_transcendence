@@ -15,17 +15,6 @@ class SECURITY(models.Model):
     code_2fa = models.IntegerField(default=0)
     status = models.CharField(default='pending', max_length=10)
 
-    # PASSWORD RESET #
-
-    code = models.IntegerField(default=0)
-    token_time = models.DateTimeField(null=True, blank=True)
-    token = models.CharField(max_length=61, unique=True, null=True, blank=True)
-
-    # LIMIT SETUP #
-    
-    send_counter = models.IntegerField(default=0)
-    retry_counter = models.IntegerField(default=0)
-    retry_time = models.DateTimeField(null=True, blank=True)
 
     def token_setup(self):
         self.token_time =  timezone.now() + timedelta(minutes=TOKEN_EXPIRE_TIME)
