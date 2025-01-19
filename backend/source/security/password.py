@@ -3,7 +3,7 @@ from register.models import Register, RegisterManager
 from security.tools import AccountLookup
 from .cases import ERROR_MSG, SUCCESS_MSG
 from rest_framework.response import Response
-from .tools import AccountLookup, ValidatePassword
+from .tools import AccountLookup
 from rest_framework.permissions import IsAuthenticated
 from django.contrib.auth.hashers import check_password
 from rest_framework.decorators import api_view, permission_classes

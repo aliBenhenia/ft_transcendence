@@ -105,14 +105,15 @@ def update_profile(request):
                     return Response({'error': 'Incorrect password'}, status=400)
                 if new_password == old_password:
                     return Response({'error': 'Try with diffrent new password'}, status=400)
-                try:
-                    RegisterManager.ValidateRegister(request.data, False)
-                    Account.set_password(new_password)
-                except RegisterException as e:
-                    return Response({'error' : ERRORS[str(e)]}, status=400)
             else:
                 return Response({'error' : 'Both current password and re-password are required'}, status=400)
         #
+        try:
+            RegisterManager.ValidateRegister(request.data, False)
+            if new_password and re_password and old_password:
+                Account.set_password(new_password)
+        except RegisterException as e:
+            return Response({'error' : ERRORS[str(e)]}, status=400)
         Account.save()
         return Response({'success': SUCCESS_MSG['1']}, status=200)
         #
